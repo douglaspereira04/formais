@@ -1,0 +1,16 @@
+/home/douglas/eclipse-workspace/GALS/src/main/java/model/automata/Automata.java
+/home/douglas/eclipse-workspace/GALS/src/main/java/control/MainControl.java
+/home/douglas/eclipse-workspace/GALS/src/main/java/control/automata/AutomataControl.java
+/home/douglas/eclipse-workspace/GALS/src/main/java/app/Main.java
+/home/douglas/eclipse-workspace/GALS/src/main/java/view/regex/RegexPanel.java
+/home/douglas/eclipse-workspace/GALS/src/main/java/view/automata/AutomataPanel.java
+/home/douglas/eclipse-workspace/GALS/src/main/java/exception/automata/DuplicatedStateException.java
+/home/douglas/eclipse-workspace/GALS/src/main/java/view/automata/AutomataTableModel.java
+/home/douglas/eclipse-workspace/GALS/src/main/java/exception/automata/DuplicatedTransitionException.java
+/home/douglas/eclipse-workspace/GALS/src/main/java/exception/automata/InvalidTransitionException.java
+/home/douglas/eclipse-workspace/GALS/src/main/java/model/io/FileUtils.java
+/home/douglas/eclipse-workspace/GALS/src/main/java/view/util/WrapLayout.java
+/home/douglas/eclipse-workspace/GALS/src/main/java/view/MainView.java
+/home/douglas/eclipse-workspace/GALS/src/main/java/view/util/Splash.java
+/home/douglas/eclipse-workspace/GALS/src/main/java/exception/automata/MultipleInitialStateException.java
+/home/douglas/eclipse-workspace/GALS/src/main/java/exception/automata/InvalidStateException.java
