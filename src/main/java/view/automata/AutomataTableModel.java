@@ -1,17 +1,8 @@
 package view.automata;
 
-import java.util.Iterator;
-
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-
-import exception.automata.DuplicatedStateException;
-import exception.automata.DuplicatedTransitionException;
-import exception.automata.InvalidStateException;
-import exception.automata.InvalidTransitionException;
-import exception.automata.MultipleInitialStateException;
-import model.automata.Automata;
 
 /**
  * Automata table model
