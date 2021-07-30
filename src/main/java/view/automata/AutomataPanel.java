@@ -14,6 +14,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 
+import exception.automata.DuplicatedStateException;
+import exception.automata.DuplicatedTransitionException;
+import exception.automata.InvalidStateException;
+import exception.automata.InvalidTransitionException;
+import exception.automata.MultipleInitialStateException;
 import model.automata.Automata;
 import view.util.WrapLayout;
 
@@ -51,10 +56,10 @@ public class AutomataPanel extends JPanel{
     public AutomataPanel() {
 	this.setLayout(new BorderLayout());
 	
-	
+
+	initializeTransitionTable();
 	initializeToolBar();
 	
-	initializeTransitionTable();
 	
 	this.add(BorderLayout.NORTH, toolbar);
 	this.add(BorderLayout.CENTER, transitionTableScroll);
@@ -105,7 +110,7 @@ public class AutomataPanel extends JPanel{
 		transitionTableModel.addColumn();
 	    }
 	});
-
+	
 	clearAutomataButton.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
@@ -149,6 +154,99 @@ public class AutomataPanel extends JPanel{
 
     
     //Getters and Setters
+    
+    
+    /**
+     * Extract automata from table model
+     * 
+     * @return the automata
+     * @throws DuplicatedStateException
+     * @throws InvalidStateException
+     * @throws DuplicatedTransitionException
+     * @throws InvalidTransitionException
+     * @throws MultipleInitialStateException
+     */
+    public Automata getAutomata() throws DuplicatedStateException, InvalidStateException, DuplicatedTransitionException,
+	    InvalidTransitionException, MultipleInitialStateException {
+	Automata automata = new Automata();
+
+	int rows = transitionTable.getRowCount();
+	int columns = transitionTable.getColumnCount();
+
+	boolean foundInitial = false;
+
+	for (int i = 1; i < rows; i++) {
+	    String state = (String) transitionTable.getValueAt(i, 0);
+	    state = state.trim();
+	    if (state.length() > 0) {
+		boolean initialState = false;
+		boolean finalState = false;
+		if (state.startsWith(">")) {
+		    initialState = true;
+
+		    if (foundInitial) {
+			throw new MultipleInitialStateException();
+		    }
+
+		    foundInitial = true;
+		    state = state.substring(1);
+		}
+		if (state.endsWith("*")) {
+		    finalState = true;
+		    state = state.substring(0, state.length() - 1);
+		}
+
+		automata.addState(state);
+
+		if (finalState)
+		    automata.setAsFinalState(state);
+
+		if (initialState)
+		    automata.setInitialState(state);
+	    }
+
+	}
+
+	for (int i = 1; i < rows; i++) {
+	    for (int j = 1; j < columns; j++) {
+		String sourceState = null;
+		String targetStates = null;
+		Character transitionCharacter = null;
+		String[] targetStatesArray = null;
+
+		try {
+		    System.out.println(i+","+j);
+		    targetStates = ((String) transitionTable.getValueAt(i, j)).trim();
+		    // emptyTransition
+		    if (targetStates.equals(""))
+			continue;
+
+		    sourceState = ((String) transitionTable.getValueAt(i, 0)).trim();
+
+		    if (sourceState.startsWith(">"))
+			sourceState = sourceState.substring(1);
+
+		    if (sourceState.endsWith("*"))
+			sourceState = sourceState.substring(0, sourceState.length() - 1);
+
+		    transitionCharacter = ((String) transitionTable.getValueAt(0, j)).trim().charAt(0);
+
+		    targetStatesArray = targetStates.split(",");
+
+		} catch (Exception e) {
+		    e.printStackTrace();
+		    // throw new InvalidTransitionException();
+		}
+
+		for (String targetState : targetStatesArray) {
+		    automata.addTransition(sourceState, transitionCharacter, targetState);
+		}
+	    }
+	}
+
+	return automata;
+
+    }
     
     public JTable getTransitionTable() {
         return transitionTable;

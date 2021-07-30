@@ -4,8 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import model.automata.Automata;
-import model.io.FileUtils;
 import view.automata.AutomataPanel;
+import view.automata.AutomataTableModel;
 
 /**
  * Dedicated to control automata panel behavior
@@ -36,13 +36,14 @@ public class AutomataControl {
     
     private void onSaveButton() {
 	try {
-	    FileUtils.selectExportFile(System.getProperty("user.dir")+System.getProperty("file.separator")+"new.automata", automataPanel);
-	    //AutomataTableModel model = ((AutomataTableModel)this.automataPanel.getTransitionTable().getModel());
-	    //automata = model.getAutomata();
+	    //FileUtils.selectExportFile(System.getProperty("user.dir")+System.getProperty("file.separator")+"new.automata", automataPanel);
+	    automata = this.automataPanel.getAutomata();
+	    System.out.println("### AUTOMATA EXTRACTED ###");
+	    System.err.println("### NOT VALIDATED ###");
 	    
 	} catch (Exception e) {
 	    // TODO: handle exception
-	    System.out.println(e);
+	    e.printStackTrace();
 	}
     }
     
