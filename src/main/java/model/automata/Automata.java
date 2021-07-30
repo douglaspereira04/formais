@@ -248,8 +248,8 @@ public class Automata {
 	    unified.setAsFinalState(state+"-2");
 	}
 	
-	for (MultiKey<? extends String> keys : automata1.getTransitions().keySet()) {
-	    for (String targetState : automata1.getTransition(keys.getKey(0), keys.getKey(1).charAt(0))) {
+	for (MultiKey<? extends String> keys : automata2.getTransitions().keySet()) {
+	    for (String targetState : automata2.getTransition(keys.getKey(0), keys.getKey(1).charAt(0))) {
 		    unified.addTransition(keys.getKey(0)+"-2", keys.getKey(1).charAt(0), targetState+"-2");
 	    }
 	}
