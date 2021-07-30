@@ -4,6 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -40,6 +43,7 @@ public class AutomataPanel extends JPanel {
     AutomataTableModel transitionTableModel = null;
     JTable transitionTable = null;
 
+    JButton newAutomataButton = null;
     JButton saveAutomataButton = null;
     JButton clearAutomataButton = null;
     JButton deleteAutomataButton = null;
@@ -70,6 +74,7 @@ public class AutomataPanel extends JPanel {
 	addColumnButton = new JButton("Add Column");
 	addRowButton = new JButton("Add Row");
 	automataComboBox = new JComboBox<String>();
+	newAutomataButton = new JButton("New");
 	saveAutomataButton = new JButton("Save");
 	clearAutomataButton = new JButton("Clear");
 	deleteAutomataButton = new JButton("Delete");
@@ -81,6 +86,7 @@ public class AutomataPanel extends JPanel {
 	toolbar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
 
 	toolbar.add(automataComboBox);
+	toolbar.add(newAutomataButton);
 	toolbar.add(saveAutomataButton);
 	toolbar.add(deleteAutomataButton);
 
@@ -111,8 +117,7 @@ public class AutomataPanel extends JPanel {
 	clearAutomataButton.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		transitionTableModel = new AutomataTableModel();
-		transitionTable.setModel(transitionTableModel);
+		initializeTransitionTable();
 	    }
 	});
     }
@@ -172,7 +177,7 @@ public class AutomataPanel extends JPanel {
 
 	for (int i = 1; i < rows; i++) {
 	    String state = (String) transitionTable.getValueAt(i, 0);
-	    if(state == null)
+	    if (state == null)
 		continue;
 	    state = state.trim();
 	    if (state.length() > 0) {
@@ -214,11 +219,10 @@ public class AutomataPanel extends JPanel {
 	    try {
 
 		/*
-		 * get source state of transition
-		 * if no source state found, jump to next line/state of
-		 * transition table
+		 * get source state of transition if no source state found, jump to next
+		 * line/state of transition table
 		 */
-		
+
 		sourceState = ((String) transitionTable.getValueAt(i, 0));
 		if (sourceState == null)
 		    continue;
@@ -238,22 +242,20 @@ public class AutomataPanel extends JPanel {
 	    for (int j = 1; j < columns; j++) {
 
 		try {
-		    
+
 		    /*
-		     * gets transition character
-		     * if cell is empty, jumps to next character/column
+		     * gets transition character if cell is empty, jumps to next character/column
 		     */
 		    String transitionCharacterCell = (String) transitionTable.getValueAt(0, j);
 		    if (transitionCharacter == null)
 			continue;
 		    transitionCharacterCell = transitionCharacterCell.trim();
-		    if (transitionCharacterCell.equals("")) 
+		    if (transitionCharacterCell.equals(""))
 			continue;
 		    transitionCharacter = transitionCharacterCell.charAt(0);
-		    
+
 		    /*
-		     * gets target states
-		     * if cell is empty, jumps to next transition
+		     * gets target states if cell is empty, jumps to next transition
 		     */
 		    targetStates = ((String) transitionTable.getValueAt(i, j));
 		    if (targetStates == null)
@@ -265,8 +267,7 @@ public class AutomataPanel extends JPanel {
 		    targetStatesArray = targetStates.split(",");
 
 		} catch (Exception e) {
-		    e.printStackTrace();
-		    // throw new InvalidTransitionException();
+		    throw new InvalidTransitionException();
 		}
 
 		for (String targetState : targetStatesArray)
@@ -277,6 +278,74 @@ public class AutomataPanel extends JPanel {
 	}
 
 	return automata;
+
+    }
+
+    /**
+     * Set transition table values given automata
+     * 
+     * @param automata
+     */
+    public void setAutomata(Automata automata) {
+	// reset transition table
+	initializeTransitionTable();
+
+	List<Character> alphabet = automata.getAlphabet();
+	List<String> states = automata.getStates();
+	Map<Character, Integer> alphabetToColumn = new HashMap<Character, Integer>();
+	Map<String, Integer> stateToRow = new HashMap<String, Integer>();
+	
+	String initialState;
+	List<String> finalStates;
+
+	// add states
+	int row = 1;
+	for (String state : states) {
+	    this.transitionTableModel.addRow();
+	    stateToRow.put(state, row);
+	    this.transitionTableModel.setValueAt(state, row, 0);
+	    row++;
+	}
+
+	// add characters
+	int column = 1;
+	for (Character character : alphabet) {
+	    this.transitionTableModel.addColumn();
+	    alphabetToColumn.put(character, column);
+	    this.transitionTableModel.setValueAt(character, row, 0);
+	    column++;
+	}
+
+	// add transitions
+	for (String state : states) {
+	    for (Character character : alphabet) {
+		String targetStates = "";
+		try {
+		    List<String> targetStatesArray = automata.getTransition(state, character);
+
+		    // jumps empty transitions
+		    if (targetStatesArray == null)
+			continue;
+
+		    for (String targetState : targetStatesArray) {
+			targetStates = targetStatesArray + "," + targetState;
+		    }
+		} catch (InvalidStateException e) {
+		    e.printStackTrace();
+		}
+	    }
+	}
+	
+	// set initial state
+	initialState = automata.getInitialState();
+	this.transitionTableModel.setValueAt(">"+initialState, stateToRow.get(initialState), 0);
+	
+	// set final states
+	finalStates = automata.getFinalStates();
+	for (String state : finalStates) {
+	    String finalState = ((String)this.transitionTableModel.getValueAt(stateToRow.get(state), 0)) + "*";
+	    this.transitionTableModel.setValueAt(finalState, stateToRow.get(state), 0);
+	}
 
     }
 
@@ -358,6 +427,14 @@ public class AutomataPanel extends JPanel {
 
     public void setAutomataComboBox(JComboBox<String> automataComboBox) {
 	this.automataComboBox = automataComboBox;
+    }
+
+    public JButton getNewAutomataButton() {
+	return newAutomataButton;
+    }
+
+    public void setNewAutomataButton(JButton newAutomataButton) {
+	this.newAutomataButton = newAutomataButton;
     }
 
 }
