@@ -24,16 +24,17 @@ import view.util.WrapLayout;
 
 /**
  * Panel dedicated to manipulate automaton
+ * 
  * @author douglas
  *
  */
-public class AutomataPanel extends JPanel{
+public class AutomataPanel extends JPanel {
 
     /**
      * 
      */
     private static final long serialVersionUID = 8670784410886817455L;
-    
+
     JPanel toolbar = null;
     JScrollPane transitionTableScroll = null;
     AutomataTableModel transitionTableModel = null;
@@ -48,24 +49,22 @@ public class AutomataPanel extends JPanel{
     JButton addColumnButton = null;
     JButton addRowButton = null;
     JComboBox<String> automataComboBox = null;
-    
+
     public AutomataPanel(Automata automata) {
-	
+
     }
-    
+
     public AutomataPanel() {
 	this.setLayout(new BorderLayout());
-	
 
 	initializeTransitionTable();
 	initializeToolBar();
-	
-	
+
 	this.add(BorderLayout.NORTH, toolbar);
 	this.add(BorderLayout.CENTER, transitionTableScroll);
-	
+
     }
-    
+
     private void initializeToolBar() {
 
 	addColumnButton = new JButton("Add Column");
@@ -77,14 +76,14 @@ public class AutomataPanel extends JPanel{
 	completeAutomataButton = new JButton("Complete");
 	unifyAutomataButton = new JButton("Unify");
 	epsilonClosureButton = new JButton("Display Epsilon Closure");
-	
+
 	toolbar = new JPanel(new WrapLayout());
 	toolbar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
 
 	toolbar.add(automataComboBox);
 	toolbar.add(saveAutomataButton);
 	toolbar.add(deleteAutomataButton);
-	
+
 	toolbar.add(new ToolbarSeparator());
 	toolbar.add(completeAutomataButton);
 	toolbar.add(unifyAutomataButton);
@@ -94,9 +93,7 @@ public class AutomataPanel extends JPanel{
 	toolbar.add(clearAutomataButton);
 	toolbar.add(addRowButton);
 	toolbar.add(addColumnButton);
-	
 
-	
 	addRowButton.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
@@ -110,7 +107,7 @@ public class AutomataPanel extends JPanel{
 		transitionTableModel.addColumn();
 	    }
 	});
-	
+
 	clearAutomataButton.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
@@ -119,26 +116,26 @@ public class AutomataPanel extends JPanel{
 	    }
 	});
     }
-    
+
     private void initializeTransitionTable() {
 
 	transitionTableScroll = new JScrollPane();
 	transitionTable = new JTable();
 	transitionTableModel = new AutomataTableModel();
-	
+
 	transitionTable.setModel(transitionTableModel);
 	transitionTableScroll.setViewportView(transitionTable);
-	
+
 	transitionTableScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	transitionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-	
-	transitionTable.setGridColor(Color.LIGHT_GRAY); 
+
+	transitionTable.setGridColor(Color.LIGHT_GRAY);
 	transitionTable.setShowGrid(true);
 	transitionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     }
-    
+
     private class ToolbarSeparator extends JLabel {
-	
+
 	/**
 	 * 
 	 */
@@ -149,13 +146,11 @@ public class AutomataPanel extends JPanel{
 	    super("|");
 	    this.setEnabled(false);
 	}
-	
+
     }
 
-    
-    //Getters and Setters
-    
-    
+    // Getters and Setters
+
     /**
      * Extract automata from table model
      * 
@@ -177,6 +172,8 @@ public class AutomataPanel extends JPanel{
 
 	for (int i = 1; i < rows; i++) {
 	    String state = (String) transitionTable.getValueAt(i, 0);
+	    if(state == null)
+		continue;
 	    state = state.trim();
 	    if (state.length() > 0) {
 		boolean initialState = false;
@@ -207,29 +204,63 @@ public class AutomataPanel extends JPanel{
 
 	}
 
+	String sourceState = null;
+	String targetStates = null;
+	Character transitionCharacter = null;
+	String[] targetStatesArray = null;
+
 	for (int i = 1; i < rows; i++) {
+
+	    try {
+
+		/*
+		 * get source state of transition
+		 * if no source state found, jump to next line/state of
+		 * transition table
+		 */
+		
+		sourceState = ((String) transitionTable.getValueAt(i, 0));
+		if (sourceState == null)
+		    continue;
+		sourceState = sourceState.trim();
+		if (sourceState.equals(""))
+		    continue;
+
+		if (sourceState.startsWith(">"))
+		    sourceState = sourceState.substring(1);
+
+		if (sourceState.endsWith("*"))
+		    sourceState = sourceState.substring(0, sourceState.length() - 1);
+	    } catch (Exception e) {
+		throw new InvalidTransitionException();
+	    }
+
 	    for (int j = 1; j < columns; j++) {
-		String sourceState = null;
-		String targetStates = null;
-		Character transitionCharacter = null;
-		String[] targetStatesArray = null;
 
 		try {
-		    System.out.println(i+","+j);
-		    targetStates = ((String) transitionTable.getValueAt(i, j)).trim();
-		    // emptyTransition
+		    
+		    /*
+		     * gets transition character
+		     * if cell is empty, jumps to next character/column
+		     */
+		    String transitionCharacterCell = (String) transitionTable.getValueAt(0, j);
+		    if (transitionCharacter == null)
+			continue;
+		    transitionCharacterCell = transitionCharacterCell.trim();
+		    if (transitionCharacterCell.equals("")) 
+			continue;
+		    transitionCharacter = transitionCharacterCell.charAt(0);
+		    
+		    /*
+		     * gets target states
+		     * if cell is empty, jumps to next transition
+		     */
+		    targetStates = ((String) transitionTable.getValueAt(i, j));
+		    if (targetStates == null)
+			continue;
+		    targetStates = targetStates.trim();
 		    if (targetStates.equals(""))
 			continue;
-
-		    sourceState = ((String) transitionTable.getValueAt(i, 0)).trim();
-
-		    if (sourceState.startsWith(">"))
-			sourceState = sourceState.substring(1);
-
-		    if (sourceState.endsWith("*"))
-			sourceState = sourceState.substring(0, sourceState.length() - 1);
-
-		    transitionCharacter = ((String) transitionTable.getValueAt(0, j)).trim().charAt(0);
 
 		    targetStatesArray = targetStates.split(",");
 
@@ -238,98 +269,95 @@ public class AutomataPanel extends JPanel{
 		    // throw new InvalidTransitionException();
 		}
 
-		for (String targetState : targetStatesArray) {
-		    automata.addTransition(sourceState, transitionCharacter, targetState);
-		}
+		for (String targetState : targetStatesArray)
+		    if (!targetState.trim().equals(""))
+			automata.addTransition(sourceState, transitionCharacter, targetState);
+
 	    }
 	}
 
 	return automata;
 
     }
-    
+
     public JTable getTransitionTable() {
-        return transitionTable;
+	return transitionTable;
     }
 
     public void setTransitionTable(JTable transitionTable) {
-        this.transitionTable = transitionTable;
+	this.transitionTable = transitionTable;
     }
 
     public JButton getSaveAutomataButton() {
-        return saveAutomataButton;
+	return saveAutomataButton;
     }
 
     public void setSaveAutomataButton(JButton saveAutomataButton) {
-        this.saveAutomataButton = saveAutomataButton;
+	this.saveAutomataButton = saveAutomataButton;
     }
 
     public JButton getClearAutomataButton() {
-        return clearAutomataButton;
+	return clearAutomataButton;
     }
 
     public void setClearAutomataButton(JButton clearAutomataButton) {
-        this.clearAutomataButton = clearAutomataButton;
+	this.clearAutomataButton = clearAutomataButton;
     }
 
     public JButton getDeleteAutomataButton() {
-        return deleteAutomataButton;
+	return deleteAutomataButton;
     }
 
     public void setDeleteAutomataButton(JButton deleteAutomataButton) {
-        this.deleteAutomataButton = deleteAutomataButton;
+	this.deleteAutomataButton = deleteAutomataButton;
     }
 
     public JButton getCompleteAutomataButton() {
-        return completeAutomataButton;
+	return completeAutomataButton;
     }
 
     public void setCompleteAutomataButton(JButton completeAutomataButton) {
-        this.completeAutomataButton = completeAutomataButton;
+	this.completeAutomataButton = completeAutomataButton;
     }
 
     public JButton getUnifyAutomataButton() {
-        return unifyAutomataButton;
+	return unifyAutomataButton;
     }
 
     public void setUnifyAutomataButton(JButton unifyAutomataButton) {
-        this.unifyAutomataButton = unifyAutomataButton;
+	this.unifyAutomataButton = unifyAutomataButton;
     }
 
     public JButton getEpsilonClosureButton() {
-        return epsilonClosureButton;
+	return epsilonClosureButton;
     }
 
     public void setEpsilonClosureButton(JButton epsilonClosureButton) {
-        this.epsilonClosureButton = epsilonClosureButton;
+	this.epsilonClosureButton = epsilonClosureButton;
     }
 
     public JButton getAddColumnButton() {
-        return addColumnButton;
+	return addColumnButton;
     }
 
     public void setAddColumnButton(JButton addColumnButton) {
-        this.addColumnButton = addColumnButton;
+	this.addColumnButton = addColumnButton;
     }
 
     public JButton getAddRowButton() {
-        return addRowButton;
+	return addRowButton;
     }
 
     public void setAddRowButton(JButton addRowButton) {
-        this.addRowButton = addRowButton;
+	this.addRowButton = addRowButton;
     }
 
     public JComboBox<String> getAutomataComboBox() {
-        return automataComboBox;
+	return automataComboBox;
     }
 
     public void setAutomataComboBox(JComboBox<String> automataComboBox) {
-        this.automataComboBox = automataComboBox;
+	this.automataComboBox = automataComboBox;
     }
-    
-    
-    
-    
 
 }
