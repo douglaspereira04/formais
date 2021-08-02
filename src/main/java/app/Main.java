@@ -11,14 +11,14 @@ import view.automata.AutomataPanel;
 import view.regex.RegexPanel;
 import view.util.Splash;
 
-
 /**
  * App main
+ * 
  * @author douglas
  *
  */
 public class Main {
-    
+
     private static MainView mainView;
     private static MainControl mainControl;
 
@@ -27,7 +27,14 @@ public class Main {
 
     public static void main(String[] args) {
 	// TODO Auto-generated method stub
+
 	
+
+	try {
+	    UIManager.setLookAndFeel(new FlatLightLaf());
+	} catch (Exception ex) {
+	    System.err.println("Failed to initialize LaF");
+	}
 
 	try {
 	    UIManager.setLookAndFeel(new FlatLightLaf());
@@ -42,9 +49,9 @@ public class Main {
 	regexPanel = new RegexPanel();
 	mainView = new MainView(automataPanel, regexPanel);
 	AutomataControl automataControl = new AutomataControl(automataPanel);
-	
+
 	splash.getProgressBar().setValue(90);
-	
+
 	mainControl = new MainControl(mainView);
 	splash.getProgressBar().setValue(95);
 
