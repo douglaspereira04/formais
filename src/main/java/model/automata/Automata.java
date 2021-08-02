@@ -2,7 +2,6 @@ package model.automata;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.apache.commons.collections4.keyvalue.MultiKey;
 import org.apache.commons.collections4.map.MultiKeyMap;
@@ -14,7 +13,7 @@ import exception.automata.InvalidStateException;
 
 /**
  * Finite automata class
- * 
+ * @author thiago
  * @author douglas
  *
  */
@@ -51,6 +50,33 @@ public class Automata {
 	this.states = new ArrayList<String>();
 	this.finalStates = new ArrayList<String>();
 	this.transitions = new MultiKeyMap<String, List<String>>();
+    }
+    
+    public Automata(char lexeme) {
+    	super();
+    	this.states = new ArrayList<String>();
+    	this.finalStates = new ArrayList<String>();
+    	this.transitions = new MultiKeyMap<String, List<String>>();
+    	
+    	String initial = "initial";
+    	try {
+			this.addState(initial);
+			this.setInitialState(initial);
+	    	String finalS = Character.toString(lexeme);
+	    	this.addState(finalS);
+	    	this.setAsFinalState(finalS);	
+	    	this.addTransition(initial,lexeme, finalS);
+		} catch (DuplicatedStateException e) {
+			System.err.println("Construtor");
+			e.printStackTrace();
+		} catch (InvalidStateException e) {
+			System.err.println("Construtor");
+			e.printStackTrace();
+		} catch (DuplicatedTransitionException e) {
+			System.err.println("Construtor");
+			e.printStackTrace();
+		}
+    
     }
     
     public List<String> getStates() {
@@ -116,7 +142,7 @@ public class Automata {
     /**
      * 
      * @param sourceState - transition source state
-     * @param transitionCharacter - transition chafinalStateracter
+     * @param transitionCharacter - transition character
      * @param targetState - transition reach state
      * @throws InvalidStateException When refers to states not present in automata
      * @throws DuplicatedTransitionException 
@@ -172,12 +198,11 @@ public class Automata {
     public List<Character> getAlphabet(){
 	List<Character> alphabet = new ArrayList<Character>();
 	
-	for (Entry<MultiKey<? extends String>, List<String>> keys : transitions.entrySet()) {
-	    Character symbol = keys.getKey().getKey(1).charAt(0);
+	for (MultiKey<? extends String> keys : transitions.keySet()) {
+	    Character symbol = keys.getKey(1).charAt(0);
 	    if (!alphabet.contains(symbol))
 		alphabet.add(symbol);
 	}
-	
 	if (alphabet.size() == 0)
 		return null;
 	
@@ -213,53 +238,158 @@ public class Automata {
 	}
     }
     
-    public static Automata unify(Automata automata1, Automata automata2) throws InvalidStateException, DuplicatedTransitionException, DuplicatedStateException {
+    public static Automata unify(Automata automata1, Automata automata2) {
 	
 	String initial = "initial";
 	Automata unified = new Automata();
-	unified.addState(initial);
 	
-	unified.setInitialState(initial);
-
 	List<String> states1 = automata1.getStates();
-	List<String> finalStates1 = automata1.getStates();
+	List<String> finalStates1 = automata1.getFinalStates();
 	
 	List<String> states2 = automata2.getStates();
 	List<String> finalStates2 = automata2.getFinalStates();
 	
-	for (String state : states1) {
-	    unified.addState(state+"-1");
-	}
-	
-	for (String state : finalStates1) {
-	    unified.setAsFinalState(state+"-1");
-	}
-	
-	for (MultiKey<? extends String> keys : automata1.getTransitions().keySet()) {
-	    for (String targetState : automata1.getTransition(keys.getKey(0), keys.getKey(1).charAt(0))) {
-		    unified.addTransition(keys.getKey(0)+"-1", keys.getKey(1).charAt(0), targetState+"-1");
-	    }
-	}
-	
-	
-	for (String state : states2) {
-	    unified.addState(state+"-2");
-	}
+	try {
+		unified.addState(initial);
+		unified.setInitialState(initial);
+		
+		for (String state : states1) {
+		    unified.addState(state+"-1");
+		}
+		
+		for (String state : finalStates1) {
+		    unified.setAsFinalState(state+"-1");
+		}
+		
+		for (String state : states2) {
+		    unified.addState(state+"-2");
+		}
 
-	for (String state : finalStates2) {
-	    unified.setAsFinalState(state+"-2");
+		for (String state : finalStates2) {
+		    unified.setAsFinalState(state+"-2");
+		}
+		
+	} catch (DuplicatedStateException e) {
+		e.printStackTrace();
+	} catch (InvalidStateException e) {
+		e.printStackTrace();
 	}
 	
-	for (MultiKey<? extends String> keys : automata2.getTransitions().keySet()) {
-	    for (String targetState : automata2.getTransition(keys.getKey(0), keys.getKey(1).charAt(0))) {
-		    unified.addTransition(keys.getKey(0)+"-2", keys.getKey(1).charAt(0), targetState+"-2");
-	    }
-	}
+	try {
+		for (MultiKey<? extends String> keys : automata1.getTransitions().keySet()) {
+		    for (String targetState : automata1.getTransition(keys.getKey(0), keys.getKey(1).charAt(0))) {
+			    unified.addTransition(keys.getKey(0)+"-1", keys.getKey(1).charAt(0), targetState+"-1");
+		    }
+		}
+		
+		for (MultiKey<? extends String> keys : automata2.getTransitions().keySet()) {
+		    for (String targetState : automata2.getTransition(keys.getKey(0), keys.getKey(1).charAt(0))) {
+			    unified.addTransition(keys.getKey(0)+"-2", keys.getKey(1).charAt(0), targetState+"-2");
+		    }
+		}
+		
 
-	unified.addTransition(initial, '&', automata1.getInitialState()+"-1");
-	unified.addTransition(initial, '&', automata2.getInitialState()+"-2");
+		unified.addTransition(initial, '&', automata1.getInitialState()+"-1");
+		unified.addTransition(initial, '&', automata2.getInitialState()+"-2");
+	} catch (DuplicatedTransitionException e) {
+		e.printStackTrace();
+	} catch (InvalidStateException e) {
+		e.printStackTrace();
+	}
 	
 	return unified;
+    }
+    
+    public static Automata concat(Automata automata1, Automata automata2) {
+    	
+    	String initial = "initial";
+    	Automata concat = new Automata();
+    	try {
+			concat.addState(initial);
+			concat.setInitialState(initial);
+	    	
+	    	List<String> states1 = automata1.getStates();
+	    	List<String> finalStates1 = automata1.getFinalStates();
+	    	
+	    	List<String> states2 = automata2.getStates();
+	    	List<String> finalStates2 = automata2.getFinalStates();
+	    	
+	    	for (String state : states1) {
+	    	    concat.addState(state+"-1");
+	    	}
+	    	
+	    	for (String state : states2) {
+	    		concat.addState(state+"-2");
+	    	}
+	    	
+	    	for (MultiKey<? extends String> keys : automata1.getTransitions().keySet()) {
+	    	    for (String targetState : automata1.getTransition(keys.getKey(0), keys.getKey(1).charAt(0))) {
+	    		    concat.addTransition(keys.getKey(0)+"-1", keys.getKey(1).charAt(0), targetState+"-1");
+	    	    }
+	    	}
+	    	
+	    	for (MultiKey<? extends String> keys : automata2.getTransitions().keySet()) {
+	    	    for (String targetState : automata2.getTransition(keys.getKey(0), keys.getKey(1).charAt(0))) {
+	    		    concat.addTransition(keys.getKey(0)+"-2", keys.getKey(1).charAt(0), targetState+"-2");
+	    	    }
+	    	}
+	    	
+	    	concat.addTransition(initial, '&', automata1.getInitialState()+"-1");
+	    	
+	    	for (String state : finalStates1) {
+	    		concat.addTransition(state+"-1", '&', automata2.getInitialState()+"-2");
+	    	}
+	    	
+	    	for (String state : finalStates2) {
+	    		concat.setAsFinalState(state+"-2");
+	    	}
+	    	
+		} catch (DuplicatedStateException e) {
+			e.printStackTrace();
+		} catch (InvalidStateException e) {
+			e.printStackTrace();
+		} catch (DuplicatedTransitionException e) {
+			e.printStackTrace();
+		}
+    	
+    	return concat;
+    }
+    
+    public static Automata closure (Automata automata) {
+    	
+    	String initial = automata.getInitialState()+"-c";
+    	Automata closure = new Automata();
+		
+		List<String> states = automata.getStates();
+		List<String> finalStates = automata.getFinalStates();
+    	
+		try {
+			for (String state : states) {
+	    	    closure.addState(state+"-c");
+	    	}
+			
+			for (String state : finalStates) {
+				closure.setAsFinalState(state+"-c");
+				closure.addTransition(state+"-c", '&', initial);
+			}
+			
+			closure.setInitialState(initial);
+			closure.setAsFinalState(initial);
+			
+			for (MultiKey<? extends String> keys : automata.getTransitions().keySet()) {
+	    	    for (String targetState : automata.getTransition(keys.getKey(0), keys.getKey(1).charAt(0))) {
+	    		    closure.addTransition(keys.getKey(0)+"-c", keys.getKey(1).charAt(0), targetState+"-c");
+	    	    }
+	    	}
+		} catch (DuplicatedStateException e) {
+			e.printStackTrace();
+		} catch (InvalidStateException e) {
+			e.printStackTrace();
+		} catch (DuplicatedTransitionException e) {
+			e.printStackTrace();
+		}
+    	
+    	return closure;
     }
     
     /**
