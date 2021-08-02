@@ -72,10 +72,9 @@ public class FileUtils {
 
 	public static <T> T loadFromFile(String path, Class<T> classOfT)
 			throws JsonIOException, JsonSyntaxException, FileNotFoundException {
-		JsonParser parser = new JsonParser();
 		JsonElement jsonElement;
 
-		jsonElement = parser.parse(new FileReader(path));
+		jsonElement = JsonParser.parseReader(new FileReader(path));
 		return gson.fromJson(jsonElement, classOfT);
 
 	}
@@ -85,10 +84,9 @@ public class FileUtils {
 		try {
 			scanner.useDelimiter("\\A");
 			String jsonString = scanner.hasNext() ? scanner.next() : "";
-			JsonParser parser = new JsonParser();
 			JsonElement jsonElement;
 
-			jsonElement = parser.parse(jsonString);
+			jsonElement = JsonParser.parseString(jsonString);
 			scanner.close();
 			return gson.fromJson(jsonElement, classOfT);
 		} catch (JsonParseException e) {
