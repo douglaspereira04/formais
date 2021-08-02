@@ -2,6 +2,7 @@ package model.automata;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections4.keyvalue.MultiKey;
 import org.apache.commons.collections4.map.MultiKeyMap;
@@ -115,7 +116,7 @@ public class Automata {
     /**
      * 
      * @param sourceState - transition source state
-     * @param transitionCharacter - transition character
+     * @param transitionCharacter - transition chafinalStateracter
      * @param targetState - transition reach state
      * @throws InvalidStateException When refers to states not present in automata
      * @throws DuplicatedTransitionException 
@@ -171,11 +172,12 @@ public class Automata {
     public List<Character> getAlphabet(){
 	List<Character> alphabet = new ArrayList<Character>();
 	
-	for (MultiKey<? extends String> keys : transitions.keySet()) {
-	    Character symbol = keys.getKey(1).charAt(0);
+	for (Entry<MultiKey<? extends String>, List<String>> keys : transitions.entrySet()) {
+	    Character symbol = keys.getKey().getKey(1).charAt(0);
 	    if (!alphabet.contains(symbol))
 		alphabet.add(symbol);
 	}
+	
 	if (alphabet.size() == 0)
 		return null;
 	

@@ -117,7 +117,8 @@ public class AutomataPanel extends JPanel {
 	clearAutomataButton.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		initializeTransitionTable();
+		transitionTableModel = new AutomataTableModel();
+		transitionTable.setModel(transitionTableModel);
 	    }
 	});
     }
