@@ -2,10 +2,6 @@ package model.automata;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
-
-import org.apache.commons.collections4.keyvalue.MultiKey;
-import org.apache.commons.collections4.map.MultiKeyMap;
 
 import exception.automata.DuplicatedStateException;
 import exception.automata.DuplicatedTransitionException;
@@ -41,20 +37,20 @@ public class Automata {
 	 * {@code List<String>} as values;
 	 * 
 	 */
-	private MultiKeyMap<String, List<String>> transitions = null;
+	private List<Transition> transitions = null;
 
 	public Automata() {
 		super();
 		this.states = new ArrayList<String>();
 		this.finalStates = new ArrayList<String>();
-		this.transitions = new MultiKeyMap<String, List<String>>();
+		this.transitions = new ArrayList<Transition>();
 	}
 
 	public Automata(char lexeme) {
 		super();
 		this.states = new ArrayList<String>();
 		this.finalStates = new ArrayList<String>();
-		this.transitions = new MultiKeyMap<String, List<String>>();
+		this.transitions = new ArrayList<Transition>();
 
 		String initial = "initial";
 		try {
@@ -81,7 +77,7 @@ public class Automata {
 		return states;
 	}
 
-	public MultiKeyMap<String, List<String>> getTransitions() {
+	public List<Transition> getTransitions() {
 		return transitions;
 	}
 
@@ -162,13 +158,13 @@ public class Automata {
 
 		if (reachableStates == null) {
 			reachableStates = new ArrayList<String>();
+			transitions.add(new Transition(sourceState, transitionCharacter, reachableStates));
 		}
 
 		if (reachableStates.contains(targetState))
 			throw new DuplicatedTransitionException();
 
 		reachableStates.add(targetState);
-		transitions.put(sourceState, transitionCharacter.toString(), reachableStates);
 
 	}
 
@@ -188,7 +184,12 @@ public class Automata {
 		if (!states.contains(sourceState))
 			throw new InvalidStateException();
 
-		return transitions.get(sourceState, transitionCharacter.toString());
+		for (Transition transition : this.transitions) {
+			if (transition.getSourceState().equals(sourceState)
+					&& transition.getTransitionCharacter().equals(transitionCharacter))
+				return transition.getTargetStates();
+		}
+		return null;
 
 	}
 
@@ -200,8 +201,8 @@ public class Automata {
 	public List<Character> getAlphabet() {
 		List<Character> alphabet = new ArrayList<Character>();
 
-		for (Entry<MultiKey<? extends String>, List<String>> keys : transitions.entrySet()) {
-			Character symbol = keys.getKey().getKey(1).charAt(0);
+		for (Transition transition : transitions) {
+			Character symbol = transition.getTransitionCharacter();
 			if (!alphabet.contains(symbol))
 				alphabet.add(symbol);
 		}
@@ -281,15 +282,17 @@ public class Automata {
 		}
 
 		try {
-			for (MultiKey<? extends String> keys : automata1.getTransitions().keySet()) {
-				for (String targetState : automata1.getTransition(keys.getKey(0), keys.getKey(1).charAt(0))) {
-					unified.addTransition(keys.getKey(0) + "-1", keys.getKey(1).charAt(0), targetState + "-1");
+			for (Transition transition : automata1.getTransitions()) {
+				for (String targetState : transition.getTargetStates()) {
+					unified.addTransition(transition.getSourceState() + "-1", transition.getTransitionCharacter(),
+							targetState + "-1");
 				}
 			}
 
-			for (MultiKey<? extends String> keys : automata2.getTransitions().keySet()) {
-				for (String targetState : automata2.getTransition(keys.getKey(0), keys.getKey(1).charAt(0))) {
-					unified.addTransition(keys.getKey(0) + "-2", keys.getKey(1).charAt(0), targetState + "-2");
+			for (Transition transition : automata2.getTransitions()) {
+				for (String targetState : transition.getTargetStates()) {
+					unified.addTransition(transition.getSourceState() + "-2", transition.getTransitionCharacter(),
+							targetState + "-2");
 				}
 			}
 
@@ -326,15 +329,17 @@ public class Automata {
 				concat.addState(state + "-2");
 			}
 
-			for (MultiKey<? extends String> keys : automata1.getTransitions().keySet()) {
-				for (String targetState : automata1.getTransition(keys.getKey(0), keys.getKey(1).charAt(0))) {
-					concat.addTransition(keys.getKey(0) + "-1", keys.getKey(1).charAt(0), targetState + "-1");
+			for (Transition transition : automata1.getTransitions()) {
+				for (String targetState : transition.getTargetStates()) {
+					concat.addTransition(transition.getSourceState() + "-1", transition.getTransitionCharacter(),
+							targetState + "-1");
 				}
 			}
 
-			for (MultiKey<? extends String> keys : automata2.getTransitions().keySet()) {
-				for (String targetState : automata2.getTransition(keys.getKey(0), keys.getKey(1).charAt(0))) {
-					concat.addTransition(keys.getKey(0) + "-2", keys.getKey(1).charAt(0), targetState + "-2");
+			for (Transition transition : automata2.getTransitions()) {
+				for (String targetState : transition.getTargetStates()) {
+					concat.addTransition(transition.getSourceState() + "-2", transition.getTransitionCharacter(),
+							targetState + "-2");
 				}
 			}
 
@@ -380,11 +385,13 @@ public class Automata {
 			closure.setInitialState(initial);
 			closure.setAsFinalState(initial);
 
-			for (MultiKey<? extends String> keys : automata.getTransitions().keySet()) {
-				for (String targetState : automata.getTransition(keys.getKey(0), keys.getKey(1).charAt(0))) {
-					closure.addTransition(keys.getKey(0) + "-c", keys.getKey(1).charAt(0), targetState + "-c");
+			for (Transition transition : automata.getTransitions()) {
+				for (String targetState : transition.getTargetStates()) {
+					closure.addTransition(transition.getSourceState() + "-c", transition.getTransitionCharacter(),
+							targetState + "-c");
 				}
 			}
+
 		} catch (DuplicatedStateException e) {
 			e.printStackTrace();
 		} catch (InvalidStateException e) {
@@ -443,6 +450,47 @@ public class Automata {
 	public Automata minimize() {
 
 		return null;
+	}
+
+	public void setTransitions(List<Transition> transitions) {
+		this.transitions = transitions;
+	}
+
+	public class Transition {
+		private String sourceState = null;
+		private Character transitionCharacter = null;
+		private List<String> targetStates = null;
+
+		public Transition(String sourceState, Character transitionCharacter, List<String> targetState) {
+			super();
+			this.sourceState = sourceState;
+			this.transitionCharacter = transitionCharacter;
+			this.targetStates = targetState;
+		}
+
+		public String getSourceState() {
+			return sourceState;
+		}
+
+		public void setSourceState(String sourceState) {
+			this.sourceState = sourceState;
+		}
+
+		public Character getTransitionCharacter() {
+			return transitionCharacter;
+		}
+
+		public void setTransitionCharacter(Character transitionCharacter) {
+			this.transitionCharacter = transitionCharacter;
+		}
+
+		public List<String> getTargetStates() {
+			return targetStates;
+		}
+
+		public void setTargetStates(List<String> targetStates) {
+			this.targetStates = targetStates;
+		}
 	}
 
 }

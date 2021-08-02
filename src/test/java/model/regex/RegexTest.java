@@ -4,16 +4,15 @@ import java.util.List;
 
 import javax.swing.UIManager;
 
-import org.apache.commons.collections4.keyvalue.MultiKey;
 import org.junit.Test;
 
 import com.formdev.flatlaf.FlatLightLaf;
 
-import exception.automata.InvalidStateException;
 import exception.regex.BracketMismatchException;
 import exception.regex.InvalidInputException;
 import exception.regex.OperatorMismatchException;
 import model.automata.Automata;
+import model.automata.Automata.Transition;
 
 public class RegexTest {
 
@@ -36,20 +35,17 @@ public class RegexTest {
 	    for (int i = 0; i < finalStates.size(); i++)
 		System.out.println(finalStates.get(i));
 	    System.out.println("TRANSI��ES:");
-	    for (MultiKey<? extends String> keys : aut.getTransitions().keySet()) {
-		for (String targetState : aut.getTransition(keys.getKey(0), keys.getKey(1).charAt(0))) {
-		    System.out.println(keys.getKey(0) + ">>" + keys.getKey(1).charAt(0) + ">>" + targetState);
-		    ;
+		for (Transition transition : aut.getTransitions()) {
+			for (String targetState : transition.getTargetStates()) {
+				System.out.println(transition.getSourceState() + ">>" +transition.getTransitionCharacter()+">>"+ targetState);
+			}
 		}
-	    }
+
 	} catch (BracketMismatchException e) {
 	    e.printStackTrace();
 	} catch (OperatorMismatchException e) {
 	    e.printStackTrace();
 	} catch (InvalidInputException e) {
-	    e.printStackTrace();
-	} catch (InvalidStateException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
 

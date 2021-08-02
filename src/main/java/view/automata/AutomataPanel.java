@@ -16,7 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.table.DefaultTableModel;
 
 import exception.automata.DuplicatedStateException;
 import exception.automata.DuplicatedTransitionException;
@@ -46,6 +45,7 @@ public class AutomataPanel extends JPanel {
 
 	JButton newAutomataButton = null;
 	JButton saveAutomataButton = null;
+	JButton loadAutomataButton = null;
 	JButton clearAutomataButton = null;
 	JButton deleteAutomataButton = null;
 	JButton completeAutomataButton = null;
@@ -77,6 +77,7 @@ public class AutomataPanel extends JPanel {
 		automataComboBox = new JComboBox<String>();
 		newAutomataButton = new JButton("New");
 		saveAutomataButton = new JButton("Save");
+		loadAutomataButton = new JButton("Load");
 		clearAutomataButton = new JButton("Clear");
 		deleteAutomataButton = new JButton("Delete");
 		completeAutomataButton = new JButton("Complete");
@@ -89,6 +90,7 @@ public class AutomataPanel extends JPanel {
 		toolbar.add(automataComboBox);
 		toolbar.add(newAutomataButton);
 		toolbar.add(saveAutomataButton);
+		toolbar.add(loadAutomataButton);
 		toolbar.add(deleteAutomataButton);
 
 		toolbar.add(new ToolbarSeparator());
@@ -338,7 +340,7 @@ public class AutomataPanel extends JPanel {
 						targetStates = targetStates + "," + targetState;
 					}
 					targetStates = targetStates.substring(1, targetStates.length());
-					
+
 					newAutomata.setValueAt(targetStates, stateToRow.get(state), alphabetToColumn.get(character));
 				} catch (InvalidStateException e) {
 					e.printStackTrace();
@@ -359,7 +361,7 @@ public class AutomataPanel extends JPanel {
 
 		this.transitionTableModel = newAutomata;
 		this.transitionTable.setModel(newAutomata);
-		
+
 	}
 
 	public JTable getTransitionTable() {
@@ -448,6 +450,14 @@ public class AutomataPanel extends JPanel {
 
 	public void setNewAutomataButton(JButton newAutomataButton) {
 		this.newAutomataButton = newAutomataButton;
+	}
+
+	public JButton getLoadAutomataButton() {
+		return loadAutomataButton;
+	}
+
+	public void setLoadAutomataButton(JButton loadAutomataButton) {
+		this.loadAutomataButton = loadAutomataButton;
 	}
 
 }

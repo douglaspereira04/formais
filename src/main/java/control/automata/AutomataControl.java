@@ -2,13 +2,18 @@ package control.automata;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+
 import model.automata.Automata;
+import model.io.FileUtils;
 import view.automata.AutomataPanel;
 
 /**
@@ -66,14 +71,26 @@ public class AutomataControl {
 				onAutomataListChange();
 			}
 		});
+
+		this.automataPanel.getLoadAutomataButton().addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onLoadButton();
+			}
+		});
 	}
 
 	private void onSaveButton() {
 		try {
-			// FileUtils.selectExportFile(System.getProperty("user.dir")+System.getProperty("file.separator")+"new.automata",
-			// automataPanel);
+
 			this.currAutomata = this.automataPanel.getAutomata();
 			this.automaton.set(this.automataPanel.getAutomataComboBox().getSelectedIndex(), this.currAutomata);
+
+			File path = FileUtils.selectExportFile(
+					System.getProperty("user.dir") + System.getProperty("file.separator") + "new.automata",
+					this.automataPanel);
+			FileUtils.saveToFile(this.currAutomata, path.getAbsolutePath());
 
 			System.out.println("### AUTOMATA EXTRACTED ###");
 			System.err.println("### NOT VALIDATED YET ###");
@@ -137,5 +154,15 @@ public class AutomataControl {
 			e.printStackTrace();
 		}
 
+	}
+
+	private void onLoadButton() {
+		File path = FileUtils.selectImportFile("*.automata", this.automataPanel);
+		try {
+			Automata automata = FileUtils.loadFromFile(path.getAbsolutePath(), Automata.class);
+		} catch (JsonIOException | JsonSyntaxException | FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
