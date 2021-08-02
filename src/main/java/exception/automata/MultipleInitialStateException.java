@@ -1,16 +1,16 @@
 package exception.automata;
 
 public class MultipleInitialStateException extends Exception {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -2578329070324763299L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2578329070324763299L;
 
-    public MultipleInitialStateException(String message) {
-	super(message);
-    }
+	public MultipleInitialStateException(String message) {
+		super(message);
+	}
 
-    public MultipleInitialStateException() {
-	super("Multiple initial states");
-    }
+	public MultipleInitialStateException() {
+		super("Multiple initial states");
+	}
 }

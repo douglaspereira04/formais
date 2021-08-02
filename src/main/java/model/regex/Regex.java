@@ -8,51 +8,57 @@ import exception.regex.OperatorMismatchException;
 import model.automata.Automata;
 
 public class Regex {
-	
+
 	private String regex;
-	
+
 	public Regex(String rgx) throws BracketMismatchException, OperatorMismatchException, InvalidInputException {
-		
-		if (rgx == null) throw new NullPointerException();
-		
+
+		if (rgx == null)
+			throw new NullPointerException();
+
 		char[] rgx_char = rgx.toCharArray();
 		int bracket = 0;
 		for (int i = 0; i < rgx.length(); i++) {
-			
+
 			char el = rgx_char[i];
 			char next = 'n';
-			if (i < rgx.length()-1) next = rgx_char[i+1];
-			
-			if (isOperator(el) == 1) bracket++;
-			if (isOperator(el) == 2) bracket--;
-			if (bracket < 0) throw new OperatorMismatchException();
-			
-			
-			if (isOperator(el) == 3 && i != rgx.length()-1) {
-				if (isOperator(next) == 3) throw new OperatorMismatchException();
+			if (i < rgx.length() - 1)
+				next = rgx_char[i + 1];
+
+			if (isOperator(el) == 1)
+				bracket++;
+			if (isOperator(el) == 2)
+				bracket--;
+			if (bracket < 0)
+				throw new OperatorMismatchException();
+
+			if (isOperator(el) == 3 && i != rgx.length() - 1) {
+				if (isOperator(next) == 3)
+					throw new OperatorMismatchException();
 			}
-			
+
 			if (isOperator(el) != 2) {
-				if (i == 0 || i == rgx.length()-1) {
-					if (isOperator(next) > 2 && isOperator(el) != isOperator(next)) throw new OperatorMismatchException();
+				if (i == 0 || i == rgx.length() - 1) {
+					if (isOperator(next) > 2 && isOperator(el) != isOperator(next))
+						throw new OperatorMismatchException();
 				}
 			}
-			
-			
-			if (isOperator(el)==5) throw new InvalidInputException("Invalid Input: .");
+
+			if (isOperator(el) == 5)
+				throw new InvalidInputException("Invalid Input: .");
 		}
-		
-		if (bracket != 0) throw new BracketMismatchException();
-		
-		
+
+		if (bracket != 0)
+			throw new BracketMismatchException();
+
 		regex = rgx;
 	}
-	
+
 	public Automata convert() {
 		String regex = infixToPostfix(concatOp(this.regex));
 		Stack<Automata> comp = new Stack<>();
 		char[] regexA = regex.toCharArray();
-		
+
 		for (int i = 0; i < regexA.length; i++) {
 			char el = regexA[i];
 			switch (el) {
@@ -75,12 +81,12 @@ public class Regex {
 				break;
 			}
 		}
-		
+
 		return comp.pop();
 	}
-	
+
 	public String infixToPostfix(String infix) {
-		
+
 		char[] infixA = infix.toCharArray();
 		String postfix = "";
 		Stack<Character> ops = new Stack<>();
@@ -93,40 +99,42 @@ public class Regex {
 				ops.push(el);
 			} else if (value == 2) {
 				System.out.println(ops.peek());
-				while (isOperator(ops.peek())!=1) {
+				while (isOperator(ops.peek()) != 1) {
 					postfix += ops.pop();
 				}
 				ops.pop();
 			} else {
-				while (!ops.isEmpty() && isOperator(ops.peek())!=1 && prec(el) <= prec(ops.peek())) 
+				while (!ops.isEmpty() && isOperator(ops.peek()) != 1 && prec(el) <= prec(ops.peek()))
 					postfix += ops.pop();
 				ops.push(el);
 			}
 		}
-		while (!ops.isEmpty()) postfix += ops.pop();
+		while (!ops.isEmpty())
+			postfix += ops.pop();
 		return postfix;
 	}
-	
+
 	public String concatOp(String regex) {
 		char[] regexA = regex.toCharArray();
 		regex = "";
-		for (int i = 0; i < regexA.length-1; i++) {
+		for (int i = 0; i < regexA.length - 1; i++) {
 			char el = regexA[i];
-			char next = regexA[i+1];
+			char next = regexA[i + 1];
 			regex += el;
-			if (isOperator(el)==0 || el == ')' || el == '*') {
-				if (isOperator(next)==0 || next == '(') regex+='.';
+			if (isOperator(el) == 0 || el == ')' || el == '*') {
+				if (isOperator(next) == 0 || next == '(')
+					regex += '.';
 			}
 		}
-		regex+=regexA[regexA.length-1];
+		regex += regexA[regexA.length - 1];
 		return regex;
 	}
-	
+
 	public int isOperator(char lexeme) {
 		switch (lexeme) {
 		case '(':
 			return 1;
-		case ')': 
+		case ')':
 			return 2;
 		case '|':
 			return 3;
@@ -138,8 +146,8 @@ public class Regex {
 			return 0;
 		}
 	}
-	
-	public int prec (char lexeme) {
+
+	public int prec(char lexeme) {
 		switch (lexeme) {
 		case '|':
 			return 1;
@@ -151,11 +159,9 @@ public class Regex {
 			return 0;
 		}
 	}
-	
+
 	public String getRegex() {
 		return regex;
 	}
-	
-	
 
 }

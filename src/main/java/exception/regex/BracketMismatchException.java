@@ -1,7 +1,7 @@
 package exception.regex;
 
 public class BracketMismatchException extends Exception {
-	
+
 	/**
 	 * 
 	 */
@@ -10,7 +10,7 @@ public class BracketMismatchException extends Exception {
 	public BracketMismatchException(String errMessage) {
 		super(errMessage);
 	}
-	
+
 	public BracketMismatchException() {
 		super("Bracket Mismatch");
 	}

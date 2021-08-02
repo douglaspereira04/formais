@@ -31,136 +31,136 @@ import com.google.gson.JsonSyntaxException;
  */
 public class FileUtils {
 
-    private static Gson gson = new Gson();
-    private static JFileChooser fileChooser = new JFileChooser();
-    
-    public static String[] getFileList(String path) {
-	String[] listOfNames;
-	File[] listOfFiles;
-	File folder;
+	private static Gson gson = new Gson();
+	private static JFileChooser fileChooser = new JFileChooser();
 
-	folder = new File(path);
-	listOfFiles = folder.listFiles();
-	listOfNames = new String[listOfFiles.length];
+	public static String[] getFileList(String path) {
+		String[] listOfNames;
+		File[] listOfFiles;
+		File folder;
 
-	for (int i = 0; i < listOfFiles.length; i++) {
-	    listOfNames[i] = listOfFiles[i].getName();
+		folder = new File(path);
+		listOfFiles = folder.listFiles();
+		listOfNames = new String[listOfFiles.length];
+
+		for (int i = 0; i < listOfFiles.length; i++) {
+			listOfNames[i] = listOfFiles[i].getName();
+		}
+
+		return listOfNames;
 	}
 
-	return listOfNames;
-    }
+	public static <T> void saveToFile(T object, String path) throws IOException {
+		BufferedWriter writer = new BufferedWriter(new FileWriter(path));
+		JsonElement result = gson.toJsonTree(object, object.getClass());
 
-    public static <T> void saveToFile(T object, String path) throws IOException {
-	BufferedWriter writer = new BufferedWriter(new FileWriter(path));
-	JsonElement result = gson.toJsonTree(object, object.getClass());
+		if (result.isJsonArray()) {
+			JSONArray json = new JSONArray(result.toString());
+			writer.write(json.toString(4));
+		} else {
+			JSONObject json = new JSONObject(result.toString());
+			writer.write(json.toString(4));
+		}
 
-	if (result.isJsonArray()) {
-	    JSONArray json = new JSONArray(result.toString());
-	    writer.write(json.toString(4));
-	} else {
-	    JSONObject json = new JSONObject(result.toString());
-	    writer.write(json.toString(4));
+		writer.close();
 	}
 
-	writer.close();
-    }
+	public static void deleteFile(String path) {
+		File file = new File(path);
+		file.delete();
+	}
 
-    public static void deleteFile(String path) {
-	File file = new File(path);
-	file.delete();
-    }
+	public static <T> T loadFromFile(String path, Class<T> classOfT)
+			throws JsonIOException, JsonSyntaxException, FileNotFoundException {
+		JsonParser parser = new JsonParser();
+		JsonElement jsonElement;
 
-    public static <T> T loadFromFile(String path, Class<T> classOfT)
-	    throws JsonIOException, JsonSyntaxException, FileNotFoundException {
-	JsonParser parser = new JsonParser();
-	JsonElement jsonElement;
-
-	jsonElement = parser.parse(new FileReader(path));
-	return gson.fromJson(jsonElement, classOfT);
-
-    }
-
-    public static <T> T loadFromFile(InputStream in, Class<T> classOfT) throws Exception {
-	Scanner scanner = new Scanner(in);
-	try {
-	    scanner.useDelimiter("\\A");
-	    String jsonString = scanner.hasNext() ? scanner.next() : "";
-	    JsonParser parser = new JsonParser();
-	    JsonElement jsonElement;
-
-	    jsonElement = parser.parse(jsonString);
-	    scanner.close();
-	    return gson.fromJson(jsonElement, classOfT);
-	} catch (JsonParseException e) {
-	    throw new Exception("Error loading file json parse");
-	} catch (IllegalStateException e) {
-	    throw new Exception("Error loading file illegal");
-	} catch (Exception e) {
-	    throw new Exception("Error");
-	} finally {
+		jsonElement = parser.parse(new FileReader(path));
+		return gson.fromJson(jsonElement, classOfT);
 
 	}
 
-    }
-    
-    /**
-     * Selects export file
-     * 
-     * @param defaultFileName default file name
-     * @return {@link File} selected file
-     */
-    public static File selectExportFile(String defaultFileName, Component parent) {
-	fileChooser.setSelectedFile(new File(defaultFileName));
-	int option = fileChooser.showSaveDialog(parent);
+	public static <T> T loadFromFile(InputStream in, Class<T> classOfT) throws Exception {
+		Scanner scanner = new Scanner(in);
+		try {
+			scanner.useDelimiter("\\A");
+			String jsonString = scanner.hasNext() ? scanner.next() : "";
+			JsonParser parser = new JsonParser();
+			JsonElement jsonElement;
 
-	if (option == JFileChooser.APPROVE_OPTION) {
+			jsonElement = parser.parse(jsonString);
+			scanner.close();
+			return gson.fromJson(jsonElement, classOfT);
+		} catch (JsonParseException e) {
+			throw new Exception("Error loading file json parse");
+		} catch (IllegalStateException e) {
+			throw new Exception("Error loading file illegal");
+		} catch (Exception e) {
+			throw new Exception("Error");
+		} finally {
 
-	    String filePath = fileChooser.getSelectedFile().getAbsolutePath();
-
-	    if (!filePath.endsWith(".json"))
-		filePath += ".json";
-
-	    File file = new File(filePath);
-	    if (file.exists()) {
-		option = JOptionPane.showConfirmDialog(fileChooser, "File already exists. Overwrite?", "Overwrite",
-			JOptionPane.YES_NO_OPTION);
-		if (option != JOptionPane.YES_OPTION)
-		    file = selectExportFile(defaultFileName, parent);
-
-	    }
-	    return file;
+		}
 
 	}
 
-	return null;
-    }
-    
-    /**
-     * Selects import file
-     * 
-     * @param defaultFileName default file name
-     * @return {@link File} selected file
-     */
-    public static File selectImportFile(String defaultFileName, Component parent) {
-	fileChooser.setSelectedFile(new File(defaultFileName));
-	int option = fileChooser.showOpenDialog(parent);
+	/**
+	 * Selects export file
+	 * 
+	 * @param defaultFileName default file name
+	 * @return {@link File} selected file
+	 */
+	public static File selectExportFile(String defaultFileName, Component parent) {
+		fileChooser.setSelectedFile(new File(defaultFileName));
+		int option = fileChooser.showSaveDialog(parent);
 
-	if (option == JFileChooser.APPROVE_OPTION) {
+		if (option == JFileChooser.APPROVE_OPTION) {
 
-	    String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+			String filePath = fileChooser.getSelectedFile().getAbsolutePath();
 
-	    if (!filePath.endsWith(".json"))
-		filePath += ".json";
+			if (!filePath.endsWith(".json"))
+				filePath += ".json";
 
-	    File file = new File(filePath);
-	    if (!file.exists()) {
-		JOptionPane.showMessageDialog(fileChooser, "Not a valid file.");
-		file = selectImportFile(defaultFileName, parent);
-	    }
-	    return file;
+			File file = new File(filePath);
+			if (file.exists()) {
+				option = JOptionPane.showConfirmDialog(fileChooser, "File already exists. Overwrite?", "Overwrite",
+						JOptionPane.YES_NO_OPTION);
+				if (option != JOptionPane.YES_OPTION)
+					file = selectExportFile(defaultFileName, parent);
 
+			}
+			return file;
+
+		}
+
+		return null;
 	}
 
-	return null;
-    }
+	/**
+	 * Selects import file
+	 * 
+	 * @param defaultFileName default file name
+	 * @return {@link File} selected file
+	 */
+	public static File selectImportFile(String defaultFileName, Component parent) {
+		fileChooser.setSelectedFile(new File(defaultFileName));
+		int option = fileChooser.showOpenDialog(parent);
+
+		if (option == JFileChooser.APPROVE_OPTION) {
+
+			String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+
+			if (!filePath.endsWith(".json"))
+				filePath += ".json";
+
+			File file = new File(filePath);
+			if (!file.exists()) {
+				JOptionPane.showMessageDialog(fileChooser, "Not a valid file.");
+				file = selectImportFile(defaultFileName, parent);
+			}
+			return file;
+
+		}
+
+		return null;
+	}
 }
