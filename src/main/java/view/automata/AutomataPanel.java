@@ -327,10 +327,11 @@ public class AutomataPanel extends JPanel {
 		    // jumps empty transitions
 		    if (targetStatesArray == null)
 			continue;
-
+		    
 		    for (String targetState : targetStatesArray) {
-			targetStates = targetStatesArray + "," + targetState;
+			targetStates = targetStates + "," + targetState;
 		    }
+		    targetStates = targetStates.substring(1, targetStates.length());
 		} catch (InvalidStateException e) {
 		    e.printStackTrace();
 		}

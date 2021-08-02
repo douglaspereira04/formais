@@ -2,11 +2,6 @@ package control.automata;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +9,6 @@ import javax.swing.JOptionPane;
 
 import model.automata.Automata;
 import view.automata.AutomataPanel;
-import view.automata.AutomataTableModel;
 
 /**
  * Dedicated to control automata panel behavior
