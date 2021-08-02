@@ -3,6 +3,7 @@ package control.automata;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -33,32 +34,32 @@ public class AutomataControl {
 	}
 
 	private void setAutomataManipulationEnabled(boolean enabled) {
-		automataPanel.getTransitionTable().setEnabled(enabled);
-		automataPanel.getSaveAutomataButton().setEnabled(enabled);
-		automataPanel.getDeleteAutomataButton().setEnabled(enabled);
-		automataPanel.getAddColumnButton().setEnabled(enabled);
-		automataPanel.getAddRowButton().setEnabled(enabled);
-		automataPanel.getClearAutomataButton().setEnabled(enabled);
-		automataPanel.getCompleteAutomataButton().setEnabled(enabled);
-		automataPanel.getEpsilonClosureButton().setEnabled(enabled);
-		automataPanel.getUnifyAutomataButton().setEnabled(enabled);
+		this.automataPanel.getTransitionTable().setEnabled(enabled);
+		this.automataPanel.getSaveAutomataButton().setEnabled(enabled);
+		this.automataPanel.getDeleteAutomataButton().setEnabled(enabled);
+		this.automataPanel.getAddColumnButton().setEnabled(enabled);
+		this.automataPanel.getAddRowButton().setEnabled(enabled);
+		this.automataPanel.getClearAutomataButton().setEnabled(enabled);
+		this.automataPanel.getCompleteAutomataButton().setEnabled(enabled);
+		this.automataPanel.getEpsilonClosureButton().setEnabled(enabled);
+		this.automataPanel.getUnifyAutomataButton().setEnabled(enabled);
 	}
 
 	private void initializeBehavior() {
-		automataPanel.getSaveAutomataButton().addActionListener(new ActionListener() {
+		this.automataPanel.getSaveAutomataButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				onSaveButton();
 			}
 		});
-		automataPanel.getNewAutomataButton().addActionListener(new ActionListener() {
+		this.automataPanel.getNewAutomataButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				onNewButton();
 			}
 		});
 
-		automataPanel.getAutomataComboBox().addActionListener(new ActionListener() {
+		this.automataPanel.getAutomataComboBox().addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -71,15 +72,15 @@ public class AutomataControl {
 		try {
 			// FileUtils.selectExportFile(System.getProperty("user.dir")+System.getProperty("file.separator")+"new.automata",
 			// automataPanel);
+			this.currAutomata = this.automataPanel.getAutomata();
+			this.automaton.set(this.automataPanel.getAutomataComboBox().getSelectedIndex(), this.currAutomata);
 
-			automaton.set(automataPanel.getAutomataComboBox().getSelectedIndex(), automataPanel.getAutomata());
-
-			onAutomataListChange();
 			System.out.println("### AUTOMATA EXTRACTED ###");
-			System.err.println("### NOT VALIDATED ###");
+			System.err.println("### NOT VALIDATED YET ###");
 
 		} catch (Exception e) {
-			// TODO: handle exception
+			System.out.println("### AUTOMATA NOT EXTRACTED ###");
+			System.err.println("### INVALID ###");
 			e.printStackTrace();
 		}
 	}
@@ -87,17 +88,21 @@ public class AutomataControl {
 	private void onAutomataListChange() {
 		int automataIndex = -1;
 
-		if (automataPanel.getAutomataComboBox().getItemCount() == 0) {
+		if (this.automataPanel.getAutomataComboBox().getItemCount() == 0) {
+			this.automataPanel.getClearAutomataButton().doClick();
 			setAutomataManipulationEnabled(false);
 		} else {
 			setAutomataManipulationEnabled(true);
-			automataIndex = automataPanel.getAutomataComboBox().getSelectedIndex();
+			automataIndex = this.automataPanel.getAutomataComboBox().getSelectedIndex();
+
 			try {
-				Automata newAutomata = automaton.get(automataIndex);
-				if (newAutomata == null)
-					automataPanel.getClearAutomataButton().doClick();
-				else
+				Automata newAutomata = this.automaton.get(automataIndex);
+				if (newAutomata == null) {
+					this.automataPanel.clearAutomata();
+				} else {
 					changeAutomata(newAutomata);
+				}
+
 			} catch (IndexOutOfBoundsException e) {
 				System.out.println("### NEW AUTOMATA ###");
 			}
@@ -106,9 +111,9 @@ public class AutomataControl {
 	}
 
 	private void changeAutomata(Automata newAutomata) {
-		if (currAutomata != newAutomata) {
-			currAutomata = newAutomata;
-			this.automataPanel.setAutomata(currAutomata);
+		if (this.currAutomata != newAutomata) {
+			this.currAutomata = newAutomata;
+			this.automataPanel.setAutomata(this.currAutomata);
 		}
 	}
 
@@ -119,8 +124,11 @@ public class AutomataControl {
 			if (automataName != null) {
 				automataName = automataName.trim();
 				if (!automataName.equals("")) {
-					automataPanel.getAutomataComboBox().addItem(automataName);
-					automaton.add(null);
+					this.automataPanel.getAutomataComboBox().addItem(automataName);
+					this.automataPanel.getAutomataComboBox().setSelectedItem(automataName);
+					this.automaton.add(null);
+					this.currAutomata = null;
+					onAutomataListChange();
 				}
 
 			}
@@ -129,6 +137,5 @@ public class AutomataControl {
 			e.printStackTrace();
 		}
 
-		onAutomataListChange();
 	}
 }

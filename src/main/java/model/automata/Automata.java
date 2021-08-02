@@ -207,7 +207,7 @@ public class Automata {
 		}
 
 		if (alphabet.size() == 0)
-			return null;
+			alphabet = null;
 
 		return alphabet;
 	}
