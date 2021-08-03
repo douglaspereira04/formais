@@ -88,6 +88,14 @@ public class AutomataControl {
 				onUnifyButton();
 			}
 		});
+		
+		this.automataPanel.getDeleteAutomataButton().addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onDeleteButton();
+			}
+		});
 	}
 
 	private void onSaveButton() {
@@ -134,6 +142,7 @@ public class AutomataControl {
 			}
 
 		}
+
 	}
 
 	private void changeAutomata(Automata newAutomata) {
@@ -228,5 +237,19 @@ public class AutomataControl {
 			JOptionPane.showMessageDialog(automataPanel, "Unification failed");
 		}
 
+	}
+	
+	private void onDeleteButton() {
+		try {
+			int index = this.automataPanel.getAutomataComboBox().getSelectedIndex();
+			this.automataPanel.getAutomataComboBox().removeItemAt(index);
+			this.automaton.remove(index);
+			this.automataPanel.getAutomataComboBox().setSelectedIndex(0);
+			this.currAutomata = this.automaton.get(0);
+		} catch (Exception e) {
+			this.currAutomata = null;
+			this.automataPanel.clearAutomata();
+		}
+		onAutomataListChange();
 	}
 }
