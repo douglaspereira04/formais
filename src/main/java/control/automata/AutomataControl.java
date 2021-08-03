@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
 import com.google.gson.JsonIOException;
@@ -77,6 +78,14 @@ public class AutomataControl {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				onLoadButton();
+			}
+		});
+
+		this.automataPanel.getUnifyAutomataButton().addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onUnifyButton();
 			}
 		});
 	}
@@ -160,9 +169,64 @@ public class AutomataControl {
 		File path = FileUtils.selectImportFile("*.automata", this.automataPanel);
 		try {
 			Automata automata = FileUtils.loadFromFile(path.getAbsolutePath(), Automata.class);
+
+			String automataName = null;
+			try {
+				automataName = JOptionPane.showInputDialog(this.automataPanel, "Enter new automata name");
+				if (automataName != null) {
+					automataName = automataName.trim();
+					if (!automataName.equals("")) {
+						this.automataPanel.getAutomataComboBox().addItem(automataName);
+						this.automataPanel.getAutomataComboBox().setSelectedItem(automataName);
+						this.automaton.add(automata);
+						this.currAutomata = automata;
+						onAutomataListChange();
+					}
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
 		} catch (JsonIOException | JsonSyntaxException | FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	private void onUnifyButton() {
+		Automata automata1 = null;
+		Automata automata2 = null;
+		Automata unified = null;
+		
+		
+		JComboBox<String> comboBox = new JComboBox<String>();
+		
+		for (int i = 0; i < this.automataPanel.getAutomataComboBox().getItemCount(); i++) {
+			comboBox.addItem(automataPanel.getAutomataComboBox().getItemAt(i));
+		}
+		JOptionPane.showMessageDialog(this.automataPanel, comboBox);
+		automata1 = this.automaton.get(comboBox.getSelectedIndex());
+		JOptionPane.showMessageDialog(this.automataPanel, comboBox);
+		automata2 = this.automaton.get(comboBox.getSelectedIndex());
+		
+		try {
+			unified = Automata.unify(automata1, automata2);
+			
+			String automataName = JOptionPane.showInputDialog(this.automataPanel, "Enter new automata name");
+			if (automataName != null) {
+				automataName = automataName.trim();
+				if (!automataName.equals("")) {
+					this.automataPanel.getAutomataComboBox().addItem(automataName);
+					this.automataPanel.getAutomataComboBox().setSelectedItem(automataName);
+					this.automaton.add(unified);
+					this.currAutomata = unified;
+					onAutomataListChange();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(automataPanel, "Unification failed");
+		}
+
 	}
 }
