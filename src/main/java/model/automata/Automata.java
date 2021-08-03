@@ -274,7 +274,14 @@ public class Automata {
 			}
 		}
 	}
-
+	
+	/**
+	 * Unify two given automata <br>
+	 * through epsilon transitions
+	 * @param automata1
+	 * @param automata2
+	 * @return Unified automata
+	 */
 	public static Automata unify(Automata automata1, Automata automata2) {
 
 		String initial = "initial";
@@ -394,7 +401,7 @@ public class Automata {
 
 		return concat;
 	}
-
+	
 	public static Automata closure(Automata automata) {
 
 		String initial = automata.getInitialState() + "-c";
@@ -473,7 +480,13 @@ public class Automata {
 			}
 		}
 	}
-
+	/**
+	 * Determinize this automata
+	 * @return Determinized automata
+	 * @throws InvalidStateException
+	 * @throws DuplicatedStateException
+	 * @throws DuplicatedTransitionException
+	 */
 	public Automata determinize()
 			throws InvalidStateException, DuplicatedStateException, DuplicatedTransitionException {
 		Automata determinized = new Automata();
@@ -481,12 +494,12 @@ public class Automata {
 		List<String> initialClosure = this.getEpsilonClosure(initialState);
 		determinize(initialClosure, determinized);
 
-		determinized.setInitialState(epsilonClosureToString(initialClosure));
+		determinized.setInitialState(stateListToString(initialClosure));
 		
 		for (Character character : determinized.getAlphabet()) {
 			for (String state : determinized.getStates()) {
 				if (determinized.getTransition(state, character) != null) {
-					String closureState = epsilonClosureToString(determinized.getTransition(state, character));
+					String closureState = stateListToString(determinized.getTransition(state, character));
 					
 					determinized.removeTransitions(state, character);
 					determinized.addTransition(state, character, closureState);
@@ -495,7 +508,7 @@ public class Automata {
 		}
 		
 		for (String state : determinized.getStates()) {
-			if (!Collections.disjoint(stringToList(state), this.getFinalStates()))
+			if (!Collections.disjoint(stringToStateList(state), this.getFinalStates()))
 				determinized.setAsFinalState(state);
 		}
 
@@ -508,10 +521,19 @@ public class Automata {
 		
 		return determinized;
 	}
-
+	
+	
+	/**
+	 * Stores determinized automata in automata parameter
+	 * @param closure
+	 * @param automata - Automata where states are stored
+	 * @throws InvalidStateException
+	 * @throws DuplicatedStateException
+	 * @throws DuplicatedTransitionException
+	 */
 	public void determinize(List<String> closure, Automata automata)
 			throws InvalidStateException, DuplicatedStateException, DuplicatedTransitionException {
-		String name = epsilonClosureToString(closure);
+		String name = stateListToString(closure);
 
 		for (String state : closure) {
 			List<Transition> transitions = this.getTransitions(state);
@@ -540,7 +562,7 @@ public class Automata {
 		List<Transition> transitions = automata.getTransitions();
 		for (int i = 0 ; i < transitions.size(); i++) {
 			if (transitions.get(i).getSourceState().equals(name)) {
-				String closureStateName = epsilonClosureToString(transitions.get(i).getTargetStates());
+				String closureStateName = stateListToString(transitions.get(i).getTargetStates());
 
 				if (!automata.getStates().contains(closureStateName)) {
 					determinize(transitions.get(i).getTargetStates(), automata);
@@ -551,12 +573,13 @@ public class Automata {
 	}
 
 	/**
-	 * @param epsilonClosure
-	 * @return state name of a given epsilon closure
+	 * Transforms state list in string representing state list
+	 * @param list of states
+	 * @return string representing states list
 	 */
-	private static String epsilonClosureToString(List<String> epsilonClosure) {
+	private static String stateListToString(List<String> list) {
 		String closureName = "";
-		for (String string : epsilonClosure) {
+		for (String string : list) {
 			closureName = closureName + "," + string;
 		}
 		if (closureName.length() > 0) {
@@ -569,10 +592,11 @@ public class Automata {
 	}
 
 	/**
-	 * @param epsilonClosure
-	 * @return state name of a given epsilon closure
+	 * Transforms string representing state list in state list 
+	 * @param string representing states list
+	 * @return list of states
 	 */
-	private static List<String> stringToList(String string) {
+	private static List<String> stringToStateList(String string) {
 		List<String> list = new ArrayList<String>();
 		string = string.substring(1, string.length()-1);
 		
@@ -585,23 +609,11 @@ public class Automata {
 
 		return list;
 	}
-
-	public void setTransitions(List<Transition> transitions) {
-		this.transitions = transitions;
-	}
-
-	public List<Character> getTransitionsSymbols(String state) throws InvalidStateException {
-		List<Character> characters = new ArrayList<Character>();
-		List<Transition> transitions = this.getTransitions(state);
-		for (Transition transition : transitions) {
-			characters.add(transition.getTransitionCharacter());
-		}
-		if (characters.size() == 0) {
-			characters = null;
-		}
-		return characters;
-	}
 	
+	/**
+	 * Gets reachable states of automata
+	 * @return list of reachable states
+	 */
 	public List<String> getReachableStates() {
 		List<String> states = new ArrayList<String>();
 		
@@ -618,49 +630,17 @@ public class Automata {
 		return states;
 	}
 	
+	/**
+	 * Removes transitions given a source state and a transition character
+	 * @param state - Source state
+	 * @param character - Transition character
+	 */
 	public void removeTransitions(String state, Character character) {
 		for (Iterator<Transition> iterator = transitions.iterator(); iterator.hasNext();) {
 			Transition transition = (Transition) iterator.next();
 			if (transition.getSourceState().equals(state) && transition.getTransitionCharacter().equals(character)) {
 				iterator.remove();
 			}
-		}
-	}
-
-	public class Transition {
-		private String sourceState = null;
-		private Character transitionCharacter = null;
-		private List<String> targetStates = null;
-
-		public Transition(String sourceState, Character transitionCharacter, List<String> targetState) {
-			super();
-			this.sourceState = sourceState;
-			this.transitionCharacter = transitionCharacter;
-			this.targetStates = targetState;
-		}
-
-		public String getSourceState() {
-			return sourceState;
-		}
-
-		public void setSourceState(String sourceState) {
-			this.sourceState = sourceState;
-		}
-
-		public Character getTransitionCharacter() {
-			return transitionCharacter;
-		}
-
-		public void setTransitionCharacter(Character transitionCharacter) {
-			this.transitionCharacter = transitionCharacter;
-		}
-
-		public List<String> getTargetStates() {
-			return targetStates;
-		}
-
-		public void setTargetStates(List<String> targetStates) {
-			this.targetStates = targetStates;
 		}
 	}
 
