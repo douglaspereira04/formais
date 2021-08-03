@@ -46,7 +46,6 @@ public class AutomataControl {
 		this.automataPanel.getAddColumnButton().setEnabled(enabled);
 		this.automataPanel.getAddRowButton().setEnabled(enabled);
 		this.automataPanel.getClearAutomataButton().setEnabled(enabled);
-		this.automataPanel.getCompleteAutomataButton().setEnabled(enabled);
 		this.automataPanel.getEpsilonClosureButton().setEnabled(enabled);
 		this.automataPanel.getUnifyAutomataButton().setEnabled(enabled);
 	}
@@ -94,6 +93,13 @@ public class AutomataControl {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				onDeleteButton();
+			}
+		});
+		
+		this.automataPanel.getDeterminizeAutomataButton().addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onDeterminizeButton();
 			}
 		});
 	}
@@ -251,5 +257,28 @@ public class AutomataControl {
 			this.automataPanel.clearAutomata();
 		}
 		onAutomataListChange();
+	}
+	
+	private void onDeterminizeButton() {
+		Automata determinized = null;
+		
+		try {
+			determinized = this.currAutomata.determinize();
+			
+			String automataName = JOptionPane.showInputDialog(this.automataPanel, "Enter new automata name");
+			if (automataName != null) {
+				automataName = automataName.trim();
+				if (!automataName.equals("")) {
+					this.automataPanel.getAutomataComboBox().addItem(automataName);
+					this.automataPanel.getAutomataComboBox().setSelectedItem(automataName);
+					this.automaton.add(determinized);
+					this.currAutomata = determinized;
+					onAutomataListChange();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(automataPanel, "Determinization failed");
+		}
 	}
 }

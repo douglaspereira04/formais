@@ -45,10 +45,10 @@ public class AutomataPanel extends JPanel {
 
 	JButton newAutomataButton = null;
 	JButton saveAutomataButton = null;
+	JButton determinizeAutomataButton = null;
 	JButton loadAutomataButton = null;
 	JButton clearAutomataButton = null;
 	JButton deleteAutomataButton = null;
-	JButton completeAutomataButton = null;
 	JButton unifyAutomataButton = null;
 	JButton epsilonClosureButton = null;
 	JButton addColumnButton = null;
@@ -80,7 +80,7 @@ public class AutomataPanel extends JPanel {
 		loadAutomataButton = new JButton("Load");
 		clearAutomataButton = new JButton("Clear");
 		deleteAutomataButton = new JButton("Delete");
-		completeAutomataButton = new JButton("Complete");
+		determinizeAutomataButton = new JButton("Determinize");
 		unifyAutomataButton = new JButton("Unify");
 		epsilonClosureButton = new JButton("Display Epsilon Closure");
 
@@ -94,7 +94,7 @@ public class AutomataPanel extends JPanel {
 		toolbar.add(deleteAutomataButton);
 
 		toolbar.add(new ToolbarSeparator());
-		toolbar.add(completeAutomataButton);
+		toolbar.add(determinizeAutomataButton);
 		toolbar.add(unifyAutomataButton);
 		toolbar.add(epsilonClosureButton);
 
@@ -396,14 +396,6 @@ public class AutomataPanel extends JPanel {
 		this.deleteAutomataButton = deleteAutomataButton;
 	}
 
-	public JButton getCompleteAutomataButton() {
-		return completeAutomataButton;
-	}
-
-	public void setCompleteAutomataButton(JButton completeAutomataButton) {
-		this.completeAutomataButton = completeAutomataButton;
-	}
-
 	public JButton getUnifyAutomataButton() {
 		return unifyAutomataButton;
 	}
@@ -450,6 +442,14 @@ public class AutomataPanel extends JPanel {
 
 	public void setNewAutomataButton(JButton newAutomataButton) {
 		this.newAutomataButton = newAutomataButton;
+	}
+
+	public JButton getDeterminizeAutomataButton() {
+		return determinizeAutomataButton;
+	}
+
+	public void setDeterminizeAutomataButton(JButton determinizeAutomataButton) {
+		this.determinizeAutomataButton = determinizeAutomataButton;
 	}
 
 	public JButton getLoadAutomataButton() {

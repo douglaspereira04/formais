@@ -1,6 +1,8 @@
 package model.automata;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import exception.automata.DuplicatedStateException;
@@ -191,6 +193,35 @@ public class Automata {
 		}
 		return null;
 
+	}
+
+	/**
+	 * Returns transitions list of type {@code List<Transition>} given a source
+	 * state <br>
+	 * returns <b>{@code null}</b> if transition does not exist
+	 * 
+	 * @param sourceState         - transition source state
+	 * @param transitionCharacter - transition character
+	 * @throws InvalidStateException When refers to states not present in automata
+	 */
+	public List<Transition> getTransitions(String sourceState) throws InvalidStateException {
+		List<Transition> transitions = new ArrayList<Transition>();
+
+		if (this.transitions == null)
+			throw new IllegalStateException();
+
+		if (!states.contains(sourceState))
+			throw new InvalidStateException();
+
+		for (Transition transition : this.transitions) {
+			if (transition.getSourceState().equals(sourceState))
+				transitions.add(transition);
+		}
+
+		if (transitions.size() == 0)
+			transitions = null;
+
+		return transitions;
 	}
 
 	/**
@@ -433,27 +464,167 @@ public class Automata {
 	public void getEpsilonClosure(String state, List<String> closure) throws InvalidStateException {
 
 		List<String> epsilonTransition = getTransition(state, '&');
-		for (String targetState : epsilonTransition) {
-			if (!closure.contains(targetState)) {
-				closure.add(targetState);
-				getEpsilonClosure(targetState, closure);
+		if (epsilonTransition != null) {
+			for (String targetState : epsilonTransition) {
+				if (!closure.contains(targetState)) {
+					closure.add(targetState);
+					getEpsilonClosure(targetState, closure);
+				}
+			}
+		}
+	}
+
+	public Automata determinize()
+			throws InvalidStateException, DuplicatedStateException, DuplicatedTransitionException {
+		Automata determinized = new Automata();
+
+		List<String> initialClosure = this.getEpsilonClosure(initialState);
+		determinize(initialClosure, determinized);
+
+		determinized.setInitialState(epsilonClosureToString(initialClosure));
+		
+		for (Character character : determinized.getAlphabet()) {
+			for (String state : determinized.getStates()) {
+				if (determinized.getTransition(state, character) != null) {
+					String closureState = epsilonClosureToString(determinized.getTransition(state, character));
+					
+					determinized.removeTransitions(state, character);
+					determinized.addTransition(state, character, closureState);
+				}
+			}
+		}
+		
+		for (String state : determinized.getStates()) {
+			if (!Collections.disjoint(stringToList(state), this.getFinalStates()))
+				determinized.setAsFinalState(state);
+		}
+
+		for (Iterator<String> iterator = determinized.getStates().iterator(); iterator.hasNext();) {
+			String state = (String) iterator.next();
+			if (!determinized.getReachableStates().contains(state))
+				iterator.remove();
+			
+		}
+		
+		return determinized;
+	}
+
+	public void determinize(List<String> closure, Automata automata)
+			throws InvalidStateException, DuplicatedStateException, DuplicatedTransitionException {
+		String name = epsilonClosureToString(closure);
+
+		for (String state : closure) {
+			List<Transition> transitions = this.getTransitions(state);
+			for (Transition transition : transitions) {
+				Character character = transition.getTransitionCharacter();
+				if (character.equals('&'))
+					continue;
+
+				for (String targetState : transition.getTargetStates()) {
+					for (String targetStateInClosure : getEpsilonClosure(targetState)) {
+						if (!automata.getStates().contains(name))
+							automata.addState(name);
+						
+						if (automata.getTransition(name, character) == null
+								|| !automata.getTransition(name, character).contains(targetStateInClosure)) {
+							if (!automata.getStates().contains(targetStateInClosure))
+								automata.addState(targetStateInClosure);
+							
+							automata.addTransition(name, character, targetStateInClosure);
+						}
+					}
+				}
+			}
+		}
+		
+		List<Transition> transitions = automata.getTransitions();
+		for (int i = 0 ; i < transitions.size(); i++) {
+			if (transitions.get(i).getSourceState().equals(name)) {
+				String closureStateName = epsilonClosureToString(transitions.get(i).getTargetStates());
+
+				if (!automata.getStates().contains(closureStateName)) {
+					determinize(transitions.get(i).getTargetStates(), automata);
+				}
 			}
 		}
 
 	}
 
-	public Automata determinize() {
+	/**
+	 * @param epsilonClosure
+	 * @return state name of a given epsilon closure
+	 */
+	private static String epsilonClosureToString(List<String> epsilonClosure) {
+		String closureName = "";
+		for (String string : epsilonClosure) {
+			closureName = closureName + "," + string;
+		}
+		if (closureName.length() > 0) {
+			closureName = "{"+closureName.substring(1)+"}";	
+		} else {
+			closureName = null;
+		}
 
-		return null;
+		return closureName;
 	}
 
-	public Automata minimize() {
+	/**
+	 * @param epsilonClosure
+	 * @return state name of a given epsilon closure
+	 */
+	private static List<String> stringToList(String string) {
+		List<String> list = new ArrayList<String>();
+		string = string.substring(1, string.length()-1);
+		
+		for (String state : string.split(",")) {
+			list.add(state);
+		}
+		if (!(list.size() > 0)) {
+			list = null;
+		}
 
-		return null;
+		return list;
 	}
 
 	public void setTransitions(List<Transition> transitions) {
 		this.transitions = transitions;
+	}
+
+	public List<Character> getTransitionsSymbols(String state) throws InvalidStateException {
+		List<Character> characters = new ArrayList<Character>();
+		List<Transition> transitions = this.getTransitions(state);
+		for (Transition transition : transitions) {
+			characters.add(transition.getTransitionCharacter());
+		}
+		if (characters.size() == 0) {
+			characters = null;
+		}
+		return characters;
+	}
+	
+	public List<String> getReachableStates() {
+		List<String> states = new ArrayList<String>();
+		
+		for (Transition transition : this.transitions) {
+			for (String state : transition.getTargetStates()) {
+				if(!states.contains(state))
+					states.add(state);
+			}
+		}
+		
+		if(states.size() == 0)
+			states = null;
+		
+		return states;
+	}
+	
+	public void removeTransitions(String state, Character character) {
+		for (Iterator<Transition> iterator = transitions.iterator(); iterator.hasNext();) {
+			Transition transition = (Transition) iterator.next();
+			if (transition.getSourceState().equals(state) && transition.getTransitionCharacter().equals(character)) {
+				iterator.remove();
+			}
+		}
 	}
 
 	public class Transition {
