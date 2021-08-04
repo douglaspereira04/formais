@@ -12,7 +12,7 @@ import exception.regex.BracketMismatchException;
 import exception.regex.InvalidInputException;
 import exception.regex.OperatorMismatchException;
 import model.automata.Automata;
-import model.automata.Automata.Transition;
+import model.automata.Transition;
 
 public class RegexTest {
 
