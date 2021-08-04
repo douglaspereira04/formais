@@ -117,12 +117,6 @@ public class AutomataPanel extends JPanel {
 			}
 		});
 
-		clearAutomataButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				clearAutomata();
-			}
-		});
 	}
 
 	public void clearAutomata() {

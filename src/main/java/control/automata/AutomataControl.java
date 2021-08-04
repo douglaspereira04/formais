@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
@@ -87,19 +88,27 @@ public class AutomataControl {
 				onUnifyButton();
 			}
 		});
-		
+
 		this.automataPanel.getDeleteAutomataButton().addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				onDeleteButton();
 			}
 		});
-		
+
 		this.automataPanel.getDeterminizeAutomataButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				onDeterminizeButton();
+			}
+		});
+
+		this.automataPanel.getClearAutomataButton().addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onClearButton();
 			}
 		});
 	}
@@ -129,10 +138,9 @@ public class AutomataControl {
 		int automataIndex = -1;
 
 		if (this.automataPanel.getAutomataComboBox().getItemCount() == 0) {
-			this.automataPanel.getClearAutomataButton().doClick();
+			this.automataPanel.clearAutomata();
 			setAutomataManipulationEnabled(false);
 		} else {
-			setAutomataManipulationEnabled(true);
 			automataIndex = this.automataPanel.getAutomataComboBox().getSelectedIndex();
 
 			try {
@@ -144,35 +152,24 @@ public class AutomataControl {
 				}
 
 			} catch (IndexOutOfBoundsException e) {
-				System.out.println("### NEW AUTOMATA ###");
+				System.out.println("### NO SUCH AUTOMATA ###");
 			}
+			setAutomataManipulationEnabled(true);
 
 		}
 
 	}
 
 	private void changeAutomata(Automata newAutomata) {
-		if (this.currAutomata != newAutomata) {
-			this.currAutomata = newAutomata;
-			this.automataPanel.setAutomata(this.currAutomata);
-		}
+		this.currAutomata = newAutomata;
+		this.automataPanel.setAutomata(this.currAutomata);
 	}
 
 	private void onNewButton() {
 		String automataName = null;
 		try {
 			automataName = JOptionPane.showInputDialog(this.automataPanel, "Enter new automata name");
-			if (automataName != null) {
-				automataName = automataName.trim();
-				if (!automataName.equals("")) {
-					this.automataPanel.getAutomataComboBox().addItem(automataName);
-					this.automataPanel.getAutomataComboBox().setSelectedItem(automataName);
-					this.automaton.add(null);
-					this.currAutomata = null;
-					onAutomataListChange();
-				}
-
-			}
+			addsAutomata(automataName, null);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -188,16 +185,8 @@ public class AutomataControl {
 			String automataName = null;
 			try {
 				automataName = JOptionPane.showInputDialog(this.automataPanel, "Enter new automata name");
-				if (automataName != null) {
-					automataName = automataName.trim();
-					if (!automataName.equals("")) {
-						this.automataPanel.getAutomataComboBox().addItem(automataName);
-						this.automataPanel.getAutomataComboBox().setSelectedItem(automataName);
-						this.automaton.add(automata);
-						this.currAutomata = automata;
-						onAutomataListChange();
-					}
-				}
+
+				addsAutomata(automataName, automata);
 			} catch (Exception e) {
 				// TODO: handle exception
 				e.printStackTrace();
@@ -212,10 +201,9 @@ public class AutomataControl {
 		Automata automata1 = null;
 		Automata automata2 = null;
 		Automata unified = null;
-		
-		
+
 		JComboBox<String> comboBox = new JComboBox<String>();
-		
+
 		for (int i = 0; i < this.automataPanel.getAutomataComboBox().getItemCount(); i++) {
 			comboBox.addItem(automataPanel.getAutomataComboBox().getItemAt(i));
 		}
@@ -223,28 +211,19 @@ public class AutomataControl {
 		automata1 = this.automaton.get(comboBox.getSelectedIndex());
 		JOptionPane.showMessageDialog(this.automataPanel, comboBox);
 		automata2 = this.automaton.get(comboBox.getSelectedIndex());
-		
+
 		try {
 			unified = Automata.unify(automata1, automata2);
-			
+
 			String automataName = JOptionPane.showInputDialog(this.automataPanel, "Enter new automata name");
-			if (automataName != null) {
-				automataName = automataName.trim();
-				if (!automataName.equals("")) {
-					this.automataPanel.getAutomataComboBox().addItem(automataName);
-					this.automataPanel.getAutomataComboBox().setSelectedItem(automataName);
-					this.automaton.add(unified);
-					this.currAutomata = unified;
-					onAutomataListChange();
-				}
-			}
+			addsAutomata(automataName, unified);
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(automataPanel, "Unification failed");
 		}
 
 	}
-	
+
 	private void onDeleteButton() {
 		try {
 			int index = this.automataPanel.getAutomataComboBox().getSelectedIndex();
@@ -258,27 +237,47 @@ public class AutomataControl {
 		}
 		onAutomataListChange();
 	}
-	
+
+	private void onClearButton() {
+		try {
+			this.automaton.set(automataPanel.getAutomataComboBox().getSelectedIndex(), null);
+			this.currAutomata = null;
+			this.onAutomataListChange();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+
 	private void onDeterminizeButton() {
 		Automata determinized = null;
-		
+
 		try {
 			determinized = this.currAutomata.determinize();
-			
+
 			String automataName = JOptionPane.showInputDialog(this.automataPanel, "Enter new automata name");
-			if (automataName != null) {
-				automataName = automataName.trim();
-				if (!automataName.equals("")) {
-					this.automataPanel.getAutomataComboBox().addItem(automataName);
-					this.automataPanel.getAutomataComboBox().setSelectedItem(automataName);
-					this.automaton.add(determinized);
-					this.currAutomata = determinized;
-					onAutomataListChange();
-				}
-			}
+			addsAutomata(automataName, determinized);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(automataPanel, "Determinization failed");
+		}
+	}
+	
+	private void addsAutomata(String name, Automata automata) {
+		if (name != null) {
+			name = name.trim();
+			if (((DefaultComboBoxModel<String>) automataPanel.getAutomataComboBox().getModel())
+					.getIndexOf(name) == -1) {
+				if (!name.equals("")) {
+					this.automataPanel.getAutomataComboBox().addItem(name);
+					this.automataPanel.getAutomataComboBox().setSelectedItem(name);
+					this.automaton.add(automata);
+					this.currAutomata = automata;
+					onAutomataListChange();
+				}
+			} else {
+				JOptionPane.showMessageDialog(automataPanel, "Automata " + name + " already exists");
+			}
 		}
 	}
 }

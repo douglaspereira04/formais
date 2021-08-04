@@ -616,6 +616,7 @@ public class Automata {
 	 */
 	public List<String> getReachableStates() {
 		List<String> states = new ArrayList<String>();
+		states.add(this.getInitialState());
 		
 		for (Transition transition : this.transitions) {
 			for (String state : transition.getTargetStates()) {
