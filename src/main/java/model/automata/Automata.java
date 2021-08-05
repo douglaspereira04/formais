@@ -12,7 +12,7 @@ import exception.automata.InvalidStateException;
 /**
  * Finite automata class
  * 
- * @author thiago
+ * @author tiago
  * @author douglas
  *
  */
@@ -81,6 +81,14 @@ public class Automata {
 
 	public List<Transition> getTransitions() {
 		return transitions;
+	}
+	
+	public boolean hasState(String state) {
+		return states.contains(state);
+	}
+	
+	public boolean hasTransition(Transition transition) {
+		return transitions.contains(transition);
 	}
 
 	/**
