@@ -12,10 +12,26 @@ import exception.regex.OperatorMismatchException;
 import model.automata.Automata;
 import model.node.Node;
 
+/**
+ * Regular Expression class
+ * 
+ * @author tiago
+ *
+ */
 public class Regex {
 
+	/**
+	 *	Regular Expression String
+	 */
 	private String regex;
-
+	/**
+	 * Builds new Regular Expression
+	 * 
+	 * @param Regular Expression String
+	 * @throws BracketMismatchException
+	 * @throws OperatorMismatchException
+	 * @throws InvalidInputException
+	 */
 	public Regex(String rgx) throws BracketMismatchException, OperatorMismatchException, InvalidInputException {
 
 		if (rgx == null)
@@ -23,43 +39,56 @@ public class Regex {
 
 		char[] rgx_char = rgx.toCharArray();
 		int bracket = 0;
+		
 		for (int i = 0; i < rgx.length(); i++) {
-
 			char el = rgx_char[i];
-			char next = 'n';
+			char next = '&';
 			if (i < rgx.length() - 1)
 				next = rgx_char[i + 1];
-
+			
+			//Counts opening bracket '('
 			if (isOperator(el) == 1)
 				bracket++;
+			//Counts closing bracket ')'
 			if (isOperator(el) == 2)
 				bracket--;
+			//Unopened bracket closed
 			if (bracket < 0)
 				throw new OperatorMismatchException();
-
-			if (isOperator(el) == 3 && i != rgx.length() - 1) {
-				if (isOperator(next) == 3)
+			//Starts with: ')', '|' and '*'
+			if (i == 0) {
+				if (isOperator(el) > 1)
 					throw new OperatorMismatchException();
 			}
-
-			if (isOperator(el) != 2) {
-				if (i == 0 || i == rgx.length() - 1) {
-					if (isOperator(next) > 2 && isOperator(el) != isOperator(next))
-						throw new OperatorMismatchException();
-				}
+			//Ends with: '(' and '|'
+			if (i == rgx.length()-1) {
+				if (isOperator(el) == 1 || isOperator(el) == 3) 
+					throw new OperatorMismatchException();
 			}
-
+			//Contains sequence: "(*", "(|", "|*" and "||" 
+			if (isOperator(el) == 1 || isOperator(el) == 3) {
+				if (isOperator(next) == 3 || isOperator(next) == 4)
+					throw new OperatorMismatchException();
+			}
+			//Contains implicit operator '.'
 			if (isOperator(el) == 5)
 				throw new InvalidInputException("Invalid Input: .");
 		}
-
+		//Unclosed bracket
 		if (bracket != 0)
 			throw new BracketMismatchException();
 
 		regex = rgx;
 	}
-	
+	/**
+	 * Generate Regular Expression Tree
+	 * @return root Node
+	 */
 	public Node tree() {
+		/**
+		 * Applies implicit operator '.' on Regex String through concatOp method
+		 * Converts from conventional infix to parenthesis-less postfix notation  
+		 */
 		String postfix = infixToPostfix(concatOp(this.regex));
 		Stack<Node> stack = new Stack<>();
 		char[] regex = postfix.toCharArray();
@@ -68,6 +97,10 @@ public class Regex {
 		root.setRight(new Node('#'));
 		Node node;
 		int id = 1;
+		/**
+		 * Default Case: Create a leaf element Node and push it to the stack
+		 * Operand Case: Create a non-leaf operand Node and link properly
+		 */
 		for (int i = 0; i < regex.length; i++) {
 			char element = regex[i];
 			switch (element) {
@@ -101,14 +134,31 @@ public class Regex {
 		return root;
 	}
 	
+	/**
+	 * Build FDA from Regex Tree
+	 * @throws DuplicatedStateException
+	 * @throws InvalidStateException
+	 * @throws DuplicatedTransitionException
+	 * @return Equivalent Automata
+	 */
 	public Automata convert() throws DuplicatedStateException, InvalidStateException, DuplicatedTransitionException {
+		
+		//Empty or Single Character Input
+		if (regex.trim().isEmpty()) return new Automata('&');
+		if (regex.length() == 1) return new Automata(regex.charAt(0));
+		
 		Automata automata = new Automata();
 		Node root = tree();
 		root.calcFollowpos();
 		Stack<ArrayList<Node>> stack = new Stack<>();
+		//Push Initial State
 		stack.push(root.firstpos());
 		boolean initial = true;
 		while (!stack.isEmpty()) {
+			/**
+			 * Values: Set of all possible transitions
+			 * Component: Set of leaves forming a state
+			 */
 			ArrayList<Character> values = new ArrayList<>();
 			ArrayList<Node> component = stack.pop();
 			String source = "";
@@ -167,7 +217,13 @@ public class Regex {
 		if (it.left() != null) prints(it.left());
 		if (it.right() != null) prints(it.right());
 	}
-
+	
+	/**
+	 * Infix to Postfix notation converter
+	 * (a|b)*.a.b.b should return ab|*a.b.b
+	 * Parenthesis-less precedence oriented sequential notation
+	 * @return Reversed Polish noted String
+	 */
 	public String infixToPostfix(String infix) {
 
 		char[] infixA = infix.toCharArray();
@@ -177,16 +233,19 @@ public class Regex {
 			char el = infixA[i];
 			int value = isOperator(el);
 			if (value == 0) {
+				//Add all operands to the String
 				postfix += el;
 			} else if (value == 1) {
+				//Push '(' to the Stack
 				ops.push(el);
 			} else if (value == 2) {
-				System.out.println(ops.peek());
+				//In ')' pop everything back to '('
 				while (isOperator(ops.peek()) != 1) {
 					postfix += ops.pop();
 				}
 				ops.pop();
 			} else {
+				//Pop operators with higher precedence 
 				while (!ops.isEmpty() && isOperator(ops.peek()) != 1 && prec(el) <= prec(ops.peek()))
 					postfix += ops.pop();
 				ops.push(el);
@@ -197,6 +256,13 @@ public class Regex {
 		return postfix;
 	}
 
+	/**
+	 * Add Implicit Concatenation Operator '.'
+	 * (a|b)*abb should return (a|b)*.a.b.b
+	 * Simplifies analysis by creating internal operand
+	 * @param Regular Expression String (regex)
+	 * @return Regex String using concatenation operator '.'
+	 */
 	public String concatOp(String regex) {
 		char[] regexA = regex.toCharArray();
 		regex = "";
@@ -213,6 +279,11 @@ public class Regex {
 		return regex;
 	}
 
+	/**
+	 * Operator Identifier Method
+	 * @param Any character from the Regex String
+	 * @return Integer in range [1-5] for operator, 0 for operand
+	 */
 	public int isOperator(char lexeme) {
 		switch (lexeme) {
 		case '(':
@@ -230,6 +301,11 @@ public class Regex {
 		}
 	}
 
+	/**
+	 * Precedence Identifier Method 
+	 * @param Any character from the Regex String
+	 * @return Integer number indicating precedence magnitude
+	 */
 	public int prec(char lexeme) {
 		switch (lexeme) {
 		case '|':

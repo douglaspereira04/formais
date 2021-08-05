@@ -26,7 +26,6 @@ public class Main {
 	private static RegexPanel regexPanel;
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 		try {
 			UIManager.setLookAndFeel(new FlatLightLaf());

@@ -58,10 +58,14 @@ public class Automata {
 		try {
 			this.addState(initial);
 			this.setInitialState(initial);
-			String finalS = Character.toString(lexeme);
-			this.addState(finalS);
-			this.setAsFinalState(finalS);
-			this.addTransition(initial, lexeme, finalS);
+			if (lexeme == '&') {
+				this.setAsFinalState(initial);
+			} else {
+				String finalS = Character.toString(lexeme);
+				this.addState(finalS);
+				this.setAsFinalState(finalS);
+				this.addTransition(initial, lexeme, finalS);
+			}
 		} catch (DuplicatedStateException e) {
 			System.err.println("Construtor");
 			e.printStackTrace();

@@ -1,7 +1,12 @@
 package model.node;
 
 import java.util.ArrayList;
-
+/**
+ * Node class
+ * 
+ * @author tiago
+ *
+ */
 public class Node {
 	private Node parent;
 	private Node left;
@@ -13,7 +18,10 @@ public class Node {
 	private ArrayList<Node> firstpos;
 	private ArrayList<Node> lastpos;
 	private ArrayList<Node> followpos;
-	
+	/**
+	 * Builds new Node
+	 * @param Node Data Character
+	 */
 	public Node(char data) {
 		setParent(parent);
 		setData(data);
@@ -25,7 +33,11 @@ public class Node {
 		setLastpos(new ArrayList<>());
 		setFollowpos(new ArrayList<>());
 	}
-	
+	/**
+	 * Builds new Node
+	 * @param Node Data Character
+	 * @param Node Id Integer
+	 */
 	public Node(char data, int id) {
 		setParent(parent);
 		setData(data);
@@ -62,7 +74,10 @@ public class Node {
 	public int id() {
 		return id;
 	}
-	
+	/**
+	 * Calculates Nullable Function Value of this Node
+	 * @return True if Nullable, False otherwise
+	 */
 	public boolean nullable() {
 		
 		boolean leftNLB = left == null ? false : left.nullable();
@@ -82,9 +97,11 @@ public class Node {
 		default:
 			return nullable = false;
 		}
-	}
-	
-	
+	}	
+	/**
+	 * Calculates Firstpos Function Value of this Node
+	 * @return List of Nodes belonging to Firstpos
+	 */
 	public ArrayList<Node> firstpos() {
 		
 		ArrayList<Node> leftList = left == null ? new ArrayList<Node>() : left.firstpos();
@@ -110,7 +127,10 @@ public class Node {
 		}
 		return firstpos;
 	}
-	
+	/**
+	 * Calculates Lastpos Function Value of this Node
+	 * @return List of Nodes belonging to Lastpos
+	 */
 	public ArrayList<Node> lastpos() {
 		ArrayList<Node> leftList = left == null ? new ArrayList<Node>() : left.lastpos();
 		ArrayList<Node> rightList = right == null ? new ArrayList<Node>() : right.lastpos();
@@ -139,7 +159,9 @@ public class Node {
 	public ArrayList<Node> followpos() {
 		return followpos;
 	}
-	
+	/**
+	 * Calculates Followpos Function Value of a Sub-Tree starting in this Node
+	 */
 	public void calcFollowpos() {
 		
 		if (left != null) left.calcFollowpos();
