@@ -1,0 +1,52 @@
+{
+    "initialState": "q0",
+    "finalStates": ["q0"],
+    "transitions": [
+        {
+            "transitionCharacter": "1",
+            "targetStates": ["q1"],
+            "sourceState": "q0"
+        },
+        {
+            "transitionCharacter": "&",
+            "targetStates": [
+                "q0",
+                "q2"
+            ],
+            "sourceState": "q0"
+        },
+        {
+            "transitionCharacter": "0",
+            "targetStates": [
+                "q1",
+                "q2"
+            ],
+            "sourceState": "q1"
+        },
+        {
+            "transitionCharacter": "1",
+            "targetStates": ["q2"],
+            "sourceState": "q1"
+        },
+        {
+            "transitionCharacter": "&",
+            "targetStates": ["q1"],
+            "sourceState": "q1"
+        },
+        {
+            "transitionCharacter": "0",
+            "targetStates": ["q0"],
+            "sourceState": "q2"
+        },
+        {
+            "transitionCharacter": "&",
+            "targetStates": ["q2"],
+            "sourceState": "q2"
+        }
+    ],
+    "states": [
+        "q0",
+        "q1",
+        "q2"
+    ]
+}

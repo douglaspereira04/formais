@@ -1,0 +1,97 @@
+{
+    "initialState": "q0",
+    "finalStates": [
+        "i0",
+        "p2"
+    ],
+    "transitions": [
+        {
+            "transitionCharacter": "&",
+            "targetStates": [
+                "p",
+                "p2"
+            ],
+            "sourceState": "q0"
+        },
+        {
+            "transitionCharacter": "0",
+            "targetStates": ["p0"],
+            "sourceState": "p"
+        },
+        {
+            "transitionCharacter": "1",
+            "targetStates": ["i"],
+            "sourceState": "p"
+        },
+        {
+            "transitionCharacter": "0",
+            "targetStates": ["i0"],
+            "sourceState": "i"
+        },
+        {
+            "transitionCharacter": "1",
+            "targetStates": ["p"],
+            "sourceState": "i"
+        },
+        {
+            "transitionCharacter": "0",
+            "targetStates": ["p0"],
+            "sourceState": "p0"
+        },
+        {
+            "transitionCharacter": "1",
+            "targetStates": ["i0"],
+            "sourceState": "p0"
+        },
+        {
+            "transitionCharacter": "0",
+            "targetStates": ["i0"],
+            "sourceState": "i0"
+        },
+        {
+            "transitionCharacter": "1",
+            "targetStates": ["p0"],
+            "sourceState": "i0"
+        },
+        {
+            "transitionCharacter": "0",
+            "targetStates": ["p2"],
+            "sourceState": "s0"
+        },
+        {
+            "transitionCharacter": "1",
+            "targetStates": ["s0"],
+            "sourceState": "s0"
+        },
+        {
+            "transitionCharacter": "0",
+            "targetStates": ["p2"],
+            "sourceState": "p2"
+        },
+        {
+            "transitionCharacter": "1",
+            "targetStates": ["i2"],
+            "sourceState": "p2"
+        },
+        {
+            "transitionCharacter": "0",
+            "targetStates": ["p2"],
+            "sourceState": "i2"
+        },
+        {
+            "transitionCharacter": "1",
+            "targetStates": ["p2"],
+            "sourceState": "i2"
+        }
+    ],
+    "states": [
+        "q0",
+        "p",
+        "i",
+        "p0",
+        "i0",
+        "s0",
+        "p2",
+        "i2"
+    ]
+}

@@ -606,15 +606,17 @@ public class Automata {
 	 */
 	private static List<String> stringToStateList(String string) {
 		List<String> list = new ArrayList<String>();
-		string = string.substring(1, string.length()-1);
+		if(string.startsWith("{") && string.endsWith("}")) {
+			string = string.substring(1, string.length()-1);
+			
+			for (String state : string.split(",")) {
+				list.add(state);
+			}
+			if (!(list.size() > 0)) {
+				list = null;
+			}
+		}
 		
-		for (String state : string.split(",")) {
-			list.add(state);
-		}
-		if (!(list.size() > 0)) {
-			list = null;
-		}
-
 		return list;
 	}
 	
