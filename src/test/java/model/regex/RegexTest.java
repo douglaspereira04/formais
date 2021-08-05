@@ -18,6 +18,8 @@ import model.automata.Automata;
 import model.automata.Transition;
 
 public class RegexTest {
+	
+	String[] regexes = new String[] {"(a|b)*abb"};
 
     @Test
     public void regexTest() {
@@ -67,6 +69,30 @@ public class RegexTest {
 	} catch (Exception ex) {
 	    System.err.println("Failed to initialize LaF");
 	}
+    }
+    
+
+    @Test
+    public void regexToAutomata() throws BracketMismatchException, OperatorMismatchException, InvalidInputException, InvalidStateException, DuplicatedStateException, DuplicatedTransitionException {
+    	
+    	Regex regex = null;
+    	for (int i = 0; i < regexes.length; i++) {
+			regex = new Regex(regexes[i]);
+			regex.convert();
+		}
+    }
+    
+    @Test
+    public void regexToDeterminization() throws BracketMismatchException, OperatorMismatchException, InvalidInputException, InvalidStateException, DuplicatedStateException, DuplicatedTransitionException {
+    	
+    	Automata automata = null;
+    	Regex regex = null;
+    	for (int i = 0; i < regexes.length; i++) {
+			regex = new Regex(regexes[i]);
+			automata = regex.convert();
+			automata.determinize();
+			
+		}
     }
 
 }
