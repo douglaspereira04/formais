@@ -8,6 +8,7 @@ import control.MainControl;
 import control.automata.AutomataControl;
 import view.MainView;
 import view.automata.AutomataPanel;
+import view.la.LAPanel;
 import view.regex.RegexPanel;
 import view.util.Splash;
 
@@ -24,6 +25,7 @@ public class Main {
 
 	private static AutomataPanel automataPanel;
 	private static RegexPanel regexPanel;
+	private static LAPanel laPanel;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -45,7 +47,8 @@ public class Main {
 
 		automataPanel = new AutomataPanel();
 		regexPanel = new RegexPanel();
-		mainView = new MainView(automataPanel, regexPanel);
+		laPanel = new LAPanel();
+		mainView = new MainView(automataPanel, regexPanel, laPanel);
 		AutomataControl automataControl = new AutomataControl(automataPanel);
 
 		splash.getProgressBar().setValue(90);

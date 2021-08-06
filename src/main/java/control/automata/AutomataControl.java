@@ -237,11 +237,9 @@ public class AutomataControl {
 	}
 
 	/**
-	 * Prompts user to unify 2 automaton
+	 * Prompts user to unify n automaton
 	 */
 	private void unify() {
-		Automata automata1 = null;
-		Automata automata2 = null;
 		Automata unified = null;
 
 		JComboBox<String> comboBox = new JComboBox<String>();
