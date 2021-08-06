@@ -39,7 +39,11 @@ public class AutomataControl {
 		initializeBehavior();
 
 	}
-
+	
+	/**
+	 * Sets avaliability of automata manipulation buttons
+	 * @param enabled
+	 */
 	private void setAutomataManipulationEnabled(boolean enabled) {
 		this.automataPanel.getTransitionTable().setEnabled(enabled);
 		this.automataPanel.getSaveAutomataButton().setEnabled(enabled);
@@ -47,21 +51,24 @@ public class AutomataControl {
 		this.automataPanel.getAddColumnButton().setEnabled(enabled);
 		this.automataPanel.getAddRowButton().setEnabled(enabled);
 		this.automataPanel.getClearAutomataButton().setEnabled(enabled);
-		this.automataPanel.getEpsilonClosureButton().setEnabled(enabled);
+		this.automataPanel.getComputeButton().setEnabled(enabled);
 		this.automataPanel.getUnifyAutomataButton().setEnabled(enabled);
 	}
-
+	
+	/**
+	 * Initialze user interface behaviour
+	 */
 	private void initializeBehavior() {
 		this.automataPanel.getSaveAutomataButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				onSaveButton();
+				save();
 			}
 		});
 		this.automataPanel.getNewAutomataButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				onNewButton();
+				newAutomata();
 			}
 		});
 
@@ -77,7 +84,7 @@ public class AutomataControl {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				onLoadButton();
+				load();
 			}
 		});
 
@@ -85,7 +92,7 @@ public class AutomataControl {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				onUnifyButton();
+				unify();
 			}
 		});
 
@@ -93,14 +100,14 @@ public class AutomataControl {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				onDeleteButton();
+				delete();
 			}
 		});
 
 		this.automataPanel.getDeterminizeAutomataButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				onDeterminizeButton();
+				determinize();
 			}
 		});
 
@@ -108,12 +115,15 @@ public class AutomataControl {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				onClearButton();
+				clear();
 			}
 		});
 	}
-
-	private void onSaveButton() {
+	
+	/**
+	 * Prompt user to save displaying automata to file
+	 */
+	private void save() {
 		try {
 
 			this.currAutomata = this.automataPanel.getAutomata();
@@ -134,6 +144,11 @@ public class AutomataControl {
 		}
 	}
 
+	/**
+	 * Changes displaying automata
+	 * Verify if panel should be enabled or not
+	 * 
+	 */
 	private void onAutomataListChange() {
 		int automataIndex = -1;
 
@@ -148,7 +163,7 @@ public class AutomataControl {
 				if (newAutomata == null) {
 					this.automataPanel.clearAutomata();
 				} else {
-					changeAutomata(newAutomata);
+					change(newAutomata);
 				}
 
 			} catch (IndexOutOfBoundsException e) {
@@ -159,25 +174,35 @@ public class AutomataControl {
 		}
 
 	}
-
-	private void changeAutomata(Automata newAutomata) {
-		this.currAutomata = newAutomata;
+	
+	/**
+	 * Changes displaying automata
+	 * @param automata
+	 */
+	private void change(Automata automata) {
+		this.currAutomata = automata;
 		this.automataPanel.setAutomata(this.currAutomata);
 	}
-
-	private void onNewButton() {
+	
+	/**
+	 * Adds a new automata to automata list
+	 */
+	private void newAutomata() {
 		String automataName = null;
 		try {
 			automataName = JOptionPane.showInputDialog(this.automataPanel, "Enter new automata name");
-			addsAutomata(automataName, null);
+			addAutomata(automataName, null);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
 
 	}
-
-	private void onLoadButton() {
+	
+	/**
+	 * Prompts user to load a automata file from file system
+	 */
+	private void load() {
 		File path = FileUtils.selectImportFile("*.automata", this.automataPanel);
 		try {
 			Automata automata = FileUtils.loadFromFile(path.getAbsolutePath(), Automata.class);
@@ -186,7 +211,7 @@ public class AutomataControl {
 			try {
 				automataName = JOptionPane.showInputDialog(this.automataPanel, "Enter new automata name");
 
-				addsAutomata(automataName, automata);
+				addAutomata(automataName, automata);
 			} catch (Exception e) {
 				// TODO: handle exception
 				e.printStackTrace();
@@ -196,8 +221,11 @@ public class AutomataControl {
 			e.printStackTrace();
 		}
 	}
-
-	private void onUnifyButton() {
+	
+	/**
+	 * Prompts user to unify 2 automaton
+	 */
+	private void unify() {
 		Automata automata1 = null;
 		Automata automata2 = null;
 		Automata unified = null;
@@ -216,15 +244,18 @@ public class AutomataControl {
 			unified = Automata.unify(automata1, automata2);
 
 			String automataName = JOptionPane.showInputDialog(this.automataPanel, "Enter new automata name");
-			addsAutomata(automataName, unified);
+			addAutomata(automataName, unified);
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(automataPanel, "Unification failed");
 		}
 
 	}
-
-	private void onDeleteButton() {
+	
+	/**
+	 * Removes displaying automata from automata list
+	 */
+	private void delete() {
 		try {
 			int index = this.automataPanel.getAutomataComboBox().getSelectedIndex();
 			this.automataPanel.getAutomataComboBox().removeItemAt(index);
@@ -237,8 +268,11 @@ public class AutomataControl {
 		}
 		onAutomataListChange();
 	}
-
-	private void onClearButton() {
+	
+	/**
+	 * Clear displaying automata
+	 */
+	private void clear() {
 		try {
 			this.automaton.set(automataPanel.getAutomataComboBox().getSelectedIndex(), null);
 			this.currAutomata = null;
@@ -247,15 +281,18 @@ public class AutomataControl {
 			// TODO: handle exception
 		}
 	}
-
-	private void onDeterminizeButton() {
+	
+	/**
+	 * Prompt user to determinize current displaying automata
+	 */
+	private void determinize() {
 		Automata determinized = null;
 
 		try {
 			determinized = this.currAutomata.determinize();
 
 			String automataName = JOptionPane.showInputDialog(this.automataPanel, "Enter new automata name");
-			addsAutomata(automataName, determinized);
+			addAutomata(automataName, determinized);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -263,7 +300,12 @@ public class AutomataControl {
 		}
 	}
 	
-	private void addsAutomata(String name, Automata automata) {
+	/**
+	 * Adds a new automata to control
+	 * @param name - of the automata
+	 * @param automata - itself
+	 */
+	private void addAutomata(String name, Automata automata) {
 		if (name != null) {
 			name = name.trim();
 			if (((DefaultComboBoxModel<String>) automataPanel.getAutomataComboBox().getModel())

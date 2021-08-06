@@ -50,7 +50,7 @@ public class AutomataPanel extends JPanel {
 	JButton clearAutomataButton = null;
 	JButton deleteAutomataButton = null;
 	JButton unifyAutomataButton = null;
-	JButton epsilonClosureButton = null;
+	JButton computeButton = null;
 	JButton addColumnButton = null;
 	JButton addRowButton = null;
 	JComboBox<String> automataComboBox = null;
@@ -82,7 +82,7 @@ public class AutomataPanel extends JPanel {
 		deleteAutomataButton = new JButton("Delete");
 		determinizeAutomataButton = new JButton("Determinize");
 		unifyAutomataButton = new JButton("Unify");
-		epsilonClosureButton = new JButton("Display Epsilon Closure");
+		computeButton = new JButton("Compute");
 
 		toolbar = new JPanel(new WrapLayout());
 		toolbar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
@@ -96,7 +96,7 @@ public class AutomataPanel extends JPanel {
 		toolbar.add(new ToolbarSeparator());
 		toolbar.add(determinizeAutomataButton);
 		toolbar.add(unifyAutomataButton);
-		toolbar.add(epsilonClosureButton);
+		toolbar.add(computeButton);
 
 		toolbar.add(new ToolbarSeparator());
 		toolbar.add(clearAutomataButton);
@@ -398,12 +398,12 @@ public class AutomataPanel extends JPanel {
 		this.unifyAutomataButton = unifyAutomataButton;
 	}
 
-	public JButton getEpsilonClosureButton() {
-		return epsilonClosureButton;
+	public JButton getComputeButton() {
+		return computeButton;
 	}
 
-	public void setEpsilonClosureButton(JButton epsilonClosureButton) {
-		this.epsilonClosureButton = epsilonClosureButton;
+	public void setComputeButton(JButton computeButton) {
+		this.computeButton = computeButton;
 	}
 
 	public JButton getAddColumnButton() {
