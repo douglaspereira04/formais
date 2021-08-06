@@ -654,5 +654,35 @@ public class Automata {
 			}
 		}
 	}
+	
+	
+	/**
+	 * Computes a word
+	 * @param word - to be computed
+	 * @return {@code true} if word is accepted. {@code false} if not
+	 * @throws DuplicatedTransitionException - when automata is not valid
+	 * @throws DuplicatedStateException - when automata is not valid
+	 * @throws InvalidStateException - when automata is not valid
+	 */
+	public boolean compute(String word) throws InvalidStateException, DuplicatedStateException, DuplicatedTransitionException {
+		boolean accepted = false;
+		String currState = null; 
+		Automata determinized = this.determinize();
+		List<String> transition = null;
+		
+		currState = determinized.getInitialState();
+		for (Character currCharacter : word.toCharArray()) {
+			transition = determinized.getTransition(currState, currCharacter);
+			if (transition.size() == 0) {
+				if (determinize().getFinalStates().contains(currState))
+					accepted = true;
+				break;
+			}
+			currState = transition.get(0);
+			
+		}
+		
+		return accepted;
+	}
 
 }
