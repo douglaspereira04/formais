@@ -1,6 +1,7 @@
 package model.automata;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -667,20 +668,23 @@ public class Automata {
 	public boolean compute(String word) throws InvalidStateException, DuplicatedStateException, DuplicatedTransitionException {
 		boolean accepted = false;
 		String currState = null; 
+		int currCharacter = 0;
 		Automata determinized = this.determinize();
 		List<String> transition = null;
 		
 		currState = determinized.getInitialState();
-		for (Character currCharacter : word.toCharArray()) {
-			transition = determinized.getTransition(currState, currCharacter);
-			if (transition.size() == 0) {
-				if (determinize().getFinalStates().contains(currState))
-					accepted = true;
-				break;
-			}
-			currState = transition.get(0);
+		for (currCharacter = 0; currCharacter < word.length(); currCharacter++) {
+			transition = determinized.getTransition(currState, word.charAt(currCharacter));
 			
+			if (transition.size() == 0) {
+				break;
+			} 
+			currState = transition.get(0);
 		}
+		
+
+		if (currCharacter == word.length() && determinized.getFinalStates().contains(currState))
+			accepted = true;
 		
 		return accepted;
 	}
