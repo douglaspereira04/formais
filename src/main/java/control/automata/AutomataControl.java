@@ -14,6 +14,9 @@ import javax.swing.JOptionPane;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+import exception.automata.DuplicatedStateException;
+import exception.automata.DuplicatedTransitionException;
+import exception.automata.InvalidStateException;
 import model.automata.Automata;
 import model.io.FileUtils;
 import view.automata.AutomataPanel;
@@ -39,9 +42,10 @@ public class AutomataControl {
 		initializeBehavior();
 
 	}
-	
+
 	/**
 	 * Sets avaliability of automata manipulation buttons
+	 * 
 	 * @param enabled
 	 */
 	private void setAutomataManipulationEnabled(boolean enabled) {
@@ -54,7 +58,7 @@ public class AutomataControl {
 		this.automataPanel.getComputeButton().setEnabled(enabled);
 		this.automataPanel.getUnifyAutomataButton().setEnabled(enabled);
 	}
-	
+
 	/**
 	 * Initialze user interface behaviour
 	 */
@@ -118,8 +122,17 @@ public class AutomataControl {
 				clear();
 			}
 		});
+		
+		this.automataPanel.getComputeButton().addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				compute();
+				
+			}
+		});
 	}
-	
+
 	/**
 	 * Prompt user to save displaying automata to file
 	 */
@@ -145,8 +158,7 @@ public class AutomataControl {
 	}
 
 	/**
-	 * Changes displaying automata
-	 * Verify if panel should be enabled or not
+	 * Changes displaying automata Verify if panel should be enabled or not
 	 * 
 	 */
 	private void onAutomataListChange() {
@@ -174,16 +186,17 @@ public class AutomataControl {
 		}
 
 	}
-	
+
 	/**
 	 * Changes displaying automata
+	 * 
 	 * @param automata
 	 */
 	private void change(Automata automata) {
 		this.currAutomata = automata;
 		this.automataPanel.setAutomata(this.currAutomata);
 	}
-	
+
 	/**
 	 * Adds a new automata to automata list
 	 */
@@ -198,7 +211,7 @@ public class AutomataControl {
 		}
 
 	}
-	
+
 	/**
 	 * Prompts user to load a automata file from file system
 	 */
@@ -221,7 +234,7 @@ public class AutomataControl {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Prompts user to unify 2 automaton
 	 */
@@ -251,7 +264,7 @@ public class AutomataControl {
 		}
 
 	}
-	
+
 	/**
 	 * Removes displaying automata from automata list
 	 */
@@ -268,7 +281,7 @@ public class AutomataControl {
 		}
 		onAutomataListChange();
 	}
-	
+
 	/**
 	 * Clear displaying automata
 	 */
@@ -281,7 +294,7 @@ public class AutomataControl {
 			// TODO: handle exception
 		}
 	}
-	
+
 	/**
 	 * Prompt user to determinize current displaying automata
 	 */
@@ -293,16 +306,40 @@ public class AutomataControl {
 
 			String automataName = JOptionPane.showInputDialog(this.automataPanel, "Enter new automata name");
 			addAutomata(automataName, determinized);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(automataPanel, "Determinization failed");
 		}
 	}
-	
+
+	/**
+	 * prompts user to compute a word in displaying automata
+	 */
+	private void compute() {
+		boolean accepted = false;
+		String message = null;
+		String word = JOptionPane.showInputDialog(automataPanel, "Word to be computed");
+
+		if (word != null)
+			try {
+				accepted = this.currAutomata.compute(word);
+			} catch (InvalidStateException | DuplicatedStateException | DuplicatedTransitionException e) {
+				JOptionPane.showMessageDialog(automataPanel, "Malformed automata");
+			}
+
+		if (accepted)
+			message = "Accepted";
+		else
+			message = "Not Accepted";
+
+		JOptionPane.showMessageDialog(automataPanel, message);
+	}
+
 	/**
 	 * Adds a new automata to control
-	 * @param name - of the automata
+	 * 
+	 * @param name     - of the automata
 	 * @param automata - itself
 	 */
 	private void addAutomata(String name, Automata automata) {
@@ -322,4 +359,5 @@ public class AutomataControl {
 			}
 		}
 	}
+
 }
