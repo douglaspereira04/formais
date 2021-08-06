@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
@@ -244,17 +245,28 @@ public class AutomataControl {
 		Automata unified = null;
 
 		JComboBox<String> comboBox = new JComboBox<String>();
+		List<Automata> automaton = new ArrayList<Automata>();
 
 		for (int i = 0; i < this.automataPanel.getAutomataComboBox().getItemCount(); i++) {
 			comboBox.addItem(automataPanel.getAutomataComboBox().getItemAt(i));
 		}
-		JOptionPane.showMessageDialog(this.automataPanel, comboBox);
-		automata1 = this.automaton.get(comboBox.getSelectedIndex());
-		JOptionPane.showMessageDialog(this.automataPanel, comboBox);
-		automata2 = this.automaton.get(comboBox.getSelectedIndex());
+		
+		int amount = 0;
+		try {
+			amount = Integer.parseInt(JOptionPane.showInputDialog(this.automataPanel, "Input automaton amount"));
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this.automataPanel, "Invalid amount");
+			return;
+		}
+		
+		for (int i = 0; i < amount; i++) {
+			JOptionPane.showMessageDialog(this.automataPanel, comboBox);
+			automaton.add(this.automaton.get(comboBox.getSelectedIndex()));
+		}
 
 		try {
-			unified = Automata.unify(automata1, automata2);
+			
+			unified = Automata.unify(automaton);
 
 			String automataName = JOptionPane.showInputDialog(this.automataPanel, "Enter new automata name");
 			addAutomata(automataName, unified);
