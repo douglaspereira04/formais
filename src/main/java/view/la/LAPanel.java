@@ -22,6 +22,7 @@ public class LAPanel extends JPanel {
 		this.setLayout(new BorderLayout());
 		
 		initializeDefinitionPanel();
+		initializeAnalysisPanel();
 		
 		laTabs = new JTabbedPane();
 		laTabs.addTab("Definições", definitionPanel);

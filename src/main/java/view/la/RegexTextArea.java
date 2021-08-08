@@ -5,6 +5,11 @@ import javax.swing.text.Document;
 
 public class RegexTextArea extends JTextArea {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2491134656031211708L;
+
 	public RegexTextArea() {
 		// TODO Auto-generated constructor stub
 	}

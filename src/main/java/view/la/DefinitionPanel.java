@@ -1,10 +1,8 @@
 package view.la;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 
@@ -12,14 +10,23 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 
 import view.util.WrapLayout;
 
+/**
+ * Panel dedicated to display lexical analyser definition input interface
+ * @author douglas
+ *
+ */
 public class DefinitionPanel extends JPanel {
 	
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8628544071906669012L;
+	
 	JPanel toolbar = null;
 	JButton loadButton = null;
 	JButton saveButton = null;
@@ -35,6 +42,9 @@ public class DefinitionPanel extends JPanel {
 	JScrollPane tokenScroll = null;
 	JPanel tokenPanel = null;
 	TokenTextArea tokenTextArea = null;
+	
+	JLabel definitionLabel = null;
+	JLabel tokenLabel = null;
 	
 	public DefinitionPanel() {
 		this(new BorderLayout());
@@ -69,21 +79,26 @@ public class DefinitionPanel extends JPanel {
 		GridBagConstraints constraints = new GridBagConstraints();
 		
 		this.inputAreaPanel = new JPanel(layout);
+		
 
 		initializeRegexInputArea();
 		initializeTokenInputArea();
 
-		constraints.anchor = GridBagConstraints.CENTER;
+		constraints.anchor = GridBagConstraints.WEST;
 		constraints.insets = new Insets(4,4,4,4);
 		
 		constraints.gridx = 0;
 		constraints.gridy = 0;
-		this.inputAreaPanel.add(new JLabel("Definições"), constraints);
+		definitionLabel = new JLabel("Definições");
+		this.inputAreaPanel.add(definitionLabel, constraints);
 
-		constraints.gridx = 1;
-		constraints.gridy = 0;
-		this.inputAreaPanel.add(new JLabel("Tokens"), constraints);
+		constraints.gridx = 0;
+		constraints.gridy = 2;
+		tokenLabel = new JLabel("Tokens");
+		this.inputAreaPanel.add(tokenLabel, constraints);
+		
 
+		constraints.anchor = GridBagConstraints.CENTER;
 		constraints.weightx = 1;
 		constraints.weighty = 1;	
 		constraints.fill = GridBagConstraints.BOTH;
@@ -92,8 +107,8 @@ public class DefinitionPanel extends JPanel {
 		constraints.gridy = 1;
 		this.inputAreaPanel.add(this.regexScroll, constraints);
 
-		constraints.gridx = 1;
-		constraints.gridy = 1;
+		constraints.gridx = 0;
+		constraints.gridy = 3;
 		this.inputAreaPanel.add(this.tokenScroll, constraints);
 		
 	}
