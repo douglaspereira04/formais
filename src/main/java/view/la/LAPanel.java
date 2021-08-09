@@ -12,6 +12,11 @@ import javax.swing.JTabbedPane;
  */
 public class LAPanel extends JPanel {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2834072946952508202L;
+
 	JTabbedPane laTabs = null;
 	
 	DefinitionPanel definitionPanel = null;

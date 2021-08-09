@@ -20,7 +20,7 @@ public class AnalysisTable extends JTable {
 	public AnalysisTable() {
 		super();
 		
-		this.setModel(new DefaultTableModel(new Object[][] {}, new String[] {"Token", "Lexeme", "Posição"}));
+		this.setModel(new DefaultTableModel(new Object[][] {}, new String[] {"Token", "Lexeme", "Position"}));
 		this.setGridColor(Color.LIGHT_GRAY);
 		this.setShowGrid(true);
 		this.setFillsViewportHeight(true); 

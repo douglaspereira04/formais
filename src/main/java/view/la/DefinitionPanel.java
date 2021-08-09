@@ -37,11 +37,11 @@ public class DefinitionPanel extends JPanel {
 	
 	JScrollPane regexScroll = null;
 	JPanel regexPanel = null;
-	RegexTextArea regexTextArea = null;
+	HighlightedTextPane regexTextArea = null;
 
 	JScrollPane tokenScroll = null;
 	JPanel tokenPanel = null;
-	TokenTextArea tokenTextArea = null;
+	HighlightedTextPane tokenTextArea = null;
 	
 	JLabel definitionLabel = null;
 	JLabel tokenLabel = null;
@@ -115,14 +115,14 @@ public class DefinitionPanel extends JPanel {
 	
 	private void initializeRegexInputArea() {
 		this.regexScroll = new JScrollPane();
-		this.regexTextArea = new RegexTextArea();
+		this.regexTextArea = new HighlightedTextPane();
 		this.regexScroll.setViewportView(this.regexTextArea);
 		this.regexScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	}
 	
 	private void initializeTokenInputArea() {
 		this.tokenScroll = new JScrollPane();
-		this.tokenTextArea = new TokenTextArea();
+		this.tokenTextArea = new HighlightedTextPane();
 		this.tokenScroll.setViewportView(this.tokenTextArea);
 		this.tokenScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	}
