@@ -14,6 +14,9 @@ import javax.swing.JOptionPane;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+import exception.automata.DuplicatedStateException;
+import exception.automata.DuplicatedTransitionException;
+import exception.automata.InvalidStateException;
 import model.automata.Automata;
 import model.io.FileUtils;
 import view.automata.AutomataPanel;
@@ -40,6 +43,11 @@ public class AutomataControl {
 
 	}
 
+	/**
+	 * Sets avaliability of automata manipulation buttons
+	 * 
+	 * @param enabled
+	 */
 	private void setAutomataManipulationEnabled(boolean enabled) {
 		this.automataPanel.getTransitionTable().setEnabled(enabled);
 		this.automataPanel.getSaveAutomataButton().setEnabled(enabled);
@@ -47,21 +55,24 @@ public class AutomataControl {
 		this.automataPanel.getAddColumnButton().setEnabled(enabled);
 		this.automataPanel.getAddRowButton().setEnabled(enabled);
 		this.automataPanel.getClearAutomataButton().setEnabled(enabled);
-		this.automataPanel.getEpsilonClosureButton().setEnabled(enabled);
+		this.automataPanel.getComputeButton().setEnabled(enabled);
 		this.automataPanel.getUnifyAutomataButton().setEnabled(enabled);
 	}
 
+	/**
+	 * Initialze user interface behaviour
+	 */
 	private void initializeBehavior() {
 		this.automataPanel.getSaveAutomataButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				onSaveButton();
+				save();
 			}
 		});
 		this.automataPanel.getNewAutomataButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				onNewButton();
+				newAutomata();
 			}
 		});
 
@@ -77,7 +88,7 @@ public class AutomataControl {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				onLoadButton();
+				load();
 			}
 		});
 
@@ -85,7 +96,7 @@ public class AutomataControl {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				onUnifyButton();
+				unify();
 			}
 		});
 
@@ -93,14 +104,14 @@ public class AutomataControl {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				onDeleteButton();
+				delete();
 			}
 		});
 
 		this.automataPanel.getDeterminizeAutomataButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				onDeterminizeButton();
+				determinize();
 			}
 		});
 
@@ -108,12 +119,24 @@ public class AutomataControl {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				onClearButton();
+				clear();
+			}
+		});
+		
+		this.automataPanel.getComputeButton().addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				compute();
+				
 			}
 		});
 	}
 
-	private void onSaveButton() {
+	/**
+	 * Prompt user to save displaying automata to file
+	 */
+	private void save() {
 		try {
 
 			this.currAutomata = this.automataPanel.getAutomata();
@@ -134,6 +157,10 @@ public class AutomataControl {
 		}
 	}
 
+	/**
+	 * Changes displaying automata Verify if panel should be enabled or not
+	 * 
+	 */
 	private void onAutomataListChange() {
 		int automataIndex = -1;
 
@@ -148,7 +175,7 @@ public class AutomataControl {
 				if (newAutomata == null) {
 					this.automataPanel.clearAutomata();
 				} else {
-					changeAutomata(newAutomata);
+					change(newAutomata);
 				}
 
 			} catch (IndexOutOfBoundsException e) {
@@ -160,16 +187,24 @@ public class AutomataControl {
 
 	}
 
-	private void changeAutomata(Automata newAutomata) {
-		this.currAutomata = newAutomata;
+	/**
+	 * Changes displaying automata
+	 * 
+	 * @param automata
+	 */
+	private void change(Automata automata) {
+		this.currAutomata = automata;
 		this.automataPanel.setAutomata(this.currAutomata);
 	}
 
-	private void onNewButton() {
+	/**
+	 * Adds a new automata to automata list
+	 */
+	private void newAutomata() {
 		String automataName = null;
 		try {
 			automataName = JOptionPane.showInputDialog(this.automataPanel, "Enter new automata name");
-			addsAutomata(automataName, null);
+			addAutomata(automataName, null);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -177,7 +212,10 @@ public class AutomataControl {
 
 	}
 
-	private void onLoadButton() {
+	/**
+	 * Prompts user to load a automata file from file system
+	 */
+	private void load() {
 		File path = FileUtils.selectImportFile("*.automata", this.automataPanel);
 		try {
 			Automata automata = FileUtils.loadFromFile(path.getAbsolutePath(), Automata.class);
@@ -186,7 +224,7 @@ public class AutomataControl {
 			try {
 				automataName = JOptionPane.showInputDialog(this.automataPanel, "Enter new automata name");
 
-				addsAutomata(automataName, automata);
+				addAutomata(automataName, automata);
 			} catch (Exception e) {
 				// TODO: handle exception
 				e.printStackTrace();
@@ -197,26 +235,38 @@ public class AutomataControl {
 		}
 	}
 
-	private void onUnifyButton() {
-		Automata automata1 = null;
-		Automata automata2 = null;
+	/**
+	 * Prompts user to unify n automaton
+	 */
+	private void unify() {
 		Automata unified = null;
 
 		JComboBox<String> comboBox = new JComboBox<String>();
+		List<Automata> automaton = new ArrayList<Automata>();
 
 		for (int i = 0; i < this.automataPanel.getAutomataComboBox().getItemCount(); i++) {
 			comboBox.addItem(automataPanel.getAutomataComboBox().getItemAt(i));
 		}
-		JOptionPane.showMessageDialog(this.automataPanel, comboBox);
-		automata1 = this.automaton.get(comboBox.getSelectedIndex());
-		JOptionPane.showMessageDialog(this.automataPanel, comboBox);
-		automata2 = this.automaton.get(comboBox.getSelectedIndex());
+		
+		int amount = 0;
+		try {
+			amount = Integer.parseInt(JOptionPane.showInputDialog(this.automataPanel, "Input automaton amount"));
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this.automataPanel, "Invalid amount");
+			return;
+		}
+		
+		for (int i = 0; i < amount; i++) {
+			JOptionPane.showMessageDialog(this.automataPanel, comboBox);
+			automaton.add(this.automaton.get(comboBox.getSelectedIndex()));
+		}
 
 		try {
-			unified = Automata.unify(automata1, automata2);
+			
+			unified = Automata.unify(automaton);
 
 			String automataName = JOptionPane.showInputDialog(this.automataPanel, "Enter new automata name");
-			addsAutomata(automataName, unified);
+			addAutomata(automataName, unified);
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(automataPanel, "Unification failed");
@@ -224,7 +274,10 @@ public class AutomataControl {
 
 	}
 
-	private void onDeleteButton() {
+	/**
+	 * Removes displaying automata from automata list
+	 */
+	private void delete() {
 		try {
 			int index = this.automataPanel.getAutomataComboBox().getSelectedIndex();
 			this.automataPanel.getAutomataComboBox().removeItemAt(index);
@@ -238,7 +291,10 @@ public class AutomataControl {
 		onAutomataListChange();
 	}
 
-	private void onClearButton() {
+	/**
+	 * Clear displaying automata
+	 */
+	private void clear() {
 		try {
 			this.automaton.set(automataPanel.getAutomataComboBox().getSelectedIndex(), null);
 			this.currAutomata = null;
@@ -248,22 +304,54 @@ public class AutomataControl {
 		}
 	}
 
-	private void onDeterminizeButton() {
+	/**
+	 * Prompt user to determinize current displaying automata
+	 */
+	private void determinize() {
 		Automata determinized = null;
 
 		try {
 			determinized = this.currAutomata.determinize();
 
 			String automataName = JOptionPane.showInputDialog(this.automataPanel, "Enter new automata name");
-			addsAutomata(automataName, determinized);
-			
+			addAutomata(automataName, determinized);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(automataPanel, "Determinization failed");
 		}
 	}
-	
-	private void addsAutomata(String name, Automata automata) {
+
+	/**
+	 * prompts user to compute a word in displaying automata
+	 */
+	private void compute() {
+		boolean accepted = false;
+		String message = null;
+		String word = JOptionPane.showInputDialog(automataPanel, "Word to be computed");
+
+		if (word != null)
+			try {
+				accepted = this.currAutomata.compute(word);
+			} catch (InvalidStateException | DuplicatedStateException | DuplicatedTransitionException e) {
+				JOptionPane.showMessageDialog(automataPanel, "Malformed automata");
+			}
+
+		if (accepted)
+			message = "Accepted";
+		else
+			message = "Not Accepted";
+
+		JOptionPane.showMessageDialog(automataPanel, message);
+	}
+
+	/**
+	 * Adds a new automata to control
+	 * 
+	 * @param name     - of the automata
+	 * @param automata - itself
+	 */
+	private void addAutomata(String name, Automata automata) {
 		if (name != null) {
 			name = name.trim();
 			if (((DefaultComboBoxModel<String>) automataPanel.getAutomataComboBox().getModel())
@@ -280,4 +368,5 @@ public class AutomataControl {
 			}
 		}
 	}
+
 }

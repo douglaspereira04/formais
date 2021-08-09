@@ -26,8 +26,7 @@ import com.google.gson.JsonSyntaxException;
 /**
  * Class to read JSON configuration files from the disk
  * 
- * @author
- *
+ * @author douglas
  */
 public class FileUtils {
 

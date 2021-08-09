@@ -86,11 +86,11 @@ public class Automata {
 	public List<Transition> getTransitions() {
 		return transitions;
 	}
-	
+
 	public boolean hasState(String state) {
 		return states.contains(state);
 	}
-	
+
 	public boolean hasTransition(Transition transition) {
 		return transitions.contains(transition);
 	}
@@ -286,72 +286,50 @@ public class Automata {
 			}
 		}
 	}
-	
+
 	/**
 	 * Unify two given automata <br>
 	 * through epsilon transitions
+	 * 
 	 * @param automata1
 	 * @param automata2
 	 * @return Unified automata
+	 * @throws DuplicatedTransitionException
+	 * @throws DuplicatedStateException 
+	 * @throws InvalidStateException 
 	 */
-	public static Automata unify(Automata automata1, Automata automata2) {
+	public static Automata unify(List<Automata> automaton) throws DuplicatedTransitionException, DuplicatedStateException, InvalidStateException {
 
 		String initial = "initial";
 		Automata unified = new Automata();
 
-		List<String> states1 = automata1.getStates();
-		List<String> finalStates1 = automata1.getFinalStates();
+		int count = 1;
 
-		List<String> states2 = automata2.getStates();
-		List<String> finalStates2 = automata2.getFinalStates();
+		unified.addState(initial);
+		unified.setInitialState(initial);
 
-		try {
-			unified.addState(initial);
-			unified.setInitialState(initial);
+		for (Automata automata : automaton) {
 
-			for (String state : states1) {
-				unified.addState(state + "-1");
+			List<String> states = automata.getStates();
+			List<String> finalStates = automata.getFinalStates();
+
+			for (String state : states) {
+				unified.addState(state + "-" + count);
 			}
 
-			for (String state : finalStates1) {
-				unified.setAsFinalState(state + "-1");
+			for (String state : finalStates) {
+				unified.setAsFinalState(state + "-" + count);
 			}
 
-			for (String state : states2) {
-				unified.addState(state + "-2");
-			}
-
-			for (String state : finalStates2) {
-				unified.setAsFinalState(state + "-2");
-			}
-
-		} catch (DuplicatedStateException e) {
-			e.printStackTrace();
-		} catch (InvalidStateException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			for (Transition transition : automata1.getTransitions()) {
+			for (Transition transition : automata.getTransitions()) {
 				for (String targetState : transition.getTargetStates()) {
-					unified.addTransition(transition.getSourceState() + "-1", transition.getTransitionCharacter(),
-							targetState + "-1");
+					unified.addTransition(transition.getSourceState() + "-" + count,
+							transition.getTransitionCharacter(), targetState + "-" + count);
 				}
 			}
+			unified.addTransition(initial, '&', automata.getInitialState() + "-" + count);
 
-			for (Transition transition : automata2.getTransitions()) {
-				for (String targetState : transition.getTargetStates()) {
-					unified.addTransition(transition.getSourceState() + "-2", transition.getTransitionCharacter(),
-							targetState + "-2");
-				}
-			}
-
-			unified.addTransition(initial, '&', automata1.getInitialState() + "-1");
-			unified.addTransition(initial, '&', automata2.getInitialState() + "-2");
-		} catch (DuplicatedTransitionException e) {
-			e.printStackTrace();
-		} catch (InvalidStateException e) {
-			e.printStackTrace();
+			count++;
 		}
 
 		return unified;
@@ -413,7 +391,7 @@ public class Automata {
 
 		return concat;
 	}
-	
+
 	public static Automata closure(Automata automata) {
 
 		String initial = automata.getInitialState() + "-c";
@@ -492,8 +470,10 @@ public class Automata {
 			}
 		}
 	}
+
 	/**
 	 * Determinize this automata
+	 * 
 	 * @return Determinized automata
 	 * @throws InvalidStateException
 	 * @throws DuplicatedStateException
@@ -507,18 +487,18 @@ public class Automata {
 		determinize(initialClosure, determinized);
 
 		determinized.setInitialState(stateListToString(initialClosure));
-		
+
 		for (Character character : determinized.getAlphabet()) {
 			for (String state : determinized.getStates()) {
 				if (determinized.getTransition(state, character) != null) {
 					String closureState = stateListToString(determinized.getTransition(state, character));
-					
+
 					determinized.removeTransitions(state, character);
 					determinized.addTransition(state, character, closureState);
 				}
 			}
 		}
-		
+
 		for (String state : determinized.getStates()) {
 			if (!Collections.disjoint(stringToStateList(state), this.getFinalStates()))
 				determinized.setAsFinalState(state);
@@ -528,15 +508,15 @@ public class Automata {
 			String state = (String) iterator.next();
 			if (!determinized.getReachableStates().contains(state))
 				iterator.remove();
-			
+
 		}
-		
+
 		return determinized;
 	}
-	
-	
+
 	/**
 	 * Stores determinized automata in automata parameter
+	 * 
 	 * @param closure
 	 * @param automata - Automata where states are stored
 	 * @throws InvalidStateException
@@ -558,21 +538,21 @@ public class Automata {
 					for (String targetStateInClosure : getEpsilonClosure(targetState)) {
 						if (!automata.getStates().contains(name))
 							automata.addState(name);
-						
+
 						if (automata.getTransition(name, character) == null
 								|| !automata.getTransition(name, character).contains(targetStateInClosure)) {
 							if (!automata.getStates().contains(targetStateInClosure))
 								automata.addState(targetStateInClosure);
-							
+
 							automata.addTransition(name, character, targetStateInClosure);
 						}
 					}
 				}
 			}
 		}
-		
+
 		List<Transition> transitions = automata.getTransitions();
-		for (int i = 0 ; i < transitions.size(); i++) {
+		for (int i = 0; i < transitions.size(); i++) {
 			if (transitions.get(i).getSourceState().equals(name)) {
 				String closureStateName = stateListToString(transitions.get(i).getTargetStates());
 
@@ -586,6 +566,7 @@ public class Automata {
 
 	/**
 	 * Transforms state list in string representing state list
+	 * 
 	 * @param list of states
 	 * @return string representing states list
 	 */
@@ -595,7 +576,7 @@ public class Automata {
 			closureName = closureName + "," + string;
 		}
 		if (closureName.length() > 0) {
-			closureName = "{"+closureName.substring(1)+"}";	
+			closureName = "{" + closureName.substring(1) + "}";
 		} else {
 			closureName = null;
 		}
@@ -604,15 +585,16 @@ public class Automata {
 	}
 
 	/**
-	 * Transforms string representing state list in state list 
+	 * Transforms string representing state list in state list
+	 * 
 	 * @param string representing states list
 	 * @return list of states
 	 */
 	private static List<String> stringToStateList(String string) {
 		List<String> list = new ArrayList<String>();
-		if(string.startsWith("{") && string.endsWith("}")) {
-			string = string.substring(1, string.length()-1);
-			
+		if (string.startsWith("{") && string.endsWith("}")) {
+			string = string.substring(1, string.length() - 1);
+
 			for (String state : string.split(",")) {
 				list.add(state);
 			}
@@ -620,34 +602,36 @@ public class Automata {
 				list = null;
 			}
 		}
-		
+
 		return list;
 	}
-	
+
 	/**
 	 * Gets reachable states of automata
+	 * 
 	 * @return list of reachable states
 	 */
 	public List<String> getReachableStates() {
 		List<String> states = new ArrayList<String>();
 		states.add(this.getInitialState());
-		
+
 		for (Transition transition : this.transitions) {
 			for (String state : transition.getTargetStates()) {
-				if(!states.contains(state))
+				if (!states.contains(state))
 					states.add(state);
 			}
 		}
-		
-		if(states.size() == 0)
+
+		if (states.size() == 0)
 			states = null;
-		
+
 		return states;
 	}
-	
+
 	/**
 	 * Removes transitions given a source state and a transition character
-	 * @param state - Source state
+	 * 
+	 * @param state     - Source state
 	 * @param character - Transition character
 	 */
 	public void removeTransitions(String state, Character character) {
@@ -657,6 +641,39 @@ public class Automata {
 				iterator.remove();
 			}
 		}
+	}
+
+	/**
+	 * Computes a word
+	 * 
+	 * @param word - to be computed
+	 * @return {@code true} if word is accepted. {@code false} if not
+	 * @throws DuplicatedTransitionException - when automata is not valid
+	 * @throws DuplicatedStateException      - when automata is not valid
+	 * @throws InvalidStateException         - when automata is not valid
+	 */
+	public boolean compute(String word)
+			throws InvalidStateException, DuplicatedStateException, DuplicatedTransitionException {
+		boolean accepted = false;
+		String currState = null;
+		int currCharacter = 0;
+		Automata determinized = this.determinize();
+		List<String> transition = null;
+
+		currState = determinized.getInitialState();
+		for (currCharacter = 0; currCharacter < word.length(); currCharacter++) {
+			transition = determinized.getTransition(currState, word.charAt(currCharacter));
+
+			if (transition.size() == 0) {
+				break;
+			}
+			currState = transition.get(0);
+		}
+
+		if (currCharacter == word.length() && determinized.getFinalStates().contains(currState))
+			accepted = true;
+
+		return accepted;
 	}
 
 }
