@@ -8,6 +8,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
+/**
+ * Splash screen
+ * @author douglas
+ *
+ */
 public class Splash extends JFrame {
 
 	/**

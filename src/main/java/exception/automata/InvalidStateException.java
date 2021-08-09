@@ -1,5 +1,10 @@
 package exception.automata;
 
+/**
+ * 
+ * @author douglas
+ *
+ */
 public class InvalidStateException extends Exception {
 	/**
 	 * 
