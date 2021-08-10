@@ -647,14 +647,13 @@ public class Automata {
 	 * Computes a word
 	 * 
 	 * @param word - to be computed
-	 * @return {@code true} if word is accepted. {@code false} if not
+	 * @return {@code String} representing acceptance state if word is accepted. {@code null} if not accepted
 	 * @throws DuplicatedTransitionException - when automata is not valid
 	 * @throws DuplicatedStateException      - when automata is not valid
 	 * @throws InvalidStateException         - when automata is not valid
 	 */
-	public boolean compute(String word)
+	public String compute(String word)
 			throws InvalidStateException, DuplicatedStateException, DuplicatedTransitionException {
-		boolean accepted = false;
 		String currState = null;
 		int currCharacter = 0;
 		Automata determinized = this.determinize();
@@ -671,9 +670,9 @@ public class Automata {
 		}
 
 		if (currCharacter == word.length() && determinized.getFinalStates().contains(currState))
-			accepted = true;
+			return currState;
 
-		return accepted;
+		return null;
 	}
 
 }

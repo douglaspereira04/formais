@@ -332,7 +332,7 @@ public class AutomataControl {
 
 		if (word != null)
 			try {
-				accepted = this.currAutomata.compute(word);
+				accepted = null != this.currAutomata.compute(word);
 			} catch (InvalidStateException | DuplicatedStateException | DuplicatedTransitionException e) {
 				JOptionPane.showMessageDialog(automataPanel, "Malformed automata");
 			}
