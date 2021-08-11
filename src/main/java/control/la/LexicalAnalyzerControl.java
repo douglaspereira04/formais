@@ -86,7 +86,13 @@ public class LexicalAnalyzerControl {
 	 * Prompts user to load a lexycal analyzer file from file system
 	 */
 	private void load() {
+		if(! (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(laPanel, "All current definitions will be lost. Continue?", "Confirmation", JOptionPane.YES_NO_OPTION)))
+			return;
+		
 		File path = FileUtils.selectImportFile("*.la", this.laPanel);
+		if (path == null)
+			return;
+		
 		String[] data = null;
 		try {
 			data = FileUtils.loadFromFile(path.getAbsolutePath(), String[].class);

@@ -216,7 +216,12 @@ public class AutomataControl {
 	 * Prompts user to load a automata file from file system
 	 */
 	private void load() {
+		
 		File path = FileUtils.selectImportFile("*.automata", this.automataPanel);
+		
+		if (path == null)
+			return;
+		
 		try {
 			Automata automata = FileUtils.loadFromFile(path.getAbsolutePath(), Automata.class);
 

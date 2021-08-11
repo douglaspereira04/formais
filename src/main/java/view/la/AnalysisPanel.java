@@ -10,7 +10,7 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 
 /**
- * Panel dedicated to display lexical analyser analysis input and output data
+ * Panel dedicated to display lexical analyzer analysis input and output data
  * @author douglas
  *
  */
