@@ -6,9 +6,10 @@ import com.formdev.flatlaf.FlatLightLaf;
 
 import control.MainControl;
 import control.automata.AutomataControl;
+import control.la.LexicalAnalyzerControl;
 import view.MainView;
 import view.automata.AutomataPanel;
-import view.la.LAPanel;
+import view.la.LexicalAnalyzerPanel;
 import view.regex.RegexPanel;
 import view.util.Splash;
 
@@ -25,7 +26,7 @@ public class Main {
 
 	private static AutomataPanel automataPanel;
 	private static RegexPanel regexPanel;
-	private static LAPanel laPanel;
+	private static LexicalAnalyzerPanel laPanel;
 
 	public static void main(String[] args) {
 
@@ -46,9 +47,10 @@ public class Main {
 
 		automataPanel = new AutomataPanel();
 		regexPanel = new RegexPanel();
-		laPanel = new LAPanel();
+		laPanel = new LexicalAnalyzerPanel();
 		mainView = new MainView(automataPanel, regexPanel, laPanel);
 		AutomataControl automataControl = new AutomataControl(automataPanel);
+		LexicalAnalyzerControl laControl = new LexicalAnalyzerControl(laPanel);
 
 		splash.getProgressBar().setValue(90);
 

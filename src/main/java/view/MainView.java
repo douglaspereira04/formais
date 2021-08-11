@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
 import view.automata.AutomataPanel;
-import view.la.LAPanel;
+import view.la.LexicalAnalyzerPanel;
 import view.regex.RegexPanel;
 
 /**
@@ -25,9 +25,9 @@ public class MainView extends JFrame {
 	private JTabbedPane sideBar = new JTabbedPane();
 	private AutomataPanel automataPanel = null;
 	private RegexPanel regexPanel = null;
-	private LAPanel laPanel = null;
+	private LexicalAnalyzerPanel laPanel = null;
 
-	public MainView(AutomataPanel automataPanel, RegexPanel regexPanel, LAPanel laPanel) {
+	public MainView(AutomataPanel automataPanel, RegexPanel regexPanel, LexicalAnalyzerPanel laPanel) {
 		this.automataPanel = automataPanel;
 		this.regexPanel = regexPanel;
 		this.laPanel = laPanel;

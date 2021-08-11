@@ -126,5 +126,55 @@ public class DefinitionPanel extends JPanel {
 		this.tokenScroll.setViewportView(this.tokenTextArea);
 		this.tokenScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	}
+
+	public JButton getLoadButton() {
+		return loadButton;
+	}
+
+	public void setLoadButton(JButton loadButton) {
+		this.loadButton = loadButton;
+	}
+
+	public JButton getSaveButton() {
+		return saveButton;
+	}
+
+	public void setSaveButton(JButton saveButton) {
+		this.saveButton = saveButton;
+	}
+
+	public JButton getClearButton() {
+		return clearButton;
+	}
+
+	public void setClearButton(JButton clearButton) {
+		this.clearButton = clearButton;
+	}
+
+	public JButton getCheckButton() {
+		return checkButton;
+	}
+
+	public void setCheckButton(JButton checkButton) {
+		this.checkButton = checkButton;
+	}
+
+	public HighlightedTextPane getRegexTextArea() {
+		return regexTextArea;
+	}
+
+	public void setRegexTextArea(HighlightedTextPane regexTextArea) {
+		this.regexTextArea = regexTextArea;
+	}
+
+	public HighlightedTextPane getTokenTextArea() {
+		return tokenTextArea;
+	}
+
+	public void setTokenTextArea(HighlightedTextPane tokenTextArea) {
+		this.tokenTextArea = tokenTextArea;
+	}
+	
+	
 	
 }

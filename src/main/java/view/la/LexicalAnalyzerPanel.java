@@ -10,7 +10,7 @@ import javax.swing.JTabbedPane;
  * @author douglas
  *
  */
-public class LAPanel extends JPanel {
+public class LexicalAnalyzerPanel extends JPanel {
 	
 	/**
 	 * 
@@ -23,7 +23,7 @@ public class LAPanel extends JPanel {
 	
 	AnalysisPanel analysisPanel = null;
 	
-	public LAPanel() {
+	public LexicalAnalyzerPanel() {
 		this.setLayout(new BorderLayout());
 		
 		initializeDefinitionPanel();
@@ -48,6 +48,24 @@ public class LAPanel extends JPanel {
 		analysisPanel = new AnalysisPanel();
 		
 	}
+
+	public DefinitionPanel getDefinitionPanel() {
+		return definitionPanel;
+	}
+
+	public void setDefinitionPanel(DefinitionPanel definitionPanel) {
+		this.definitionPanel = definitionPanel;
+	}
+
+	public AnalysisPanel getAnalysisPanel() {
+		return analysisPanel;
+	}
+
+	public void setAnalysisPanel(AnalysisPanel analysisPanel) {
+		this.analysisPanel = analysisPanel;
+	}
+	
+	
 	
 	
 

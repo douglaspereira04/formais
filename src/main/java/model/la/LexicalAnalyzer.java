@@ -21,14 +21,24 @@ import exception.regex.OperatorMismatchException;
 import model.automata.Automata;
 import model.regex.Regex;
 
-public class LexycalAnalyzer {
+/**
+ * 
+ * Class dedicated to manage lexical analyzer
+ * @author douglas
+ * @author tiago
+ *
+ */
+public class LexicalAnalyzer {
 	
 	private final static String SE = " : ";
 	private final static String tokenPath = "";
 	private final static String redefPath = "";
+
+	Map<String, String> stateToToken = null;
+	Automata automata = null;
 	
 	
-	public static List<LexicalEntry> analyze(String text, Automata automata, Map<String, String> stateToToken) throws InvalidStateException, DuplicatedStateException, DuplicatedTransitionException{
+	public List<LexicalEntry> analyze(String text) throws InvalidStateException, DuplicatedStateException, DuplicatedTransitionException{
 		List<LexicalEntry> entries = new ArrayList<LexicalEntry>();
 		char[] inputText = text.toCharArray();
 		
