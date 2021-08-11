@@ -47,6 +47,13 @@ public class LexicalAnalyzerControl {
 				load();
 			}
 		});
+		
+		this.laPanel.getDefinitionPanel().getClearButton().addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				clear();
+			}
+		});
 	}
 
 	/**
@@ -94,6 +101,16 @@ public class LexicalAnalyzerControl {
 			JOptionPane.showMessageDialog(laPanel, "Invalid file", "Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Clears text areas in lexical analyzer panel
+	 */
+	private void clear() {
+		this.laPanel.getDefinitionPanel().getRegexTextArea().setText("");
+		this.laPanel.getDefinitionPanel().getTokenTextArea().setText("");
+		
+
 	}
 
 }
