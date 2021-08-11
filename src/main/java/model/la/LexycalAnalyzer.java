@@ -1,15 +1,32 @@
 package model.la;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import exception.automata.DuplicatedStateException;
 import exception.automata.DuplicatedTransitionException;
 import exception.automata.InvalidStateException;
+import exception.regex.BracketMismatchException;
+import exception.regex.InvalidInputException;
+import exception.regex.OperatorMismatchException;
 import model.automata.Automata;
+import model.regex.Regex;
 
 public class LexycalAnalyzer {
+	
+	private final static String SE = " : ";
+	private final static String tokenPath = "";
+	private final static String redefPath = "";
+	
 	
 	public static List<LexicalEntry> analyze(String text, Automata automata, Map<String, String> stateToToken) throws InvalidStateException, DuplicatedStateException, DuplicatedTransitionException{
 		List<LexicalEntry> entries = new ArrayList<LexicalEntry>();
@@ -71,5 +88,101 @@ public class LexycalAnalyzer {
 		return entries;
 		
 	}
-
+	
+	public static void storeRegularDefinition(String input) {
+		FileWriter fw;
+		try {
+			fw = new FileWriter(redefPath,true);
+			BufferedWriter bw = new BufferedWriter(fw);
+			BufferedReader br = new BufferedReader(new StringReader(input));
+			String redef = null;
+			while ((redef = br.readLine()) != null) {
+				bw.write(redef);
+				bw.newLine();
+			}
+			bw.close();
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static Map<String, String> loadRegularDefinition() {
+		Map<String, String> redefMap = new HashMap<>();
+		FileReader fr;
+		try {
+			fr = new FileReader(redefPath);
+		BufferedReader br = new BufferedReader(fr);
+		while (br.ready()) {
+			StringTokenizer st = new StringTokenizer(br.readLine(), SE);
+			redefMap.put(st.nextToken(), st.nextToken());
+		}
+		br.close();
+		fr.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return redefMap;
+	}
+	
+	public static void storeToken(String input) {
+		FileWriter fw;
+		try {
+			fw = new FileWriter(tokenPath, true);
+			BufferedWriter bw = new BufferedWriter(fw);
+			BufferedReader br = new BufferedReader(new StringReader(input));
+			String token = null;
+			while ((token = br.readLine()) != null) {
+				bw.write(redefParser(token));
+				bw.newLine();
+			}
+			bw.close();
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static Map<String, String> loadToken() {
+		Map<String, String> tokenMap = new HashMap<>();
+		FileReader fr;
+		try {
+			fr = new FileReader(tokenPath);
+			BufferedReader br = new BufferedReader(fr);
+			while (br.ready()) {
+				StringTokenizer st = new StringTokenizer(br.readLine(), SE);
+				tokenMap.put(st.nextToken(), st.nextToken());
+			}
+			br.close();
+			fr.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return tokenMap;
+	}
+	
+	public static String redefParser(String token) {
+		StringTokenizer st = new StringTokenizer(token, SE);
+		Map<String, String> redefMap = loadRegularDefinition();
+		String id = st.nextToken();
+		String regex = st.nextToken();
+		for (String redef : redefMap.keySet()) {
+			if (regex.contains(redef)) {
+				regex.replace(redef, redefMap.get(redef));
+			}
+		}
+		String parsedToken = id.concat(SE).concat(regex);
+		return parsedToken;
+	}
+	
+	public static Automata parser() throws BracketMismatchException, OperatorMismatchException, InvalidInputException, DuplicatedStateException, InvalidStateException, DuplicatedTransitionException {
+		Map<String, String> tokenMap = loadToken();
+		List<Automata> tokenFDAlist = new ArrayList<>();
+		for (String token : tokenMap.keySet()) {
+			Regex regex = new Regex(tokenMap.get(token));
+			tokenFDAlist.add(regex.convert());
+		}
+		Automata parser = Automata.unify(tokenFDAlist).determinize();
+		return parser;
+	}
 }
