@@ -92,7 +92,7 @@ public class Regex {
 		String postfix = infixToPostfix(concatOp(this.regex));
 		Stack<Node> stack = new Stack<>();
 		char[] regex = postfix.toCharArray();
-		System.out.println(postfix);
+		//System.out.println(postfix);
 		Node root = new Node('.');
 		root.setRight(new Node('#'));
 		Node node;

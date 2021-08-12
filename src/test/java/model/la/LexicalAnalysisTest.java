@@ -69,9 +69,7 @@ public class LexicalAnalysisTest {
 			
 			LexicalAnalyzer lexicon = new LexicalAnalyzer();
 			Map<String, String> redefMap = lexicon.loadRegularDefinition(redefList);
-			Map<String, String> tokenMap = lexicon.loadToken(tokenList, redefList);
 			for (String regex : redefMap.keySet()) System.out.println(redefMap.get(regex)+" : "+regex);
-			for (String regex : tokenMap.keySet()) System.out.println(tokenMap.get(regex)+" : "+regex);
 		} catch (IOException e) {
 			System.err.println("Arquivo Não Encontrado");
 			e.printStackTrace();
@@ -116,8 +114,6 @@ public class LexicalAnalysisTest {
 				System.out.println("----------------------------------------------------------------------------------------");
 				System.out.println();
 				System.out.println("STATES TO TOKEN");
-				Map<String, String> statesToToken = lexicon.getStateToToken();
-				for (String state : statesToToken.keySet()) System.out.println(state+" : "+statesToToken.get(state));
 			} catch (BracketMismatchException | OperatorMismatchException | InvalidInputException
 					| DuplicatedStateException | InvalidStateException | DuplicatedTransitionException e) {
 				e.printStackTrace();

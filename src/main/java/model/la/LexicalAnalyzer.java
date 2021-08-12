@@ -28,19 +28,19 @@ public class LexicalAnalyzer {
 	
 	private final static String SE = " : ";
 
-	private Map<String, String> stateToToken = null;
+	private List<Object[]> stateToToken = null;
 	private Automata automata = null;
 	
 	public LexicalAnalyzer() {
-		stateToToken = new HashMap<>();
+		stateToToken = new ArrayList<Object[]>();
 	}
 	
 	public LexicalAnalyzer(String definitions, String tokens) throws BracketMismatchException, OperatorMismatchException, InvalidInputException, DuplicatedStateException, InvalidStateException, DuplicatedTransitionException {
-		stateToToken = new HashMap<>();
+		stateToToken = new ArrayList<Object[]>();
 		this.setDefinitions(definitions, tokens);
 	}
 	
-	public Map<String, String> getStateToToken() {
+	public List<Object[]> getStateToToken() {
 		return this.stateToToken;
 	}
 	
@@ -51,8 +51,19 @@ public class LexicalAnalyzer {
 	 */
 	private String getTokenID(String state) {
 
-		String singleState = Automata.stringToStateList(state).get(0);
-		return stateToToken.get(singleState);
+		List<String> states = Automata.stringToStateList(state);
+		Object[] candidateEntry = new Object[] {null, null, Integer.valueOf(Integer.MAX_VALUE)};
+		for (Object[] entry : stateToToken) {
+			if (states.contains(entry[0])) {
+				if ((Integer)candidateEntry[2] > (Integer)entry[2]) {
+					candidateEntry = entry;
+				}
+			}
+		}
+		
+		if(candidateEntry[0]==null)
+			return null;
+		return (String)candidateEntry[1];
 	}
 	
 	/**
@@ -142,11 +153,14 @@ public class LexicalAnalyzer {
 		return redefMap;
 	}
 	
-	public Map<String, String> loadToken(List<String> tokenList, List<String> redefList) {
-		Map<String, String> tokenMap = new HashMap<>();
+	public Map<String, Object[]> loadToken(List<String> tokenList, List<String> redefList) {
+		Map<String, Object[]> tokenMap = new HashMap<>();
+		int index = 0;
 		for (String line : tokenList) {
 			StringTokenizer tokenST = new StringTokenizer(line, SE);
-			tokenMap.put(redefParser(line, redefList), tokenST.nextToken().trim());
+			String temp = redefParser(line, redefList);
+			tokenMap.put(temp, new Object[] {tokenST.nextToken().trim(), Integer.valueOf(index)});
+			index++;
 		}
 		return tokenMap;
 	}
@@ -165,8 +179,8 @@ public class LexicalAnalyzer {
 	}
 	
 	public Automata parser(List<String> tokenList, List<String> redefList) throws BracketMismatchException, OperatorMismatchException, InvalidInputException, DuplicatedStateException, InvalidStateException, DuplicatedTransitionException {
-		Map<String, String> tokenMap = loadToken(tokenList, redefList);
-		Map<Automata, String> automataToID = new HashMap<Automata, String>();
+		Map<String, Object[]> tokenMap = loadToken(tokenList, redefList);
+		HashMap<Automata, Object[]> automataToID = new HashMap<Automata, Object[]>();
 				
 		List<Automata> tokenFDAlist = new ArrayList<>();
 		for (String regexString : tokenMap.keySet()) {
@@ -181,9 +195,11 @@ public class LexicalAnalyzer {
 		for (String finalState : automaton.getFinalStates()) {
 			String[] splited = finalState.split("-");
 			int index = Integer.parseInt(splited[splited.length-1])-1;
-			String id = automataToID.get(tokenFDAlist.get(index));
-			stateToToken.put(finalState, id);
+			String id = (String)automataToID.get(tokenFDAlist.get(index))[0];
+			Integer precedence = (Integer)automataToID.get(tokenFDAlist.get(index))[1];
+			stateToToken.add(new Object[] {finalState, id, precedence});
 		}
+		
 		
 		return automaton.determinize();
 	}
