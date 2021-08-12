@@ -21,7 +21,7 @@ public class RegexPanel extends JPanel {
 	
 	JPanel panel = null;
 	JTextField regexField = null;
-	JButton loadRegexButton = null;
+	JButton saveButton = null;
 	
 	
 	public RegexPanel() {
@@ -33,21 +33,31 @@ public class RegexPanel extends JPanel {
 	private void initializePanel() {
 		
 		regexField = new JTextField(20);
-		loadRegexButton = new JButton("Load");
+		saveButton = new JButton("Save automata");
 		
 		panel = new JPanel(new WrapLayout());
 		panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
 		
 		panel.add(regexField);
-		panel.add(loadRegexButton);
-		
-		loadRegexButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-			}
-		});
+		panel.add(saveButton);
 		
 	}
+
+	public JTextField getRegexField() {
+		return regexField;
+	}
+
+	public void setRegexField(JTextField regexField) {
+		this.regexField = regexField;
+	}
+
+	public JButton getSaveButton() {
+		return saveButton;
+	}
+
+	public void setSaveButton(JButton saveButton) {
+		this.saveButton = saveButton;
+	}
+	
 
 }
