@@ -32,7 +32,8 @@ public class DefinitionPanel extends JPanel {
 	JButton saveButton = null;
 	JButton clearButton = null;
 	JButton checkButton = null;
-	
+	JButton saveAutomataButton = null;
+
 	JPanel inputAreaPanel = null;
 	
 	JScrollPane regexScroll = null;
@@ -59,7 +60,7 @@ public class DefinitionPanel extends JPanel {
 		this.add(BorderLayout.NORTH, this.toolbar);
 		this.add(BorderLayout.CENTER, this.inputAreaPanel);
 	}
-	
+
 	private void initializeToolBar() {
 		this.toolbar = new JPanel(new WrapLayout());
 		
@@ -67,11 +68,13 @@ public class DefinitionPanel extends JPanel {
 		this.saveButton = new JButton("Save");
 		this.clearButton = new JButton("Clear");
 		this.checkButton = new JButton("Check");
+		this.saveAutomataButton = new JButton("Save Automata");
 
 		this.toolbar.add(this.loadButton);
 		this.toolbar.add(this.saveButton);
 		this.toolbar.add(this.clearButton);
 		this.toolbar.add(this.checkButton);
+		this.toolbar.add(this.saveAutomataButton);
 	}
 	
 	private void initializeInputArea() {
@@ -157,6 +160,14 @@ public class DefinitionPanel extends JPanel {
 
 	public void setCheckButton(JButton checkButton) {
 		this.checkButton = checkButton;
+	}
+	
+	public JButton getSaveAutomataButton() {
+		return saveAutomataButton;
+	}
+
+	public void setSaveAutomataButton(JButton saveAutomataButton) {
+		this.saveAutomataButton = saveAutomataButton;
 	}
 
 	public HighlightedTextPane getRegexTextArea() {

@@ -1,6 +1,7 @@
 package model.la;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,9 @@ public class LexicalAnalyzer {
 		return this.stateToToken;
 	}
 	
+	public LexicalAnalyzer(String definitions, String tokens) throws BracketMismatchException, OperatorMismatchException, InvalidInputException, DuplicatedStateException, InvalidStateException, DuplicatedTransitionException {
+		this.setDefinitions(definitions, tokens);
+	}
 	
 	public List<LexicalEntry> analyze(String text) throws InvalidStateException, DuplicatedStateException, DuplicatedTransitionException{
 		List<LexicalEntry> entries = new ArrayList<LexicalEntry>();
@@ -147,5 +151,16 @@ public class LexicalAnalyzer {
 			stateToToken.put(finalState, tokenMap.get(regex)+":"+regex);
 		}
 		return Automata.unify(tokenFDAlist);
+	}
+	
+	public void setDefinitions(String definitions, String tokens) throws BracketMismatchException, OperatorMismatchException, InvalidInputException, DuplicatedStateException, InvalidStateException, DuplicatedTransitionException {
+		List<String> definitionList = Arrays.asList(definitions.split("\n"));
+		List<String> tokenList = Arrays.asList(tokens.split("\n"));
+		
+		this.automata = parser(tokenList, definitionList);
+	}
+	
+	public Automata getAutomata() {
+		return this.automata;
 	}
 }

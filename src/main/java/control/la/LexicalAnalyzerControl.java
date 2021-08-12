@@ -4,13 +4,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+import exception.automata.DuplicatedStateException;
+import exception.automata.DuplicatedTransitionException;
+import exception.automata.InvalidStateException;
+import exception.regex.BracketMismatchException;
+import exception.regex.InvalidInputException;
+import exception.regex.OperatorMismatchException;
+import model.automata.Automata;
 import model.io.FileUtils;
+import model.la.LexicalAnalyzer;
+import model.regex.Regex;
 import view.la.LexicalAnalyzerPanel;
 
 /**
@@ -52,6 +62,13 @@ public class LexicalAnalyzerControl {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				clear();
+			}
+		});
+		
+		this.laPanel.getDefinitionPanel().getSaveAutomataButton().addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				saveAutomata();
 			}
 		});
 	}
@@ -115,8 +132,26 @@ public class LexicalAnalyzerControl {
 	private void clear() {
 		this.laPanel.getDefinitionPanel().getRegexTextArea().setText("");
 		this.laPanel.getDefinitionPanel().getTokenTextArea().setText("");
-		
 
+	}
+
+
+	private void saveAutomata() {
+
+		String definitions = this.laPanel.getDefinitionPanel().getRegexTextArea().getText();
+		String tokens = this.laPanel.getDefinitionPanel().getTokenTextArea().getText();
+		
+		try {
+			Automata automata =(new LexicalAnalyzer(definitions, tokens)).getAutomata();
+			File path = FileUtils.selectExportFile("*.automata", laPanel);
+			FileUtils.saveToFile(automata, path.getAbsolutePath());
+		} catch (DuplicatedStateException | BracketMismatchException | OperatorMismatchException | InvalidInputException | InvalidStateException | DuplicatedTransitionException e) {
+			JOptionPane.showMessageDialog(laPanel, "Couldn't generate automata", "Error", JOptionPane.ERROR_MESSAGE);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(laPanel, "Error saving file", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		
+		
 	}
 
 }
