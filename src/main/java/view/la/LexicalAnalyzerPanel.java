@@ -12,6 +12,19 @@ import javax.swing.JTabbedPane;
  */
 public class LexicalAnalyzerPanel extends JPanel {
 	
+	public enum LexicalAnalyzerTab{
+		DEFINITIONS(0), ANALYSIS(1);
+		private int value;
+
+		LexicalAnalyzerTab(int value) {
+	        this.value = value;
+	    }
+
+	    public int getValue() {
+			return value;
+	    }
+	}
+	
 	/**
 	 * 
 	 */
@@ -65,6 +78,17 @@ public class LexicalAnalyzerPanel extends JPanel {
 		this.analysisPanel = analysisPanel;
 	}
 	
+	public void setTab(LexicalAnalyzerTab tab) {
+		this.laTabs.setSelectedIndex(tab.getValue());
+	}
+
+	public JTabbedPane getTabs() {
+		return laTabs;
+	}
+
+	public void setTabs(JTabbedPane laTabs) {
+		this.laTabs = laTabs;
+	}
 	
 	
 	

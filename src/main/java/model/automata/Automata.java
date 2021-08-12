@@ -17,6 +17,8 @@ import exception.automata.InvalidStateException;
  *
  */
 public class Automata {
+	
+	public boolean determinized = false;
 
 	/**
 	 * States list
@@ -485,7 +487,8 @@ public class Automata {
 
 		List<String> initialClosure = this.getEpsilonClosure(initialState);
 		determinize(initialClosure, determinized);
-
+		
+		determinized.determinized = true;
 		determinized.setInitialState(stateListToString(initialClosure));
 
 		for (Character character : determinized.getAlphabet()) {
@@ -599,7 +602,7 @@ public class Automata {
 	 * @param string representing states list
 	 * @return list of states
 	 */
-	private static List<String> stringToStateList(String string) {
+	public static List<String> stringToStateList(String string) {
 		List<String> list = new ArrayList<String>();
 		if (string.startsWith("{") && string.endsWith("}")) {
 			string = string.substring(1, string.length() - 1);
@@ -665,7 +668,14 @@ public class Automata {
 			throws InvalidStateException, DuplicatedStateException, DuplicatedTransitionException {
 		String currState = null;
 		int currCharacter = 0;
-		Automata determinized = this.determinize();
+		
+		Automata determinized = null;
+		
+		if (this.determinized == false)
+			determinized = this.determinize();
+		else
+			determinized = this;
+			
 		List<String> transition = null;
 
 		currState = determinized.getInitialState();

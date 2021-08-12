@@ -44,6 +44,14 @@ public class LexicalAnalyzer {
 		return this.stateToToken;
 	}
 	
+	/**
+	 * Analyze a text
+	 * @param text - to be analyzed
+	 * @return {@link List} {@code <}{@link LexicalEntry}{@code >} of tokens found
+	 * @throws InvalidStateException
+	 * @throws DuplicatedStateException
+	 * @throws DuplicatedTransitionException
+	 */
 	public List<LexicalEntry> analyze(String text) throws InvalidStateException, DuplicatedStateException, DuplicatedTransitionException{
 		List<LexicalEntry> entries = new ArrayList<LexicalEntry>();
 		char[] inputText = text.toCharArray();
@@ -91,7 +99,8 @@ public class LexicalAnalyzer {
 			}
 			
 			position = i - length;
-			token = stateToToken.get(lastAcceptedState);
+			String singleState = Automata.stringToStateList(lastAcceptedState).get(0);
+			token = stateToToken.get(singleState);
 			entries.add(new LexicalEntry(token, lastLexeme, position));
 			length = 0;
 			
@@ -160,7 +169,7 @@ public class LexicalAnalyzer {
 			stateToToken.put(finalState, id);
 		}
 		
-		return automaton;
+		return automaton.determinize();
 	}
 	
 	public void setDefinitions(String definitions, String tokens) throws BracketMismatchException, OperatorMismatchException, InvalidInputException, DuplicatedStateException, InvalidStateException, DuplicatedTransitionException {
