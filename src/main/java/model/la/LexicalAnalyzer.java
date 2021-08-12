@@ -3,6 +3,7 @@ package model.la;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -140,18 +141,26 @@ public class LexicalAnalyzer {
 	
 	public Automata parser(List<String> tokenList, List<String> redefList) throws BracketMismatchException, OperatorMismatchException, InvalidInputException, DuplicatedStateException, InvalidStateException, DuplicatedTransitionException {
 		Map<String, String> tokenMap = loadToken(tokenList, redefList);
+		Map<Automata, String> automataToID = new HashMap<Automata, String>();
+				
 		List<Automata> tokenFDAlist = new ArrayList<>();
 		for (String regexString : tokenMap.keySet()) {
 			Regex regex = new Regex(regexString);
 			Automata automaton = regex.convert();
 			tokenFDAlist.add(automaton);
+			automataToID.put(automaton, tokenMap.get(regexString));
 		}
-		Automata automaton = Automata.unify(tokenFDAlist).determinize();
-		for (String regex : tokenMap.keySet()) {
-			String finalState = automaton.compute(regex);
-			stateToToken.put(finalState, tokenMap.get(regex)+":"+regex);
+		
+		Automata automaton = Automata.unify(tokenFDAlist);
+		
+		for (String finalState : automaton.getFinalStates()) {
+			String[] splited = finalState.split("-");
+			int index = Integer.parseInt(splited[splited.length-1])-1;
+			String id = automataToID.get(tokenFDAlist.get(index));
+			stateToToken.put(finalState, id);
 		}
-		return Automata.unify(tokenFDAlist);
+		
+		return automaton;
 	}
 	
 	public void setDefinitions(String definitions, String tokens) throws BracketMismatchException, OperatorMismatchException, InvalidInputException, DuplicatedStateException, InvalidStateException, DuplicatedTransitionException {
