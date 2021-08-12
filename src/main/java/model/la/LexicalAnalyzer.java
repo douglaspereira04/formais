@@ -45,6 +45,17 @@ public class LexicalAnalyzer {
 	}
 	
 	/**
+	 * Given a final state returns the token id
+	 * @param state - final state
+	 * @return token id of {@link String} type
+	 */
+	private String getTokenID(String state) {
+
+		String singleState = Automata.stringToStateList(state).get(0);
+		return stateToToken.get(singleState);
+	}
+	
+	/**
 	 * Analyze a text
 	 * @param text - to be analyzed
 	 * @return {@link List} {@code <}{@link LexicalEntry}{@code >} of tokens found
@@ -99,8 +110,7 @@ public class LexicalAnalyzer {
 			}
 			
 			position = i - length;
-			String singleState = Automata.stringToStateList(lastAcceptedState).get(0);
-			token = stateToToken.get(singleState);
+			token = getTokenID(lastAcceptedState);
 			entries.add(new LexicalEntry(token, lastLexeme, position));
 			length = 0;
 			
