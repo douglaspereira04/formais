@@ -34,12 +34,13 @@ public class LexicalAnalyzer {
 		stateToToken = new HashMap<>();
 	}
 	
-	public Map<String, String> getStateToToken() {
-		return this.stateToToken;
+	public LexicalAnalyzer(String definitions, String tokens) throws BracketMismatchException, OperatorMismatchException, InvalidInputException, DuplicatedStateException, InvalidStateException, DuplicatedTransitionException {
+		stateToToken = new HashMap<>();
+		this.setDefinitions(definitions, tokens);
 	}
 	
-	public LexicalAnalyzer(String definitions, String tokens) throws BracketMismatchException, OperatorMismatchException, InvalidInputException, DuplicatedStateException, InvalidStateException, DuplicatedTransitionException {
-		this.setDefinitions(definitions, tokens);
+	public Map<String, String> getStateToToken() {
+		return this.stateToToken;
 	}
 	
 	public List<LexicalEntry> analyze(String text) throws InvalidStateException, DuplicatedStateException, DuplicatedTransitionException{
