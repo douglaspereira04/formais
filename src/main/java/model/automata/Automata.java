@@ -229,9 +229,9 @@ public class Automata {
 			if (transition.getSourceState().equals(sourceState))
 				transitions.add(transition);
 		}
-		//Esta linha de código causará NullPointerException toda vez que este método for chamado em um estado final que não tenha transições
-		//if (transitions.size() == 0)
-			//transitions = null;
+		
+		if (transitions.size() == 0)
+			transitions = null;
 
 		return transitions;
 	}
@@ -531,25 +531,25 @@ public class Automata {
 		String name = stateListToString(closure);
 
 		for (String state : closure) {
-			System.out.println("DETERMINIZE TESTE - STATE: "+state);
 			List<Transition> transitions = this.getTransitions(state);
-			System.out.println("TRANSITION: "+transitions.size());
-			for (Transition transition : transitions) {
-				Character character = transition.getTransitionCharacter();
-				if (character.equals('&'))
-					continue;
+			if (transitions != null) {
+				for (Transition transition : transitions) {
+					Character character = transition.getTransitionCharacter();
+					if (character.equals('&'))
+						continue;
 
-				for (String targetState : transition.getTargetStates()) {
-					for (String targetStateInClosure : getEpsilonClosure(targetState)) {
-						if (!automata.getStates().contains(name))
-							automata.addState(name);
+					for (String targetState : transition.getTargetStates()) {
+						for (String targetStateInClosure : getEpsilonClosure(targetState)) {
+							if (!automata.getStates().contains(name))
+								automata.addState(name);
 
-						if (automata.getTransition(name, character) == null
-								|| !automata.getTransition(name, character).contains(targetStateInClosure)) {
-							if (!automata.getStates().contains(targetStateInClosure))
-								automata.addState(targetStateInClosure);
+							if (automata.getTransition(name, character) == null
+									|| !automata.getTransition(name, character).contains(targetStateInClosure)) {
+								if (!automata.getStates().contains(targetStateInClosure))
+									automata.addState(targetStateInClosure);
 
-							automata.addTransition(name, character, targetStateInClosure);
+								automata.addTransition(name, character, targetStateInClosure);
+							}
 						}
 					}
 				}
