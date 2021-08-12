@@ -1,0 +1,11 @@
+keyword:begin
+keyword:while
+keyword:if
+keyword:for
+keyword:private
+keyword:public
+keyword:new
+literal:L(L|D)*
+relop:(<|>|==|>=|<=)
+number:D*
+string:"(L|D)*"

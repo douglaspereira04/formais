@@ -229,9 +229,9 @@ public class Automata {
 			if (transition.getSourceState().equals(sourceState))
 				transitions.add(transition);
 		}
-
-		if (transitions.size() == 0)
-			transitions = null;
+		//Esta linha de código causará NullPointerException toda vez que este método for chamado em um estado final que não tenha transições
+		//if (transitions.size() == 0)
+			//transitions = null;
 
 		return transitions;
 	}
@@ -492,7 +492,10 @@ public class Automata {
 			for (String state : determinized.getStates()) {
 				if (determinized.getTransition(state, character) != null) {
 					String closureState = stateListToString(determinized.getTransition(state, character));
-
+					//System.out.println("ERRO INVALID STATE TEST");
+					//System.out.println("STATE: "+state);
+					//System.out.println("CHARACTER: "+character);
+					System.out.println("CLOSURE STATE: "+closureState);
 					determinized.removeTransitions(state, character);
 					determinized.addTransition(state, character, closureState);
 				}
@@ -528,7 +531,9 @@ public class Automata {
 		String name = stateListToString(closure);
 
 		for (String state : closure) {
+			System.out.println("DETERMINIZE TESTE - STATE: "+state);
 			List<Transition> transitions = this.getTransitions(state);
+			System.out.println("TRANSITION: "+transitions.size());
 			for (Transition transition : transitions) {
 				Character character = transition.getTransitionCharacter();
 				if (character.equals('&'))
@@ -674,5 +679,4 @@ public class Automata {
 
 		return null;
 	}
-
 }

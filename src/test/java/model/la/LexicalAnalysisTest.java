@@ -1,6 +1,10 @@
 package model.la;
 
-import java.util.HashMap;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -8,71 +12,123 @@ import org.junit.Test;
 import exception.automata.DuplicatedStateException;
 import exception.automata.DuplicatedTransitionException;
 import exception.automata.InvalidStateException;
+import exception.regex.BracketMismatchException;
+import exception.regex.InvalidInputException;
+import exception.regex.OperatorMismatchException;
 import model.automata.Automata;
-import view.la.AnalysisTable;
-
+import model.automata.Transition;
 public class LexicalAnalysisTest {
-
+	
 	@Test
-	public void LexicalAnalysisTest() throws InvalidStateException, DuplicatedStateException, DuplicatedTransitionException {
-
-		Automata automata = new Automata();
-		Map<String, String> stateToToken = new HashMap<String, String>();
-		AnalysisTable table = new AnalysisTable();
-		Character[] inputText = new Character[50];
-		String acceptedState = null;
-		String lastAcceptedState = null;
-		String token = null;
-		int position = 0;
-
-		int length = 0;
-
-		boolean lexicalError = false;
-
-		String lexeme = "";
-		String lastLexeme = "";
-
-		for (int i = 0; i < inputText.length; i++) {
-			lexeme = lexeme.concat(String.valueOf(inputText[i]));
-
-			length++;
-			acceptedState = automata.compute(lexeme);
-
-			if (acceptedState == null) {
-				if (!(i+1 < inputText.length)) {
-					lexicalError = true;
-					position = i;
-					break;
-				}
-				continue;
-			}
-
-			while (acceptedState != null) {
-				length++;
-				lastAcceptedState = acceptedState;
-				lastLexeme = lexeme;
-
-				i++;
-
-				if (!(i < inputText.length)) {
-					break;
-				}
-
-				lexeme = lexeme.concat(String.valueOf(inputText[i]));
-				acceptedState = automata.compute(lexeme);
-			}
-			
-			position = i - length;
-			token = stateToToken.get(lastAcceptedState);
-			table.addEntry(token, lastLexeme, position);
-			length = 0;
-			
+	public void LexicalAnalyzerFileReadTest() {
+		
+		System.out.println("INICIO TESTE 1");
+		
+		try {
+			FileReader redefFR = new FileReader("redef.txt");
+			FileReader tokenFR = new FileReader("token.txt");
+			BufferedReader redefBR = new BufferedReader(redefFR);
+			BufferedReader tokenBR = new BufferedReader(tokenFR);
+			List<String> redefList = new ArrayList<>();
+			List<String> tokenList = new ArrayList<>();
+			while (redefBR.ready()) redefList.add(redefBR.readLine());
+			while (tokenBR.ready()) tokenList.add(tokenBR.readLine());
+			for (String line : redefList) System.out.println(line);
+			for (String line : tokenList) System.out.println(line);
+			redefFR.close();
+			redefBR.close();
+			tokenFR.close();
+			tokenBR.close();
+		} catch (IOException e) {
+			System.err.println("Arquivo Não Encontrado");
+			e.printStackTrace();
 		}
 		
-		if (lexicalError) {
-			table.addEntry("ERROR", lexeme, position);
+		System.out.println("TERMINO TESTE 1");
+		
+	}
+	
+	@Test
+	public void LexicalAnalyzerLoadTest() {
+		
+		System.out.println("INICIO TESTE 2");
+		
+		try {
+			FileReader redefFR = new FileReader("redef.txt");
+			FileReader tokenFR = new FileReader("token.txt");
+			BufferedReader redefBR = new BufferedReader(redefFR);
+			BufferedReader tokenBR = new BufferedReader(tokenFR);
+			List<String> redefList = new ArrayList<>();
+			List<String> tokenList = new ArrayList<>();
+			while (redefBR.ready()) redefList.add(redefBR.readLine());
+			while (tokenBR.ready()) tokenList.add(tokenBR.readLine());
+			redefFR.close();
+			redefBR.close();
+			tokenFR.close();
+			tokenBR.close();
+			
+			LexicalAnalyzer lexicon = new LexicalAnalyzer();
+			Map<String, String> redefMap = lexicon.loadRegularDefinition(redefList);
+			Map<String, String> tokenMap = lexicon.loadToken(tokenList, redefList);
+			for (String regex : redefMap.keySet()) System.out.println(redefMap.get(regex)+" : "+regex);
+			for (String regex : tokenMap.keySet()) System.out.println(tokenMap.get(regex)+" : "+regex);
+		} catch (IOException e) {
+			System.err.println("Arquivo Não Encontrado");
+			e.printStackTrace();
 		}
-
+		
+		System.out.println("TERMINO TESTE 2");
+	}
+	
+	@Test
+	public void LexicalAnalyzerParserTest() {
+		System.out.println("INICIO TESTE 3");
+		try {
+			FileReader redefFR = new FileReader("redef.txt");
+			FileReader tokenFR = new FileReader("token.txt");
+			BufferedReader redefBR = new BufferedReader(redefFR);
+			BufferedReader tokenBR = new BufferedReader(tokenFR);
+			List<String> redefList = new ArrayList<>();
+			List<String> tokenList = new ArrayList<>();
+			while (redefBR.ready()) redefList.add(redefBR.readLine());
+			while (tokenBR.ready()) tokenList.add(tokenBR.readLine());
+			redefFR.close();
+			redefBR.close();
+			tokenFR.close();
+			tokenBR.close();
+			
+			LexicalAnalyzer lexicon = new LexicalAnalyzer();
+			try {
+				Automata automaton = lexicon.parser(tokenList, redefList);
+				System.out.println("ESTADOS:");
+				for (String state : automaton.getStates()) System.out.println(state);
+				System.out.println("ESTADO INICIAL:");
+				System.out.println(automaton.getInitialState());
+				System.out.println("ESTADOS FINAIS:");
+				for (String state : automaton.getFinalStates()) System.out.println(state);
+				System.out.println("TRANSIÇÕES:");
+				for (Transition transition : automaton.getTransitions()) {
+					for (String targetState : transition.getTargetStates()) {
+						System.out.println(transition.getSourceState() + ">>" +transition.getTransitionCharacter()+">>"+ targetState);
+					}
+				}
+				
+				System.out.println("----------------------------------------------------------------------------------------");
+				System.out.println();
+				System.out.println("STATES TO TOKEN");
+				Map<String, String> statesToToken = lexicon.getStateToToken();
+				for (String state : statesToToken.keySet()) System.out.println(state+" : "+statesToToken.get(state));
+			} catch (BracketMismatchException | OperatorMismatchException | InvalidInputException
+					| DuplicatedStateException | InvalidStateException | DuplicatedTransitionException e) {
+				e.printStackTrace();
+			}
+		} catch (IOException e) {
+			System.err.println("Arquivo Não Encontrado");
+			e.printStackTrace();
+		}
+		
+		System.out.println("TERMINO TESTE 3");
+		
 	}
 
 }

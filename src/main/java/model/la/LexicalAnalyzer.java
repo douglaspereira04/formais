@@ -1,11 +1,5 @@
 package model.la;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,11 +25,17 @@ import model.regex.Regex;
 public class LexicalAnalyzer {
 	
 	private final static String SE = " : ";
-	private final static String tokenPath = "";
-	private final static String redefPath = "";
 
-	Map<String, String> stateToToken = null;
-	Automata automata = null;
+	private Map<String, String> stateToToken = null;
+	private Automata automata = null;
+	
+	public LexicalAnalyzer() {
+		stateToToken = new HashMap<>();
+	}
+	
+	public Map<String, String> getStateToToken() {
+		return this.stateToToken;
+	}
 	
 	
 	public List<LexicalEntry> analyze(String text) throws InvalidStateException, DuplicatedStateException, DuplicatedTransitionException{
@@ -99,100 +99,53 @@ public class LexicalAnalyzer {
 		
 	}
 	
-	public static void storeRegularDefinition(String input) {
-		FileWriter fw;
-		try {
-			fw = new FileWriter(redefPath,true);
-			BufferedWriter bw = new BufferedWriter(fw);
-			BufferedReader br = new BufferedReader(new StringReader(input));
-			String redef = null;
-			while ((redef = br.readLine()) != null) {
-				bw.write(redef);
-				bw.newLine();
-			}
-			bw.close();
-			fw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public static Map<String, String> loadRegularDefinition() {
+	public Map<String, String> loadRegularDefinition(List<String> redefList) {
 		Map<String, String> redefMap = new HashMap<>();
-		FileReader fr;
-		try {
-			fr = new FileReader(redefPath);
-		BufferedReader br = new BufferedReader(fr);
-		while (br.ready()) {
-			StringTokenizer st = new StringTokenizer(br.readLine(), SE);
-			redefMap.put(st.nextToken(), st.nextToken());
+		for (String line : redefList) {
+			StringTokenizer redefST = new StringTokenizer(line, SE);
+			String id = redefST.nextToken();
+			String redef = redefST.nextToken();
+			redefMap.put(redef, id);
 		}
-		br.close();
-		fr.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		
 		return redefMap;
 	}
 	
-	public static void storeToken(String input) {
-		FileWriter fw;
-		try {
-			fw = new FileWriter(tokenPath, true);
-			BufferedWriter bw = new BufferedWriter(fw);
-			BufferedReader br = new BufferedReader(new StringReader(input));
-			String token = null;
-			while ((token = br.readLine()) != null) {
-				bw.write(redefParser(token));
-				bw.newLine();
-			}
-			bw.close();
-			fw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public static Map<String, String> loadToken() {
+	public Map<String, String> loadToken(List<String> tokenList, List<String> redefList) {
 		Map<String, String> tokenMap = new HashMap<>();
-		FileReader fr;
-		try {
-			fr = new FileReader(tokenPath);
-			BufferedReader br = new BufferedReader(fr);
-			while (br.ready()) {
-				StringTokenizer st = new StringTokenizer(br.readLine(), SE);
-				tokenMap.put(st.nextToken(), st.nextToken());
-			}
-			br.close();
-			fr.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		for (String line : tokenList) {
+			StringTokenizer tokenST = new StringTokenizer(line, SE);
+			tokenMap.put(redefParser(line, redefList), tokenST.nextToken().trim());
 		}
 		return tokenMap;
 	}
 	
-	public static String redefParser(String token) {
+	public String redefParser(String token, List<String> redefString) {
 		StringTokenizer st = new StringTokenizer(token, SE);
-		Map<String, String> redefMap = loadRegularDefinition();
-		String id = st.nextToken();
+		Map<String, String> redefMap = loadRegularDefinition(redefString);
+		st.nextToken();
 		String regex = st.nextToken();
 		for (String redef : redefMap.keySet()) {
-			if (regex.contains(redef)) {
-				regex.replace(redef, redefMap.get(redef));
+			if (regex.contains(redefMap.get(redef))) {
+				regex = regex.replace(redefMap.get(redef), "("+redef+")");
 			}
 		}
-		String parsedToken = id.concat(SE).concat(regex);
-		return parsedToken;
+		return regex;
 	}
 	
-	public static Automata parser() throws BracketMismatchException, OperatorMismatchException, InvalidInputException, DuplicatedStateException, InvalidStateException, DuplicatedTransitionException {
-		Map<String, String> tokenMap = loadToken();
+	public Automata parser(List<String> tokenList, List<String> redefList) throws BracketMismatchException, OperatorMismatchException, InvalidInputException, DuplicatedStateException, InvalidStateException, DuplicatedTransitionException {
+		Map<String, String> tokenMap = loadToken(tokenList, redefList);
 		List<Automata> tokenFDAlist = new ArrayList<>();
-		for (String token : tokenMap.keySet()) {
-			Regex regex = new Regex(tokenMap.get(token));
-			tokenFDAlist.add(regex.convert());
+		for (String regexString : tokenMap.keySet()) {
+			Regex regex = new Regex(regexString);
+			Automata automaton = regex.convert();
+			tokenFDAlist.add(automaton);
 		}
-		Automata parser = Automata.unify(tokenFDAlist).determinize();
-		return parser;
+		Automata automaton = Automata.unify(tokenFDAlist).determinize();
+		for (String regex : tokenMap.keySet()) {
+			String finalState = automaton.compute(regex);
+			stateToToken.put(finalState, tokenMap.get(regex)+":"+regex);
+		}
+		return Automata.unify(tokenFDAlist);
 	}
 }
