@@ -489,11 +489,17 @@ public class Automata {
 		determinized.setInitialState(stateListToString(initialClosure));
 
 		for (Character character : determinized.getAlphabet()) {
-			for (String state : determinized.getStates()) {
+			int statesAmount = determinized.getStates().size();
+			
+			for (int i = 0; i < statesAmount; i++) {
+				String state = determinized.getStates().get(i);
+				
 				if (determinized.getTransition(state, character) != null) {
 					String closureState = stateListToString(determinized.getTransition(state, character));
-					if (!determinized.getStates().contains(closureState))
+					if (!determinized.getStates().contains(closureState)) {
 						determinized.addState(closureState);
+						statesAmount++;
+					}
 					determinized.removeTransitions(state, character);
 					determinized.addTransition(state, character, closureState);
 				}
@@ -666,7 +672,7 @@ public class Automata {
 		for (currCharacter = 0; currCharacter < word.length(); currCharacter++) {
 			transition = determinized.getTransition(currState, word.charAt(currCharacter));
 
-			if (transition.size() == 0) {
+			if (transition == null || transition.size() == 0) {
 				break;
 			}
 			currState = transition.get(0);
