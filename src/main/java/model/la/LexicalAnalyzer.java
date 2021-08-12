@@ -81,7 +81,6 @@ public class LexicalAnalyzer {
 
 		for (int i = 0; i < inputText.length; i++) {
 			lexeme = lexeme.concat(String.valueOf(inputText[i]));
-
 			length++;
 			acceptedState = automata.compute(lexeme);
 
@@ -95,29 +94,36 @@ public class LexicalAnalyzer {
 			}
 
 			while (acceptedState != null) {
-				length++;
 				lastAcceptedState = acceptedState;
 				lastLexeme = lexeme;
 
-				i++;
 
-				if (!(i < inputText.length)) {
+				if (!(i+1 < inputText.length)) {
 					break;
 				}
-
+				
+				i++;
 				lexeme = lexeme.concat(String.valueOf(inputText[i]));
+				length++;
+				
 				acceptedState = automata.compute(lexeme);
 			}
 			
 			position = i - length;
 			token = getTokenID(lastAcceptedState);
+			System.out.println(lastAcceptedState);
 			entries.add(new LexicalEntry(token, lastLexeme, position));
 			length = 0;
+			
+			if (acceptedState == null) {
+				i--;
+				lexeme = "";
+			}
 			
 		}
 		
 		if (lexicalError) {
-			entries.add(new LexicalEntry("ERROR", lexeme, position));
+			entries.add(new LexicalEntry("ERROR", lastLexeme, position));
 		}
 		
 		return entries;
