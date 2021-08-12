@@ -492,10 +492,8 @@ public class Automata {
 			for (String state : determinized.getStates()) {
 				if (determinized.getTransition(state, character) != null) {
 					String closureState = stateListToString(determinized.getTransition(state, character));
-					//System.out.println("ERRO INVALID STATE TEST");
-					//System.out.println("STATE: "+state);
-					//System.out.println("CHARACTER: "+character);
-					System.out.println("CLOSURE STATE: "+closureState);
+					if (!determinized.getStates().contains(closureState))
+						determinized.addState(closureState);
 					determinized.removeTransitions(state, character);
 					determinized.addTransition(state, character, closureState);
 				}
