@@ -146,6 +146,11 @@ public class LexicalAnalyzer {
 
 	}
 
+	/**
+	 * Maps every regular definition's expression into it's ID
+	 * @param List of regular definition Strings {id1:regex1, id2,regex2}
+	 * @return String Map Regex to ID <regex1, id1>
+	 */
 	public Map<String, String> loadRegularDefinition(List<String> redefList) {
 		Map<String, String> redefMap = new HashMap<>();
 		for (String line : redefList) {
@@ -158,6 +163,12 @@ public class LexicalAnalyzer {
 		return redefMap;
 	}
 
+	/**
+	 * Maps every token expression into it's ID
+	 * @param List of token Strings
+	 * @param List of regular definition Strings
+	 * @return Map<REGEX to ID> 
+	 */
 	public Map<String, Object[]> loadToken(List<String> tokenList, List<String> redefList) {
 		Map<String, Object[]> tokenMap = new HashMap<>();
 		int index = 0;
@@ -180,6 +191,11 @@ public class LexicalAnalyzer {
 		return tokenMap;
 	}
 
+	/**
+	 * Replace REDEF ID symbol on String token for REDEF regular expression
+	 * @param List of regular definition Strings
+	 * @return Replaced Token String
+	 */
 	public String redefParser(String token, List<String> redefString) {
 		StringTokenizer st = new StringTokenizer(token, SE);
 		Map<String, String> redefMap = loadRegularDefinition(redefString);
@@ -193,6 +209,12 @@ public class LexicalAnalyzer {
 		return regex;
 	}
 
+	/**
+	 * Generate FDA unifying all token's FDAs
+	 * @param List of token Strings
+	 * @param List of regular definition Strings
+	 * @return Determinized Unified Automata
+	 */
 	public Automata parser(List<String> tokenList, List<String> redefList)
 			throws BracketMismatchException, OperatorMismatchException, InvalidInputException, DuplicatedStateException,
 			InvalidStateException, DuplicatedTransitionException {

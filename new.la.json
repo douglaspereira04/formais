@@ -1,4 +1,4 @@
 [
-    "D:(1|2|3|4|5|6|7|8|9)*\nL:(a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z)*\n",
-    "begin:begin\nwhile:while\nif:if\nfor:for\nprivate:private\npublic:public\nnew:new\nliteral:L(L|D)*\nrelop:(<|>|==|>=|<=)\nnumber:D*\nstring:\"(L|D)*\""
+    "D:(0|1|2|3|4|5|6|7|8|9)\nL:(a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z)\n",
+    "begin:begin\nnumber:D*\nspace: \nbreak:\\n\nwhile:while\nif:if\nfor:for\nprivate:private\npublic:public\nnew:new\nliteral:L(L|D)*\nrelop:(<|>|==|>=|<=)\nstring:\"(L|D)*\""
 ]
