@@ -1,7 +1,8 @@
 # Linguagens Formais e Compiladores
 
 Projeto Java8 utilizando o software de gerenciamento de projetos Maven
-
+<br>
+Para obter a versão de entrega, obtenha o projeto do lançamento(Release) Primeira Entrega, entiquetado(Tag) como PRIMEIRA-ENTREGA
 
 ## Compilar aplicação
 - Caso não tenha instalado o JDK8 instalado execute no terminal:
