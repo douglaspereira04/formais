@@ -2,7 +2,9 @@
 
 Projeto Java8 utilizando o software de gerenciamento de projetos Maven
 <br>
-Para obter a versão de entrega, obtenha o projeto do lançamento(Release) Primeira Entrega, entiquetado(Tag) como PRIMEIRA-ENTREGA
+Para obter a versão da primeira entrega, obtenha o projeto do lançamento(Pre-Release) Primeira Entrega.
+<br>
+Durante o periodo de avaliação o branch main também estará com o código da primeira entrega.
 
 ## Compilar aplicação
 - Caso não tenha instalado o JDK8 instalado execute no terminal:
