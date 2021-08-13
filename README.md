@@ -4,9 +4,13 @@ Projeto Java8 utilizando o software de gerenciamento de projetos Maven
 
 
 ## Compilar aplicação
-- Caso não tenha instalado o jdk8 instalado execute no terminal:
+- Caso não tenha instalado o JDK8 instalado execute no terminal:
 ```
 sudo apt install openjdk-8-jdk
+```
+- Caso não tenha o Maven instalado execute no terminal:
+```
+sudo apt install maven
 ```
 - No diretorio raiz do projeto execute:
 ```
