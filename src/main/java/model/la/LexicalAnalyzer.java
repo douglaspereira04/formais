@@ -3,10 +3,11 @@ package model.la;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+
+import org.apache.commons.text.StringEscapeUtils;
 
 import exception.automata.DuplicatedStateException;
 import exception.automata.DuplicatedTransitionException;
@@ -122,7 +123,6 @@ public class LexicalAnalyzer {
 			
 			position = i - length;
 			token = getTokenID(lastAcceptedState);
-			System.out.println(lastAcceptedState);
 			entries.add(new LexicalEntry(token, lastLexeme, position));
 			length = 0;
 			
@@ -159,6 +159,7 @@ public class LexicalAnalyzer {
 		for (String line : tokenList) {
 			StringTokenizer tokenST = new StringTokenizer(line, SE);
 			String temp = redefParser(line, redefList);
+			temp = StringEscapeUtils.unescapeJava(temp);
 			tokenMap.put(temp, new Object[] {tokenST.nextToken().trim(), Integer.valueOf(index)});
 			index++;
 		}
@@ -187,6 +188,7 @@ public class LexicalAnalyzer {
 			Regex regex = new Regex(regexString);
 			Automata automaton = regex.convert();
 			tokenFDAlist.add(automaton);
+			
 			automataToID.put(automaton, tokenMap.get(regexString));
 		}
 		

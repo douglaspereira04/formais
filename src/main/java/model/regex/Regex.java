@@ -144,7 +144,6 @@ public class Regex {
 	public Automata convert() throws DuplicatedStateException, InvalidStateException, DuplicatedTransitionException {
 		
 		//Empty or Single Character Input
-		if (regex.trim().isEmpty()) return new Automata('&');
 		if (regex.length() == 1) return new Automata(regex.charAt(0));
 		
 		Automata automata = new Automata();
