@@ -17,7 +17,7 @@ mvn clean package install
 No diretorio raiz do projeto:
 - Garanta que a aplicação tem permissão de excução executando o comando:
 ```
-chmod +rwx filename
+chmod +rwx target/GALS-0.5-PRIMEIRA-ENTREGA-jar-with-dependencies.jar
 ```
 - Execute a aplicação com o comando:
 ```
