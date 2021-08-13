@@ -23,5 +23,3 @@ chmod +rwx filename
 ```
 java -jar target/GALS-0.5-PRIMEIRA-ENTREGA-jar-with-dependencies.jar 
 ```
-
-A aplicação pode ser acessada pelo navegador em [127.0.0.1:5000](127.0.0.1:5000).
