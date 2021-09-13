@@ -2,31 +2,49 @@ package model.parser.ll1;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import exception.automata.InvalidStateException;
+import org.apache.commons.collections4.map.MultiKeyMap;
 
+import exception.automata.InvalidStateException;
+import hu.webarticum.treeprinter.ListingTreePrinter;
+import hu.webarticum.treeprinter.SimpleTreeNode;
+import hu.webarticum.treeprinter.TreeNode;
+
+/**
+ * LL1 Parser class
+ * 
+ * @author douglas
+ *
+ */
 public class Parser {
 
 	public static final String EPSILON = "&";
 	private String grammar = null;
 	private List<String> alphabet = null;
 	private List<String> nonTerminalSymbols = null;
-	private List<String> terminals = null;
+	private List<String> terminalSymbols = null;
 	private Map<String, List<String>> followPos = null;
 	private Map<String, List<String>> firstPos = null;
+	private MultiKeyMap<String, String> parsingTable = null;
 
 	/**
 	 * Gets alphabet, non terminal symbols and terminal symbols from the given
 	 * grammar
 	 * 
 	 * @param grammar
+	 * @throws InvalidStateException when grammar hasnt been set
 	 */
-	public void setGrammar(String grammar) {
-		this.grammar = grammar;
+	public void loadGrammar() throws InvalidStateException {
+		if (this.grammar == null)
+			throw new InvalidStateException("#NO GRAMMAR");
+
+		this.alphabet = new ArrayList<String>();
+		this.nonTerminalSymbols = new ArrayList<String>();
 
 		String[] lines = grammar.split("\n");
 
@@ -44,14 +62,13 @@ public class Parser {
 			addNotContains(head, this.nonTerminalSymbols);
 
 			for (String symbol : tail) {
-				if (symbol.equals(EPSILON)) {
+				if (!symbol.equals(EPSILON)) {
 					addNotContains(symbol, alphabet);
 				}
 			}
 
-			List<String> temp = new ArrayList<String>(this.alphabet);
-			temp.removeAll(this.nonTerminalSymbols);
-			this.terminals.addAll(temp);
+			this.terminalSymbols = new ArrayList<String>(this.alphabet);
+			this.terminalSymbols.removeAll(this.nonTerminalSymbols);
 
 		}
 
@@ -62,8 +79,10 @@ public class Parser {
 	 * 
 	 * @throws InvalidStateException
 	 */
-	public void setFirstPos() throws InvalidStateException {
+	public void loadFirstPos() throws InvalidStateException {
 		if (this.grammar == null)
+			throw new InvalidStateException("#NO GRAMMAR");
+		if (this.alphabet == null || this.terminalSymbols == null || this.nonTerminalSymbols == null)
 			throw new InvalidStateException("#NO GRAMMAR");
 
 		this.firstPos = new HashMap<String, List<String>>();
@@ -92,58 +111,99 @@ public class Parser {
 				if (tail.size() == 1 && tail.get(0).equals(EPSILON)) {
 					notDone |= addNotContains(EPSILON, this.firstPos.get(head));
 				} else {
-					notDone |= collectFirsts4(tail, this.firstPos.get(head));
+					notDone |= collectFirsts(tail, this.firstPos.get(head));
 				}
-				
+
 			}
 
 		} while (notDone);
 
 	}
-	
-	private boolean collectFirsts4(List<String> tail, List<String> nonTerminalFirsts) {
-		
+
+	private boolean collectFirsts(List<String> tail, List<String> nonTerminalFirsts) {
+
 		boolean result = false;
-		
+
 		boolean epsilonInSymbolFirsts = true;
-		
+
 		for (int i = 0; i < tail.size(); i++) {
-			
+
 			String symbol = tail.get(i);
-			
+
 			epsilonInSymbolFirsts = false;
-			
-			if(this.terminals.contains(symbol)) {
+
+			if (this.terminalSymbols.contains(symbol)) {
 				result |= addNotContains(symbol, nonTerminalFirsts);
 				break;
 			}
-			
+
+			if (this.firstPos.get(symbol) == null)
+				this.firstPos.put(symbol, new ArrayList<String>());
+
 			for (int j = 0; j < this.firstPos.get(symbol).size(); j++) {
 				String first = this.firstPos.get(symbol).get(j);
-				
+
 				epsilonInSymbolFirsts |= first == EPSILON;
-				
+
 				result |= addNotContains(first, nonTerminalFirsts);
-				
+
 			}
-			
+
 			if (!epsilonInSymbolFirsts) {
 				break;
 			}
-			
+
 		}
-		
-		if(epsilonInSymbolFirsts) {
+
+		if (epsilonInSymbolFirsts) {
 			result |= addNotContains(EPSILON, nonTerminalFirsts);
 		}
 		return result;
-		
-		
+
 	}
 
-	private boolean collectFirsts3(List<String> sequence) {
+	private List<String> collectFirsts(List<String> sequence) {
 		// TODO Auto-generated method stub
-		return false;
+		List<String> result = new ArrayList<String>();
+		boolean epsilonInSymbolFirsts = true;
+
+		for (int i = 0; i < sequence.size(); i++) {
+
+			String symbol = sequence.get(i);
+
+			epsilonInSymbolFirsts = false;
+
+			if (this.terminalSymbols.contains(symbol)) {
+				addNotContains(symbol, result);
+				break;
+			}
+
+			if (this.firstPos.get(symbol) == null)
+				this.firstPos.put(symbol, new ArrayList<String>());
+
+			for (int j = 0; j < this.firstPos.get(symbol).size(); j++) {
+				String first = firstPos.get(symbol).get(j);
+
+				epsilonInSymbolFirsts |= first == EPSILON;
+
+				addNotContains(first, result);
+
+			}
+
+			epsilonInSymbolFirsts |= firstPos.get(symbol).isEmpty();
+
+			if (!epsilonInSymbolFirsts) {
+				break;
+			}
+
+		}
+
+		if (epsilonInSymbolFirsts) {
+			addNotContains(EPSILON, result);
+		}
+
+		return result;
+
 	}
 
 	/**
@@ -151,7 +211,7 @@ public class Parser {
 	 * 
 	 * @throws InvalidStateException When grmmar not set
 	 */
-	private void setFollowPos() throws InvalidStateException {
+	public void loadFollowPos() throws InvalidStateException {
 		if (this.grammar == null)
 			throw new InvalidStateException("#NO GRAMMAR");
 
@@ -167,7 +227,7 @@ public class Parser {
 			boolean isFirstLine = true;
 			for (String line : lines) {
 				String[] production = line.split("->");
-				if (production.length != 2)
+				if (production.length < 2)
 					continue;
 
 				String head = production[0].trim();
@@ -192,7 +252,17 @@ public class Parser {
 							this.followPos.put(symbol, new ArrayList<String>());
 						}
 
-						// TODO continuar follows
+						List<String> afterSymbolFirsts = collectFirsts(tail.subList(i + 1, tail.size()));
+
+						for (String first : afterSymbolFirsts) {
+							if (first == EPSILON) {
+								for (String headFollow : this.followPos.get(head)) {
+									notDone |= addNotContains(headFollow, this.followPos.get(symbol));
+								}
+							} else {
+								notDone |= addNotContains(first, this.followPos.get(symbol));
+							}
+						}
 
 					}
 				}
@@ -204,6 +274,131 @@ public class Parser {
 
 	}
 
+	/**
+	 * Loads parsing table from grammar set to parser
+	 * 
+	 * @throws InvalidStateException if grammar, first or follow pos havent been set
+	 */
+	public void loadParsingTable() throws InvalidStateException {
+		parsingTable = new MultiKeyMap<>();
+
+		if (this.grammar == null)
+			throw new InvalidStateException("#NO GRAMMAR");
+		if (this.alphabet == null || this.terminalSymbols == null || this.nonTerminalSymbols == null)
+			throw new InvalidStateException("#NO GRAMMAR");
+		if (this.firstPos == null)
+			throw new InvalidStateException("#NO FIRSTPOS");
+		if (this.followPos == null)
+			throw new InvalidStateException("#NO FOLLOWPOS");
+		String[] lines = grammar.split("\n");
+
+		for (String line : lines) {
+			String[] production = line.split("->");
+			if (production.length < 2)
+				continue;
+			String head = production[0].trim();
+
+			List<String> tail = Arrays.asList(production[1].trim().split(" "));
+			tail.replaceAll(String::trim);
+
+			List<String> tailFirsts = collectFirsts(tail);
+
+			for (String symbol : tailFirsts) {
+				if (symbol != EPSILON) {
+					String rule = parsingTable.get(head, symbol);
+					if (rule == null) {
+						parsingTable.put(head, symbol, line.trim());
+					} else {
+						parsingTable.put(head, symbol, rule + " " + line.trim());
+					}
+
+				} else {
+					for (String symbol2 : this.followPos.get(head)) {
+						String rule = parsingTable.get(head, symbol2);
+						if (rule == null) {
+							parsingTable.put(head, symbol2, line.trim());
+						} else {
+							parsingTable.put(head, symbol2, rule + " " + line.trim());
+						}
+					}
+				}
+			}
+
+		}
+	}
+
+	public ParsingResult parse(String token, int maxSteps) {
+		ParsingResult result = new ParsingResult();
+		String[] input = token.split(" ");
+		SimpleTreeNode tree = new SimpleTreeNode("ROOT");
+
+		List<String> stack = new ArrayList<String>();
+		stack.add("$");
+		stack.add(this.nonTerminalSymbols.get(0));
+
+		List<SimpleTreeNode> parents = new ArrayList<SimpleTreeNode>();
+		parents.add(tree);
+
+		boolean ok = true;
+
+		for (int i = 0, index = 0; i < maxSteps && 1 < stack.size(); ++i) {
+
+			String top = stack.get(stack.size() - 1);
+			String symbol = index < input.length ? input[index] : "$";
+
+			if (symbol.trim().equals(""))
+				symbol = "$";
+
+			
+			String rule = null;
+			if (top.equals(symbol)) {
+				stack.remove(stack.size() - 1);
+				++index;
+				( parents.remove(parents.size() - 1)).addChild(new SimpleTreeNode(symbol));
+				
+			} else {
+
+				if (this.nonTerminalSymbols.contains(top)) {
+					
+
+					rule = this.parsingTable.get(top, symbol);
+					SimpleTreeNode node = new SimpleTreeNode(top);
+					( parents.remove(parents.size() - 1)).addChild(node);
+					
+					if (rule == null) {
+						ok = false;
+						break;
+					}
+					 
+					stack.remove(stack.size()-1);
+					
+					List<String> tail = Arrays.asList(rule.split("->")[1].trim().split(" "));
+					tail.replaceAll(String::trim);
+					Collections.reverse(tail);
+					
+					
+					for (int j = 0; j < tail.size(); j++) {
+						parents.add(node);
+					}
+					
+					if (!tail.contains(EPSILON)) {
+						stack.addAll(tail);
+					} else {
+						( parents.remove(parents.size() - 1)).addChild(new SimpleTreeNode(EPSILON));
+					}
+				} else {
+					
+					ok = false;
+					break;
+				}
+			}
+			result.addEntry(String.join(" ", stack), String.join(" ", Arrays.copyOfRange(input, index, input.length)), rule);
+		}
+		
+		result.setTree(tree);
+		return result;
+	}
+
 	private <T> boolean addNotContains(T item, List<T> list) {
 		if (!list.contains(item)) {
 			list.add(item);
@@ -212,12 +407,65 @@ public class Parser {
 		return false;
 	}
 
-	// trim all elements originalStrings.replaceAll(String::trim);
-	// diferrence = list1.removeall(list2)
-
 	public Parser() {
 
 		// TODO Auto-generated constructor stub
+	}
+
+	public List<String> getAlphabet() {
+		return alphabet;
+	}
+
+	public void setAlphabet(List<String> alphabet) {
+		this.alphabet = alphabet;
+	}
+
+	public List<String> getNonTerminalSymbols() {
+		return nonTerminalSymbols;
+	}
+
+	public void setNonTerminalSymbols(List<String> nonTerminalSymbols) {
+		this.nonTerminalSymbols = nonTerminalSymbols;
+	}
+
+	public Map<String, List<String>> getFollowPos() {
+		return followPos;
+	}
+
+	public void setFollowPos(Map<String, List<String>> followPos) {
+		this.followPos = followPos;
+	}
+
+	public Map<String, List<String>> getFirstPos() {
+		return firstPos;
+	}
+
+	public void setFirstPos(Map<String, List<String>> firstPos) {
+		this.firstPos = firstPos;
+	}
+
+	public void setGrammar(String grammar) {
+		this.grammar = grammar;
+	}
+
+	public String getGrammar() {
+		return grammar;
+	}
+
+	public List<String> getTerminalSymbols() {
+		return terminalSymbols;
+	}
+
+	public void setTerminalSymbols(List<String> terminalSymbols) {
+		this.terminalSymbols = terminalSymbols;
+	}
+
+	public MultiKeyMap<String, String> getParsingTable() {
+		return parsingTable;
+	}
+
+	public void setParsingTable(MultiKeyMap<String, String> parsingTable) {
+		this.parsingTable = parsingTable;
 	}
 
 }
