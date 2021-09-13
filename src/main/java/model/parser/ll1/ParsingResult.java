@@ -69,7 +69,7 @@ public class ParsingResult {
 	}
 
 	public String getTreeAsString() {
-		return new ListingTreePrinter().getAsString(tree);
+		return new ListingTreePrinter().getAsString(tree.getChildren().get(0));
 	}
 	
 	public void setTree(TreeNode tree) {
