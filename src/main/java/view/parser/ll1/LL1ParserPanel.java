@@ -1,0 +1,52 @@
+package view.parser.ll1;
+
+import java.awt.BorderLayout;
+
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.table.DefaultTableModel;
+
+/**
+ * Panel to configure an ll1 parser
+ * @author douglas
+ *
+ */
+public class LL1ParserPanel extends JPanel {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4403836902111211975L;
+
+	JTabbedPane parserTabs = null;
+	LL1ParserDefinitionPanel parserDefinitionPanel = null;
+	LL1ParsingResultPanel parsingResultPanel = null;
+	
+	
+	public LL1ParserPanel() {
+		// TODO Auto-generated constructor stub
+		initialize();
+	}
+
+	public void initialize() {
+		this.setLayout(new BorderLayout());
+		
+		parserDefinitionPanel = new LL1ParserDefinitionPanel();
+		
+		parserTabs = new JTabbedPane();
+		parserTabs.addTab("Definições", parserDefinitionPanel);
+		parserTabs.addTab("Análise", parsingResultPanel);
+
+
+		parserTabs.setTabPlacement(JTabbedPane.TOP);
+		parserTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+		
+		this.add(BorderLayout.CENTER, parserTabs);
+		
+	}
+	
+
+}
