@@ -79,13 +79,14 @@ public class LL1ParsingResultPanel extends JPanel {
 
 		constraints.anchor = GridBagConstraints.CENTER;
 		constraints.weightx = 1;
-		constraints.weighty = 1;
+		constraints.weighty = 0.2;
 		constraints.fill = GridBagConstraints.BOTH;
 		
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		this.add(tokenScroll, constraints);
 
+		constraints.weighty = 1;
 		constraints.gridx = 0;
 		constraints.gridy = 3;
 		this.add(this.resultTableScroll, constraints);
@@ -131,5 +132,40 @@ public class LL1ParsingResultPanel extends JPanel {
 		resultTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		resultTable.setEnabled(false);
 	}
+
+	public DefaultTableModel getResultTableModel() {
+		return resultTableModel;
+	}
+
+	public void setResultTableModel(DefaultTableModel resultTableModel) {
+		this.resultTableModel = resultTableModel;
+	}
+
+	public JTable getResultTable() {
+		return resultTable;
+	}
+
+	public void setResultTable(JTable resultTable) {
+		this.resultTable = resultTable;
+	}
+
+	public JTextArea getTreeTextArea() {
+		return treeTextArea;
+	}
+
+	public void setTreeTextArea(JTextArea treeTextArea) {
+		this.treeTextArea = treeTextArea;
+	}
+
+	public JTextArea getTokenTextArea() {
+		return tokenTextArea;
+	}
+
+	public void setTokenTextArea(JTextArea tokenTextArea) {
+		this.tokenTextArea = tokenTextArea;
+	}
+	
+	
+	
 
 }

@@ -3,10 +3,13 @@ package control.parser.ll1;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import javax.swing.JOptionPane;
+
 import exception.automata.InvalidStateException;
 import model.parser.ll1.LL1Parser;
+import model.parser.ll1.LL1ParsingResult;
 import view.parser.ll1.LL1ParserPanel;
-
+import view.parser.ll1.LL1ParsingResultPanel;
 
 /**
  * Class dedicated to control LL1ParserPanel behavior
@@ -37,9 +40,21 @@ public class LL1ParserControl {
 				} catch (Exception e2) {
 					e2.printStackTrace();
 					parserPanel.getParserDefinitionPanel().initializeParsingTablePanel();
+					parser = null;
 				}
 			}
 
+		});
+		
+		this.parserPanel.getParsingResultPanel().getTokenTextArea().addKeyListener(new KeyAdapter() {
+		
+			@Override
+			public void keyReleased(KeyEvent e) {
+				
+				parse();
+				
+			}
+		
 		});
 		
 	}
@@ -58,6 +73,34 @@ public class LL1ParserControl {
 		this.parser.loadParsingTable();
 		
 		this.parserPanel.getParserDefinitionPanel().initializeParsingTablePanel(this.parser);
+	}
+	
+	private void parse() {
+		LL1ParsingResultPanel resultPanel = parserPanel.getParsingResultPanel();
+		resultPanel.initializeResultTablePanel();
+		
+		if(parser == null) {
+			JOptionPane.showMessageDialog(parserPanel, "Defina um parser válido");
+			parserPanel.getParserTabs().setSelectedComponent(parserPanel.getParserDefinitionPanel());
+		}else {
+			try {
+				
+				LL1ParsingResult result = parser.parse(resultPanel.getTokenTextArea().getText(), 100000000);
+				resultPanel.getTreeTextArea().setText(result.getTreeAsString());
+
+				resultPanel.getResultTableModel().addColumn("Pilha");
+				resultPanel.getResultTableModel().addColumn("Entrada");
+				resultPanel.getResultTableModel().addColumn("Regra");
+				
+				for (int i = 0; i < result.getInput().size(); i++) {
+					Object[] entry = new Object[] {result.getStack().get(i),result.getInput().get(i),result.getRule().get(i)};
+					resultPanel.getResultTableModel().addRow(entry);
+				}
+				
+			} catch (Exception e2) {
+				JOptionPane.showMessageDialog(parserPanel, "Erro");
+			}
+		}
 	}
 
 }
