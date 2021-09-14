@@ -3,14 +3,11 @@ package view.parser.ll1;
 import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.table.DefaultTableModel;
 
 /**
  * Panel to configure an ll1 parser
+ * Displaying an parsing table
  * @author douglas
  *
  */

@@ -16,8 +16,19 @@ import javax.swing.table.DefaultTableModel;
 
 import model.parser.ll1.LL1Parser;
 
+/**
+ * Panel dedicated to define ll1 parser
+ * 
+ * @author douglas
+ *
+ */
 public class LL1ParserDefinitionPanel extends JPanel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 929781123313455926L;
+	
 	JScrollPane grammarScroll = null;
 	JPanel grammarPanel = null;
 	JTextArea grammarTextArea;

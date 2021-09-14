@@ -4,14 +4,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
@@ -30,7 +27,6 @@ import model.automata.Automata;
 import model.io.FileUtils;
 import model.la.LexicalAnalyzer;
 import model.la.LexicalEntry;
-import model.regex.Regex;
 import view.la.LexicalAnalyzerPanel;
 import view.la.LexicalAnalyzerPanel.LexicalAnalyzerTab;
 
@@ -130,7 +126,7 @@ public class LexicalAnalyzerControl {
 	}
 
 	/**
-	 * Prompts user to load a lexycal analyzer file from file system
+	 * Prompts user to load a lexical analyzer file from file system
 	 */
 	private void load() {
 		if (!(JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(laPanel,

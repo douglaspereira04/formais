@@ -4,16 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.map.MultiKeyMap;
 
 import exception.automata.InvalidStateException;
-import hu.webarticum.treeprinter.ListingTreePrinter;
 import hu.webarticum.treeprinter.SimpleTreeNode;
-import hu.webarticum.treeprinter.TreeNode;
 
 /**
  * LL1 Parser class
@@ -327,6 +324,12 @@ public class LL1Parser {
 		}
 	}
 
+	/**
+	 * Parses a token
+	 * @param token to be validated
+	 * @param maxSteps maximum iteration count
+	 * @return {@link LL1ParsingResult} containing the result
+	 */
 	public LL1ParsingResult parse(String token, int maxSteps) {
 		LL1ParsingResult result = new LL1ParsingResult();
 		String[] input = token.split(" ");
@@ -339,7 +342,6 @@ public class LL1Parser {
 		List<SimpleTreeNode> parents = new ArrayList<SimpleTreeNode>();
 		parents.add(tree);
 
-		boolean ok = true;
 
 		for (int i = 0, index = 0; i < maxSteps && 1 < stack.size(); ++i) {
 
@@ -366,7 +368,6 @@ public class LL1Parser {
 					( parents.remove(parents.size() - 1)).addChild(node);
 					
 					if (rule == null) {
-						ok = false;
 						break;
 					}
 					 
@@ -387,8 +388,6 @@ public class LL1Parser {
 						( parents.remove(parents.size() - 1)).addChild(new SimpleTreeNode(EPSILON));
 					}
 				} else {
-					
-					ok = false;
 					break;
 				}
 			}
