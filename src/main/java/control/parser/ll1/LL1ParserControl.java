@@ -60,13 +60,11 @@ public class LL1ParserControl {
 	}
 	
 	private void createParsingTable() throws InvalidStateException {
-		String TESTGRAMMAR = "E -> T E'\n" + "E' -> + T E'\n" + "E' -> &\n" + "T -> F T'\n"
-				+ "T' -> * F T'\n" + "T' -> &\n" + "F -> ( E )\n" + "F -> id";
 		
 		String grammar = this.parserPanel.getParserDefinitionPanel().getGrammarTextArea().getText();
 		this.parser = new LL1Parser();
 		
-		this.parser.setGrammar(TESTGRAMMAR);
+		this.parser.setGrammar(grammar);
 		this.parser.loadGrammar();
 		this.parser.loadFirstPos();
 		this.parser.loadFollowPos();
