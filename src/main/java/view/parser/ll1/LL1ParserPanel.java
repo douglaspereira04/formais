@@ -30,8 +30,9 @@ public class LL1ParserPanel extends JPanel {
 
 	public void initialize() {
 		this.setLayout(new BorderLayout());
-		
+
 		parserDefinitionPanel = new LL1ParserDefinitionPanel();
+		parsingResultPanel = new LL1ParsingResultPanel();
 		
 		parserTabs = new JTabbedPane();
 		parserTabs.addTab("Definições", parserDefinitionPanel);

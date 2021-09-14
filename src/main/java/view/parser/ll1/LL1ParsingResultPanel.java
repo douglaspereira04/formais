@@ -31,7 +31,10 @@ public class LL1ParsingResultPanel extends JPanel {
 	private JTextArea treeTextArea;
 	private JLabel treeLabel = null;
 	
-	private JTextArea token = null;
+	private JScrollPane tokenScroll = null;
+	private JPanel tokenPanel = null;
+	private JTextArea tokenTextArea;
+	private JLabel tokenLabel;
 
 	/**
 	 * 
@@ -44,6 +47,7 @@ public class LL1ParsingResultPanel extends JPanel {
 	}
 	
 	private void initialize() {
+		initializeTokenPanel();
 		initializeTreePanel();
 
 		resultTableScroll = new JScrollPane();
@@ -57,8 +61,14 @@ public class LL1ParsingResultPanel extends JPanel {
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.insets = new Insets(4, 4, 4, 4);
 
+		
 		constraints.gridx = 0;
 		constraints.gridy = 0;
+		tokenLabel = new JLabel("Token");
+		this.add(tokenLabel, constraints);
+
+		constraints.gridx = 0;
+		constraints.gridy = 2;
 		resultTableLabel = new JLabel("Result");
 		this.add(resultTableLabel, constraints);
 
@@ -71,14 +81,20 @@ public class LL1ParsingResultPanel extends JPanel {
 		constraints.weightx = 1;
 		constraints.weighty = 1;
 		constraints.fill = GridBagConstraints.BOTH;
-
+		
 		constraints.gridx = 0;
 		constraints.gridy = 1;
+		this.add(tokenScroll, constraints);
+
+		constraints.gridx = 0;
+		constraints.gridy = 3;
 		this.add(this.resultTableScroll, constraints);
 		
 		constraints.gridx = 1;
 		constraints.gridy = 1;
+		constraints.gridheight = 3;
 		this.add(this.treeScroll, constraints);
+		
 
 	}
 
@@ -89,6 +105,15 @@ public class LL1ParsingResultPanel extends JPanel {
 		this.treeScroll.setViewportView(this.treeTextArea);
 		this.treeScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		treePanel.add(treeScroll);
+	}
+
+	private void initializeTokenPanel() {
+		this.tokenPanel = new JPanel();
+		this.tokenScroll = new JScrollPane();
+		this.tokenTextArea = new JTextArea();
+		this.tokenScroll.setViewportView(this.tokenTextArea);
+		this.tokenScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		tokenPanel.add(tokenScroll);
 	}
 
 	public void initializeResultTablePanel() {
