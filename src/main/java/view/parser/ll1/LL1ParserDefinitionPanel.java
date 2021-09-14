@@ -29,15 +29,15 @@ public class LL1ParserDefinitionPanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 929781123313455926L;
 	
-	JScrollPane grammarScroll = null;
-	JPanel grammarPanel = null;
-	JTextArea grammarTextArea;
-	JLabel grammarLabel = null;
+	private JScrollPane grammarScroll = null;
+	private JPanel grammarPanel = null;
+	private JTextArea grammarTextArea;
+	private JLabel grammarLabel = null;
 
-	JScrollPane parsingTableScroll = null;
-	DefaultTableModel parsingTableModel = null;
-	JTable parsingTable = null;
-	JLabel parsingTableLabel = null;
+	private JScrollPane parsingTableScroll = null;
+	private DefaultTableModel parsingTableModel = null;
+	private JTable parsingTable = null;
+	private JLabel parsingTableLabel = null;
 
 	public LL1ParserDefinitionPanel() {
 

@@ -18,9 +18,9 @@ public class LL1ParserPanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 4403836902111211975L;
 
-	JTabbedPane parserTabs = null;
-	LL1ParserDefinitionPanel parserDefinitionPanel = null;
-	LL1ParsingResultPanel parsingResultPanel = null;
+	private JTabbedPane parserTabs = null;
+	private LL1ParserDefinitionPanel parserDefinitionPanel = null;
+	private LL1ParsingResultPanel parsingResultPanel = null;
 	
 	
 	public LL1ParserPanel() {
