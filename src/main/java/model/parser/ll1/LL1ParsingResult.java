@@ -11,7 +11,7 @@ import hu.webarticum.treeprinter.TreeNode;
  * @author douglas
  *
  */
-public class ParsingResult {
+public class LL1ParsingResult {
 
 	private List<String> stack = null;
 	private List<String> input = null;
@@ -20,7 +20,7 @@ public class ParsingResult {
 	private TreeNode tree = null;
 	
 	
-	public ParsingResult() {
+	public LL1ParsingResult() {
 
 		this.stack = new ArrayList<String>();
 		this.input = new ArrayList<String>();

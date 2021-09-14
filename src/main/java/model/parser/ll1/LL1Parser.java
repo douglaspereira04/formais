@@ -21,7 +21,7 @@ import hu.webarticum.treeprinter.TreeNode;
  * @author douglas
  *
  */
-public class Parser {
+public class LL1Parser {
 
 	public static final String EPSILON = "&";
 	private String grammar = null;
@@ -327,8 +327,8 @@ public class Parser {
 		}
 	}
 
-	public ParsingResult parse(String token, int maxSteps) {
-		ParsingResult result = new ParsingResult();
+	public LL1ParsingResult parse(String token, int maxSteps) {
+		LL1ParsingResult result = new LL1ParsingResult();
 		String[] input = token.split(" ");
 		SimpleTreeNode tree = new SimpleTreeNode("ROOT");
 
@@ -407,7 +407,7 @@ public class Parser {
 		return false;
 	}
 
-	public Parser() {
+	public LL1Parser() {
 
 		// TODO Auto-generated constructor stub
 	}

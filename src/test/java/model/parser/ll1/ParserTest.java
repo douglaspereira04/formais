@@ -47,7 +47,7 @@ public class ParserTest {
 	@Test
 	public void firstPosTest() throws InvalidStateException {
 
-		Parser ll1 = new Parser();
+		LL1Parser ll1 = new LL1Parser();
 		ll1.setGrammar(TESTGRAMMAR);
 		ll1.loadGrammar();
 		ll1.loadFirstPos();
@@ -59,7 +59,7 @@ public class ParserTest {
 	@Test
 	public void followPosTest() throws InvalidStateException {
 
-		Parser ll1 = new Parser();
+		LL1Parser ll1 = new LL1Parser();
 		ll1.setGrammar(TESTGRAMMAR);
 		ll1.loadGrammar();
 		ll1.loadFirstPos();
@@ -72,7 +72,7 @@ public class ParserTest {
 	@Test
 	public void grammarTest() throws InvalidStateException {
 
-		Parser ll1 = new Parser();
+		LL1Parser ll1 = new LL1Parser();
 		ll1.setGrammar(TESTGRAMMAR);
 		ll1.loadGrammar();
 
@@ -85,7 +85,7 @@ public class ParserTest {
 	@Test
 	public void parsingTableTest() throws InvalidStateException {
 
-		Parser ll1 = new Parser();
+		LL1Parser ll1 = new LL1Parser();
 		ll1.setGrammar(TESTGRAMMAR);
 		ll1.loadGrammar();
 		ll1.loadFirstPos();
@@ -98,14 +98,14 @@ public class ParserTest {
 	@Test
 	public void parseTest() throws InvalidStateException {
 
-		Parser ll1 = new Parser();
+		LL1Parser ll1 = new LL1Parser();
 		ll1.setGrammar(TESTGRAMMAR);
 		ll1.loadGrammar();
 		ll1.loadFirstPos();
 		ll1.loadFollowPos();
 		ll1.loadParsingTable();
 
-		ParsingResult result = ll1.parse("id + id", 100);
+		LL1ParsingResult result = ll1.parse("id + id", 100);
 			
 		
 		assert(stackList.equals(result.getStack()));

@@ -47,6 +47,32 @@ public class LL1ParserPanel extends JPanel {
 		this.add(BorderLayout.CENTER, parserTabs);
 		
 	}
+
+	public JTabbedPane getParserTabs() {
+		return parserTabs;
+	}
+
+	public void setParserTabs(JTabbedPane parserTabs) {
+		this.parserTabs = parserTabs;
+	}
+
+	public LL1ParserDefinitionPanel getParserDefinitionPanel() {
+		return parserDefinitionPanel;
+	}
+
+	public void setParserDefinitionPanel(LL1ParserDefinitionPanel parserDefinitionPanel) {
+		this.parserDefinitionPanel = parserDefinitionPanel;
+	}
+
+	public LL1ParsingResultPanel getParsingResultPanel() {
+		return parsingResultPanel;
+	}
+
+	public void setParsingResultPanel(LL1ParsingResultPanel parsingResultPanel) {
+		this.parsingResultPanel = parsingResultPanel;
+	}
+	
+	
 	
 
 }

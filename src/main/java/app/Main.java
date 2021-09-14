@@ -7,6 +7,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 import control.MainControl;
 import control.automata.AutomataControl;
 import control.la.LexicalAnalyzerControl;
+import control.parser.ll1.LL1ParserControl;
 import control.regex.RegexControl;
 import view.MainView;
 import view.automata.AutomataPanel;
@@ -56,6 +57,7 @@ public class Main {
 		AutomataControl automataControl = new AutomataControl(automataPanel);
 		LexicalAnalyzerControl laControl = new LexicalAnalyzerControl(laPanel);
 		RegexControl regexControl = new RegexControl(regexPanel);
+		LL1ParserControl ll1ParserControl = new LL1ParserControl(ll1ParserPanel);
 
 		splash.getProgressBar().setValue(90);
 
