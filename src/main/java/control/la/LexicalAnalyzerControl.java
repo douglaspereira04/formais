@@ -285,8 +285,9 @@ public class LexicalAnalyzerControl {
 		LL1ParserPanel parserPanel = Main.mainView.getLl1ParserPanel();
 		LL1ParsingResultPanel resultPanel = parserPanel.getParsingResultPanel();
 		Main.mainView.getSideBar().setSelectedComponent(parserPanel);
-		parserPanel.getParserTabs().setSelectedComponent(resultPanel);
 		resultPanel.getTokenTextArea().setText(tokens);
+		parserPanel.getParserTabs().setSelectedComponent(resultPanel);
+		
 
 	}
 

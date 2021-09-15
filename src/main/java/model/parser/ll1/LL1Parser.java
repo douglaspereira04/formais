@@ -160,7 +160,7 @@ public class LL1Parser {
 	}
 
 	private List<String> collectFirsts(List<String> sequence) {
-		// TODO Auto-generated method stub
+
 		List<String> result = new ArrayList<String>();
 		boolean epsilonInSymbolFirsts = true;
 
@@ -413,7 +413,6 @@ public class LL1Parser {
 
 	public LL1Parser() {
 
-		// TODO Auto-generated constructor stub
 	}
 
 	public List<String> getAlphabet() {

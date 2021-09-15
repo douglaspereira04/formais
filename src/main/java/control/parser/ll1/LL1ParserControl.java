@@ -5,6 +5,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JOptionPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import exception.automata.InvalidStateException;
 import model.parser.ll1.LL1Parser;
@@ -56,6 +58,20 @@ public class LL1ParserControl {
 				
 			}
 		
+		});
+		
+		this.parserPanel.getParserTabs().addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				
+				if (parserPanel.getParserTabs().getSelectedComponent() == parserPanel.getParsingResultPanel()) {
+					if(!parserPanel.getParsingResultPanel().getTokenTextArea().getText().trim().equals("")) {
+						parse();
+					}
+				}
+				
+			}
 		});
 		
 	}
