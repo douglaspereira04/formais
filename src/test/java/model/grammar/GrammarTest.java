@@ -345,5 +345,6 @@ public class GrammarTest {
 		lrtable.compute(input);
 		
 		System.out.println();
-	}	
+	}
+
 }

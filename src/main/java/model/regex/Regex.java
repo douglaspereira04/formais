@@ -36,6 +36,11 @@ public class Regex {
 
 		if (rgx == null)
 			throw new NullPointerException();
+		
+		if (rgx.length() == 1) {
+			regex = rgx;
+			return;
+		}
 
 		char[] rgx_char = rgx.toCharArray();
 		int bracket = 0;
