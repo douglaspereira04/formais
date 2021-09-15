@@ -24,7 +24,7 @@ import view.util.Splash;
  */
 public class Main {
 
-	private static MainView mainView;
+	public static MainView mainView;
 	private static MainControl mainControl;
 
 	private static AutomataPanel automataPanel;

@@ -4,6 +4,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -26,6 +27,10 @@ public class AnalysisPanel extends JPanel {
 
 	public JScrollPane textAreaScroll = null;
 	public JTextArea textArea = null;
+
+	public JButton exportButton = null;
+	public JButton ll1AnalysisButton = null;
+	public JButton lr1AnalysisButton = null;
 	
 	public AnalysisPanel() {
 		super(new GridBagLayout());
@@ -33,6 +38,10 @@ public class AnalysisPanel extends JPanel {
 	}
 	
 	public void initialize() {
+		exportButton = new JButton("Exportar");
+		ll1AnalysisButton = new JButton("Abrir no Parser LL1");
+		lr1AnalysisButton = new JButton("Abrir no Parser LR1");
+		
 		analysisTableScroll = new JScrollPane();
 		analysisTable = new AnalysisTable();
 		analysisTableScroll.setViewportView(analysisTable);
@@ -51,6 +60,7 @@ public class AnalysisPanel extends JPanel {
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weightx = 1;
 		constraints.weighty = 1;	
+		constraints.gridwidth = 3;
 
 		constraints.gridx = 0;
 		constraints.gridy = 0;
@@ -60,7 +70,21 @@ public class AnalysisPanel extends JPanel {
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		this.add(analysisTableScroll, constraints);
+
+		constraints.weighty = 0;
+		constraints.gridwidth = 1;
 		
+		constraints.gridx = 0;
+		constraints.gridy = 2;
+		this.add(exportButton, constraints);
+
+		constraints.gridx = 1;
+		constraints.gridy = 2;
+		this.add(ll1AnalysisButton, constraints);
+		
+		constraints.gridx = 2;
+		constraints.gridy = 2;
+		this.add(lr1AnalysisButton, constraints);
 		
 	}
 
@@ -79,6 +103,29 @@ public class AnalysisPanel extends JPanel {
 	public void setTextArea(JTextArea textArea) {
 		this.textArea = textArea;
 	}
-	
+
+	public JButton getExportButton() {
+		return exportButton;
+	}
+
+	public void setExportButton(JButton exportButton) {
+		this.exportButton = exportButton;
+	}
+
+	public JButton getLl1AnalysisButton() {
+		return ll1AnalysisButton;
+	}
+
+	public void setLl1AnalysisButton(JButton ll1AnalysisButton) {
+		this.ll1AnalysisButton = ll1AnalysisButton;
+	}
+
+	public JButton getLr1AnalysisButton() {
+		return lr1AnalysisButton;
+	}
+
+	public void setLr1AnalysisButton(JButton lr1AnalysisButton) {
+		this.lr1AnalysisButton = lr1AnalysisButton;
+	}
 	
 }

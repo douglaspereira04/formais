@@ -51,14 +51,19 @@ public class FileUtils {
 
 	public static <T> void saveToFile(T object, String path) throws IOException {
 		BufferedWriter writer = new BufferedWriter(new FileWriter(path));
-		JsonElement result = gson.toJsonTree(object, object.getClass());
+		
+		if(object.getClass() == String.class) {
+			writer.write((String)object);
+		}else {
+			JsonElement result = gson.toJsonTree(object, object.getClass());
 
-		if (result.isJsonArray()) {
-			JSONArray json = new JSONArray(result.toString());
-			writer.write(json.toString(4));
-		} else {
-			JSONObject json = new JSONObject(result.toString());
-			writer.write(json.toString(4));
+			if (result.isJsonArray()) {
+				JSONArray json = new JSONArray(result.toString());
+				writer.write(json.toString(4));
+			} else {
+				JSONObject json = new JSONObject(result.toString());
+				writer.write(json.toString(4));
+			}
 		}
 
 		writer.close();
@@ -104,9 +109,10 @@ public class FileUtils {
 	 * Selects export file
 	 * 
 	 * @param defaultFileName default file name
+	 * @param extension file extension
 	 * @return {@link File} selected file
 	 */
-	public static File selectExportFile(String defaultFileName, Component parent) {
+	public static File selectExportFile(String defaultFileName, Component parent, String extension) {
 		fileChooser.setSelectedFile(new File(defaultFileName));
 		int option = fileChooser.showSaveDialog(parent);
 
@@ -114,15 +120,15 @@ public class FileUtils {
 
 			String filePath = fileChooser.getSelectedFile().getAbsolutePath();
 
-			if (!filePath.endsWith(".json"))
-				filePath += ".json";
+			if (!filePath.endsWith(extension))
+				filePath += extension;
 
 			File file = new File(filePath);
 			if (file.exists()) {
 				option = JOptionPane.showConfirmDialog(fileChooser, "File already exists. Overwrite?", "Overwrite",
 						JOptionPane.YES_NO_OPTION);
 				if (option != JOptionPane.YES_OPTION)
-					file = selectExportFile(defaultFileName, parent);
+					file = selectExportFile(defaultFileName, parent, extension);
 
 			}
 			return file;
@@ -130,6 +136,17 @@ public class FileUtils {
 		}
 
 		return null;
+	}
+
+
+	/**
+	 * Selects export file with json extension
+	 * 
+	 * @param defaultFileName default file name
+	 * @return {@link File} selected file
+	 */
+	public static File selectExportFile(String defaultFileName, Component parent) {
+		return selectExportFile(defaultFileName, parent, ".json");
 	}
 
 	/**
