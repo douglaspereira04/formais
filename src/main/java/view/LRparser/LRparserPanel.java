@@ -135,37 +135,6 @@ public class LRparserPanel extends JPanel {
 		grammarPanel.add(grammarScroll);
 	}
 
-	public void initializeParsingTablePanel(LL1Parser parser) {
-
-		initializeParsingTablePanel();
-
-		parsingTableModel.addColumn("");
-
-		List<String> terminal = parser.getTerminalSymbols();
-		terminal.add("$");
-		for (int i = 0; i < terminal.size(); i++) {
-			String symbol = terminal.get(i);
-			parsingTableModel.addColumn(symbol);
-		}
-
-		for (int i = 0; i < parser.getNonTerminalSymbols().size(); i++) {
-			parsingTableModel.addRow(new String[parsingTableModel.getColumnCount()]);
-			parsingTableModel.setValueAt(parser.getNonTerminalSymbols().get(i), i, 0);
-		}
-
-		for (int i = 0; i < terminal.size(); i++) {
-			for (int j = 0; j < parser.getNonTerminalSymbols().size(); j++) {
-				String production = parser.getParsingTable().get(parser.getNonTerminalSymbols().get(j),
-						terminal.get(i));
-				parsingTableModel.setValueAt(production, j, i + 1);
-			}
-		}
-
-		parsingTable.getTableHeader().repaint();
-		parsingTable.repaint();
-
-	}
-
 	public void initializeParsingTablePanel() {
 		parsingTable = new JTable();
 		parsingTableModel = new DefaultTableModel();
