@@ -1,0 +1,6 @@
+var = 12039
+str = ""
+if var < 213092
+str = "batata"
+for while begin
+Begin For While
