@@ -1,6 +1,7 @@
 package view.parser.ll1;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -113,6 +114,7 @@ public class LL1ParsingResultPanel extends JPanel {
 		this.treePanel = new JPanel();
 		this.treeScroll = new JScrollPane();
 		this.treeTextArea = new JTextArea();
+		this.treeTextArea.setFont(new Font("SansSerif", Font.PLAIN, 12));
 		this.treeScroll.setViewportView(this.treeTextArea);
 		this.treeScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		treePanel.add(treeScroll);

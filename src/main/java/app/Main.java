@@ -10,6 +10,7 @@ import control.la.LexicalAnalyzerControl;
 import control.parser.ll1.LL1ParserControl;
 import control.regex.RegexControl;
 import view.MainView;
+import view.LRparser.LRparserPanel;
 import view.automata.AutomataPanel;
 import view.la.LexicalAnalyzerPanel;
 import view.parser.ll1.LL1ParserPanel;
@@ -32,6 +33,8 @@ public class Main {
 	private static LexicalAnalyzerPanel laPanel;
 	private static LL1ParserPanel ll1ParserPanel;
 
+	private static LRparserPanel lr1ParserPanel;
+
 	public static void main(String[] args) {
 
 		try {
@@ -53,7 +56,9 @@ public class Main {
 		regexPanel = new RegexPanel();
 		laPanel = new LexicalAnalyzerPanel();
 		ll1ParserPanel = new LL1ParserPanel();
-		mainView = new MainView(automataPanel, regexPanel, laPanel, ll1ParserPanel);
+		lr1ParserPanel = new LRparserPanel();
+		
+		mainView = new MainView(automataPanel, regexPanel, laPanel, ll1ParserPanel, lr1ParserPanel);
 		AutomataControl automataControl = new AutomataControl(automataPanel);
 		LexicalAnalyzerControl laControl = new LexicalAnalyzerControl(laPanel);
 		RegexControl regexControl = new RegexControl(regexPanel);

@@ -28,6 +28,7 @@ import model.automata.Automata;
 import model.io.FileUtils;
 import model.la.LexicalAnalyzer;
 import model.la.LexicalEntry;
+import view.LRparser.LRparserPanel;
 import view.la.LexicalAnalyzerPanel;
 import view.la.LexicalAnalyzerPanel.LexicalAnalyzerTab;
 import view.parser.ll1.LL1ParserPanel;
@@ -293,8 +294,12 @@ public class LexicalAnalyzerControl {
 
 	private void openLR1() throws InvalidStateException {
 		String tokens = getAnalysisString();
+
+		LRparserPanel parserPanel = Main.mainView.getLr1ParserPanel();
+		parserPanel.getTokenTextArea().setText(tokens);
+
+		Main.mainView.getSideBar().setSelectedComponent(parserPanel);
 		
-		// TODO Abrir LR1 na análise
 		
 	}
 }

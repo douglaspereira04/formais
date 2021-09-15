@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
+import view.LRparser.LRparserPanel;
 import view.automata.AutomataPanel;
 import view.la.LexicalAnalyzerPanel;
 import view.parser.ll1.LL1ParserPanel;
@@ -27,12 +28,14 @@ public class MainView extends JFrame {
 	private RegexPanel regexPanel = null;
 	private LexicalAnalyzerPanel laPanel = null;
 	private LL1ParserPanel ll1ParserPanel = null;
+	private LRparserPanel lr1ParserPanel = null;
 
-	public MainView(AutomataPanel automataPanel, RegexPanel regexPanel, LexicalAnalyzerPanel laPanel, LL1ParserPanel ll1ParserPanel) {
+	public MainView(AutomataPanel automataPanel, RegexPanel regexPanel, LexicalAnalyzerPanel laPanel, LL1ParserPanel ll1ParserPanel, LRparserPanel lr1ParserPanel) {
 		this.automataPanel = automataPanel;
 		this.regexPanel = regexPanel;
 		this.laPanel = laPanel;
 		this.ll1ParserPanel = ll1ParserPanel;
+		this.lr1ParserPanel = lr1ParserPanel;
 		initialize();
 		this.setLocationRelativeTo(null);
 
@@ -51,6 +54,7 @@ public class MainView extends JFrame {
 		sideBar.addTab("Regex", regexPanel);
 		sideBar.addTab("Lexical Analyser", laPanel);
 		sideBar.addTab("LL1 Parser", ll1ParserPanel);
+		sideBar.addTab("LR1 Parser", lr1ParserPanel);
 
 		sideBar.setTabPlacement(JTabbedPane.LEFT);
 		sideBar.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
@@ -95,6 +99,14 @@ public class MainView extends JFrame {
 
 	public void setLl1ParserPanel(LL1ParserPanel ll1ParserPanel) {
 		this.ll1ParserPanel = ll1ParserPanel;
+	}
+
+	public LRparserPanel getLr1ParserPanel() {
+		return lr1ParserPanel;
+	}
+
+	public void setLr1ParserPanel(LRparserPanel lr1ParserPanel) {
+		this.lr1ParserPanel = lr1ParserPanel;
 	}
 	
 	
