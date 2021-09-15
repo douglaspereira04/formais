@@ -326,7 +326,8 @@ public class LL1Parser {
 
 	/**
 	 * Parses a token
-	 * @param token to be validated
+	 * 
+	 * @param token    to be validated
 	 * @param maxSteps maximum iteration count
 	 * @return {@link LL1ParsingResult} containing the result
 	 */
@@ -342,7 +343,6 @@ public class LL1Parser {
 		List<SimpleTreeNode> parents = new ArrayList<SimpleTreeNode>();
 		parents.add(tree);
 
-
 		for (int i = 0, index = 0; i < maxSteps && 1 < stack.size(); ++i) {
 
 			String top = stack.get(stack.size() - 1);
@@ -351,50 +351,55 @@ public class LL1Parser {
 			if (symbol.trim().equals(""))
 				symbol = "$";
 
-			
 			String rule = null;
 			if (top.equals(symbol)) {
 				stack.remove(stack.size() - 1);
 				++index;
-				( parents.remove(parents.size() - 1)).addChild(new SimpleTreeNode(symbol));
-				
+				(parents.remove(parents.size() - 1)).addChild(new SimpleTreeNode(symbol));
+
 			} else {
 
 				if (this.nonTerminalSymbols.contains(top)) {
-					
 
 					rule = this.parsingTable.get(top, symbol);
 					SimpleTreeNode node = new SimpleTreeNode(top);
-					( parents.remove(parents.size() - 1)).addChild(node);
-					
+					(parents.remove(parents.size() - 1)).addChild(node);
+
 					if (rule == null) {
 						break;
 					}
-					 
-					stack.remove(stack.size()-1);
-					
+
+					stack.remove(stack.size() - 1);
+
 					List<String> tail = Arrays.asList(rule.split("->")[1].trim().split(" "));
 					tail.replaceAll(String::trim);
 					Collections.reverse(tail);
-					
-					
+
 					for (int j = 0; j < tail.size(); j++) {
 						parents.add(node);
 					}
-					
+
 					if (!tail.contains(EPSILON)) {
 						stack.addAll(tail);
 					} else {
-						( parents.remove(parents.size() - 1)).addChild(new SimpleTreeNode(EPSILON));
+						(parents.remove(parents.size() - 1)).addChild(new SimpleTreeNode(EPSILON));
 					}
 				} else {
 					break;
 				}
 			}
-			result.addEntry(String.join(" ", stack), String.join(" ", Arrays.copyOfRange(input, index, input.length)), rule);
+			result.addEntry(String.join(" ", stack), String.join(" ", Arrays.copyOfRange(input, index, input.length)),
+					rule);
 		}
-		
+
 		result.setTree(tree);
+		try {
+			result.setAccepted(result.getStack().get(result.getStack().size() - 1).equals("$")
+					&& result.getInput().get(result.getInput().size() - 1).trim().equals(""));
+		} catch (Exception e) {
+			result.setAccepted(false);
+		}
+
 		return result;
 	}
 

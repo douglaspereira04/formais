@@ -35,6 +35,7 @@ public class LL1ParsingResultPanel extends JPanel {
 	private JPanel tokenPanel = null;
 	private JTextArea tokenTextArea;
 	private JLabel tokenLabel;
+	private JLabel resultLabel;
 
 	/**
 	 * 
@@ -69,7 +70,7 @@ public class LL1ParsingResultPanel extends JPanel {
 
 		constraints.gridx = 0;
 		constraints.gridy = 2;
-		resultTableLabel = new JLabel("Result");
+		resultTableLabel = new JLabel("Resultado");
 		this.add(resultTableLabel, constraints);
 
 		constraints.gridx = 1;
@@ -90,11 +91,20 @@ public class LL1ParsingResultPanel extends JPanel {
 		constraints.gridx = 0;
 		constraints.gridy = 3;
 		this.add(this.resultTableScroll, constraints);
-		
+
 		constraints.gridx = 1;
 		constraints.gridy = 1;
 		constraints.gridheight = 3;
 		this.add(this.treeScroll, constraints);
+
+		constraints.weightx = 1;
+		constraints.weighty = 0;
+		resultLabel = new JLabel("");
+		resultLabel.setOpaque(true);
+		constraints.gridx = 0;
+		constraints.gridy = 4;
+		constraints.gridwidth = 2;
+		this.add(this.resultLabel, constraints);
 		
 
 	}
@@ -164,6 +174,15 @@ public class LL1ParsingResultPanel extends JPanel {
 	public void setTokenTextArea(JTextArea tokenTextArea) {
 		this.tokenTextArea = tokenTextArea;
 	}
+
+	public JLabel getResultLabel() {
+		return resultLabel;
+	}
+
+	public void setResultLabel(JLabel resultLabel) {
+		this.resultLabel = resultLabel;
+	}
+	
 	
 	
 	

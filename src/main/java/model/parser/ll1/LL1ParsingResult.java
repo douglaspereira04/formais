@@ -19,6 +19,8 @@ public class LL1ParsingResult {
 	
 	private TreeNode tree = null;
 	
+	private boolean accepted = false;
+	
 	
 	public LL1ParsingResult() {
 
@@ -75,6 +77,15 @@ public class LL1ParsingResult {
 	public void setTree(TreeNode tree) {
 		this.tree = tree;
 	}
+
+	public boolean isAccepted() {
+		return accepted;
+	}
+
+	public void setAccepted(boolean accepted) {
+		this.accepted = accepted;
+	}
+	
 
 
 

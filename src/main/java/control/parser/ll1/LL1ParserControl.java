@@ -1,5 +1,6 @@
 package control.parser.ll1;
 
+import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -95,7 +96,16 @@ public class LL1ParserControl {
 					resultPanel.getResultTableModel().addRow(entry);
 				}
 				
+				if (result.isAccepted()) {
+					resultPanel.getResultLabel().setBackground(Color.GREEN);
+					resultPanel.getResultLabel().setText("Aceito");
+				}else {
+					resultPanel.getResultLabel().setBackground(Color.RED);
+					resultPanel.getResultLabel().setText("Rejeitado");
+				}
+				
 			} catch (Exception e2) {
+				e2.printStackTrace();
 				JOptionPane.showMessageDialog(parserPanel, "Erro");
 			}
 		}
