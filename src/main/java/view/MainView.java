@@ -8,8 +8,8 @@ import javax.swing.JTabbedPane;
 
 import view.automata.AutomataPanel;
 import view.la.LexicalAnalyzerPanel;
+import view.parser.ll1.LL1ParserPanel;
 import view.regex.RegexPanel;
-
 /**
  * 
  * @author douglas
@@ -26,11 +26,13 @@ public class MainView extends JFrame {
 	private AutomataPanel automataPanel = null;
 	private RegexPanel regexPanel = null;
 	private LexicalAnalyzerPanel laPanel = null;
+	private LL1ParserPanel ll1ParserPanel = null;
 
-	public MainView(AutomataPanel automataPanel, RegexPanel regexPanel, LexicalAnalyzerPanel laPanel) {
+	public MainView(AutomataPanel automataPanel, RegexPanel regexPanel, LexicalAnalyzerPanel laPanel, LL1ParserPanel ll1ParserPanel) {
 		this.automataPanel = automataPanel;
 		this.regexPanel = regexPanel;
 		this.laPanel = laPanel;
+		this.ll1ParserPanel = ll1ParserPanel;
 		initialize();
 		this.setLocationRelativeTo(null);
 
@@ -48,9 +50,52 @@ public class MainView extends JFrame {
 		sideBar.addTab("Automata", automataPanel);
 		sideBar.addTab("Regex", regexPanel);
 		sideBar.addTab("Lexical Analyser", laPanel);
+		sideBar.addTab("LL1 Parser", ll1ParserPanel);
 
 		sideBar.setTabPlacement(JTabbedPane.LEFT);
 		sideBar.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
 	}
+
+	public JTabbedPane getSideBar() {
+		return sideBar;
+	}
+
+	public void setSideBar(JTabbedPane sideBar) {
+		this.sideBar = sideBar;
+	}
+
+	public AutomataPanel getAutomataPanel() {
+		return automataPanel;
+	}
+
+	public void setAutomataPanel(AutomataPanel automataPanel) {
+		this.automataPanel = automataPanel;
+	}
+
+	public RegexPanel getRegexPanel() {
+		return regexPanel;
+	}
+
+	public void setRegexPanel(RegexPanel regexPanel) {
+		this.regexPanel = regexPanel;
+	}
+
+	public LexicalAnalyzerPanel getLaPanel() {
+		return laPanel;
+	}
+
+	public void setLaPanel(LexicalAnalyzerPanel laPanel) {
+		this.laPanel = laPanel;
+	}
+
+	public LL1ParserPanel getLl1ParserPanel() {
+		return ll1ParserPanel;
+	}
+
+	public void setLl1ParserPanel(LL1ParserPanel ll1ParserPanel) {
+		this.ll1ParserPanel = ll1ParserPanel;
+	}
+	
+	
 }

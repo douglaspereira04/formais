@@ -25,8 +25,8 @@ public class LexicalAnalysisTest {
 		System.out.println("INICIO TESTE 1");
 		
 		try {
-			FileReader redefFR = new FileReader("redef.txt");
-			FileReader tokenFR = new FileReader("token.txt");
+			FileReader redefFR = new FileReader(this.getClass().getClassLoader().getResource("redef.txt").getPath());
+			FileReader tokenFR = new FileReader(this.getClass().getClassLoader().getResource("token.txt").getPath());
 			BufferedReader redefBR = new BufferedReader(redefFR);
 			BufferedReader tokenBR = new BufferedReader(tokenFR);
 			List<String> redefList = new ArrayList<>();
@@ -54,8 +54,8 @@ public class LexicalAnalysisTest {
 		System.out.println("INICIO TESTE 2");
 		
 		try {
-			FileReader redefFR = new FileReader("redef.txt");
-			FileReader tokenFR = new FileReader("token.txt");
+			FileReader redefFR = new FileReader(this.getClass().getClassLoader().getResource("redef.txt").getPath());
+			FileReader tokenFR = new FileReader(this.getClass().getClassLoader().getResource("token.txt").getPath());
 			BufferedReader redefBR = new BufferedReader(redefFR);
 			BufferedReader tokenBR = new BufferedReader(tokenFR);
 			List<String> redefList = new ArrayList<>();
@@ -82,8 +82,8 @@ public class LexicalAnalysisTest {
 	public void LexicalAnalyzerParserTest() {
 		System.out.println("INICIO TESTE 3");
 		try {
-			FileReader redefFR = new FileReader("redef.txt");
-			FileReader tokenFR = new FileReader("token.txt");
+			FileReader redefFR = new FileReader(this.getClass().getClassLoader().getResource("redef.txt").getPath());
+			FileReader tokenFR = new FileReader(this.getClass().getClassLoader().getResource("token.txt").getPath());
 			BufferedReader redefBR = new BufferedReader(redefFR);
 			BufferedReader tokenBR = new BufferedReader(tokenFR);
 			List<String> redefList = new ArrayList<>();

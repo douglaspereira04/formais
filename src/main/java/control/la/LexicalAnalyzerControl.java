@@ -4,14 +4,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
@@ -20,6 +17,7 @@ import javax.swing.event.ChangeListener;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+import app.Main;
 import exception.automata.DuplicatedStateException;
 import exception.automata.DuplicatedTransitionException;
 import exception.automata.InvalidStateException;
@@ -30,9 +28,10 @@ import model.automata.Automata;
 import model.io.FileUtils;
 import model.la.LexicalAnalyzer;
 import model.la.LexicalEntry;
-import model.regex.Regex;
 import view.la.LexicalAnalyzerPanel;
 import view.la.LexicalAnalyzerPanel.LexicalAnalyzerTab;
+import view.parser.ll1.LL1ParserPanel;
+import view.parser.ll1.LL1ParsingResultPanel;
 
 /**
  * 
@@ -44,8 +43,9 @@ import view.la.LexicalAnalyzerPanel.LexicalAnalyzerTab;
  */
 public class LexicalAnalyzerControl {
 
-	LexicalAnalyzerPanel laPanel = null;
-	LexicalAnalyzer analyzer = null;
+	private LexicalAnalyzerPanel laPanel = null;
+	private LexicalAnalyzer analyzer = null;
+	private List<LexicalEntry> analysis = null;
 
 	public LexicalAnalyzerControl(LexicalAnalyzerPanel laPanel) {
 
@@ -102,6 +102,45 @@ public class LexicalAnalyzerControl {
 			}
 
 		});
+
+		this.laPanel.getAnalysisPanel().getExportButton().addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					exportAnalysis();
+				} catch (InvalidStateException e1) {
+					JOptionPane.showMessageDialog(laPanel, "Nada para exportar");
+					e1.printStackTrace();
+				}
+			}
+		});
+
+		this.laPanel.getAnalysisPanel().getLl1AnalysisButton().addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					openLL1();
+				} catch (InvalidStateException e1) {
+					JOptionPane.showMessageDialog(laPanel, "Nada para exportar");
+					e1.printStackTrace();
+				}
+			}
+		});
+
+		this.laPanel.getAnalysisPanel().getLr1AnalysisButton().addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					openLR1();
+				} catch (InvalidStateException e1) {
+					JOptionPane.showMessageDialog(laPanel, "Nada para exportar");
+					e1.printStackTrace();
+				}
+			}
+		});
 	}
 
 	/**
@@ -130,7 +169,7 @@ public class LexicalAnalyzerControl {
 	}
 
 	/**
-	 * Prompts user to load a lexycal analyzer file from file system
+	 * Prompts user to load a lexical analyzer file from file system
 	 */
 	private void load() {
 		if (!(JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(laPanel,
@@ -149,7 +188,6 @@ public class LexicalAnalyzerControl {
 			this.laPanel.getDefinitionPanel().getTokenTextArea().setText(data[1]);
 
 		} catch (JsonIOException | JsonSyntaxException | FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ArrayIndexOutOfBoundsException e) {
 			JOptionPane.showMessageDialog(laPanel, "Invalid file", "Error", JOptionPane.ERROR_MESSAGE);
@@ -199,11 +237,13 @@ public class LexicalAnalyzerControl {
 	}
 
 	private void analyze() {
+		analysis = null;
 		String text = this.laPanel.getAnalysisPanel().getTextArea().getText();
 		List<LexicalEntry> entries = new ArrayList<LexicalEntry>();
 
 		try {
 			entries = this.analyzer.analyze(text);
+			analysis = entries;
 			this.laPanel.getAnalysisPanel().getAnalysisTable().clear();
 			for (LexicalEntry lexicalEntry : entries) {
 				this.laPanel.getAnalysisPanel().getAnalysisTable().addEntry(lexicalEntry.getToken(),
@@ -212,5 +252,49 @@ public class LexicalAnalyzerControl {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void exportAnalysis() throws InvalidStateException {
+		String tokens = getAnalysisString();
+
+		try {
+			File path = FileUtils.selectExportFile("*.lexical", laPanel, ".lexical");
+			FileUtils.saveToFile(tokens, path.getAbsolutePath());
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(laPanel, "Error saving file", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+
+	}
+
+	private String getAnalysisString() throws InvalidStateException {
+
+		if (analysis == null)
+			throw new InvalidStateException("###NO ANALYSIS");
+		String tokens = "";
+		for (LexicalEntry lexicalEntry : analysis) {
+			tokens += lexicalEntry.getToken() + " ";
+		}
+		tokens.substring(0, tokens.length() - 1);
+
+		return tokens;
+	}
+
+	private void openLL1() throws InvalidStateException {
+		String tokens = getAnalysisString();
+
+		LL1ParserPanel parserPanel = Main.mainView.getLl1ParserPanel();
+		LL1ParsingResultPanel resultPanel = parserPanel.getParsingResultPanel();
+		Main.mainView.getSideBar().setSelectedComponent(parserPanel);
+		resultPanel.getTokenTextArea().setText(tokens);
+		parserPanel.getParserTabs().setSelectedComponent(resultPanel);
+		
+
+	}
+
+	private void openLR1() throws InvalidStateException {
+		String tokens = getAnalysisString();
+		
+		// TODO Abrir LR1 na análise
+		
 	}
 }
