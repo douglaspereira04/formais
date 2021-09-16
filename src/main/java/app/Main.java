@@ -5,6 +5,7 @@ import javax.swing.UIManager;
 import com.formdev.flatlaf.FlatLightLaf;
 
 import control.MainControl;
+import control.LRparser.LRparserControl;
 import control.automata.AutomataControl;
 import control.la.LexicalAnalyzerControl;
 import control.parser.ll1.LL1ParserControl;
@@ -63,6 +64,7 @@ public class Main {
 		LexicalAnalyzerControl laControl = new LexicalAnalyzerControl(laPanel);
 		RegexControl regexControl = new RegexControl(regexPanel);
 		LL1ParserControl ll1ParserControl = new LL1ParserControl(ll1ParserPanel);
+		LRparserControl lrParserControl = new LRparserControl(lr1ParserPanel);
 
 		splash.getProgressBar().setValue(90);
 
