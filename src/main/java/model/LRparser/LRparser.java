@@ -96,8 +96,8 @@ public class LRparser {
 						lookahead = item2.lookahead();
 					} else {
 						for (char c : item2.lookahead().toCharArray()) {
-							if (!lookahead.contains((Character.toString(c))))
-								lookahead += "/" + item2.lookahead();
+							if (!lookahead.contains((Character.toString(c)))) 
+								lookahead += " " + item2.lookahead();
 						}
 					}
 				}

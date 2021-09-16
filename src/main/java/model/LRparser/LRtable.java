@@ -178,7 +178,7 @@ public class LRtable {
 						if (production_index < 0)
 							System.err.println("Item não pertence ao Estado");
 						
-						String[] lookahead = item.lookahead().split("/");
+						String[] lookahead = item.lookahead().split(" ");
 						
 						//Iterates each lookahead character
 						for (int i = 0; i < lookahead.length; i++) {
