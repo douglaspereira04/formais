@@ -25,14 +25,7 @@ public class Grammar {
 			String[] production  = line.split("->");
 			String stringHead = production[0].trim();
 			
-			if(stringHead.length() >1) {
-				if(stringHead.charAt(1) == '\'') {
-					stringHead =stringHead.charAt(0)+"l";
-				}
-			}
-			
-			NONTERMINAL head = NONTERMINAL.valueOf(stringHead);
-			this.addProduction(new Production(head, production[1].trim()));
+			this.addProduction(new Production(stringHead, production[1].trim()));
 		}
 		
 	}

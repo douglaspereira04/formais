@@ -31,7 +31,7 @@ public class LRparserControl {
 	LRparserPanel parserPanel = null;
 	LRtable table = null;
 
-	public LRparserControl(LRparserPanel parserPanel) {	
+	public LRparserControl(LRparserPanel parserPanel) {
 		this.parserPanel = parserPanel;
 
 		initializeBehavior();
@@ -62,15 +62,15 @@ public class LRparserControl {
 	}
 
 	private void parse() {
-		
-		List<String> text = Arrays.asList( parserPanel.getTokenTextArea().getText().split(" "));
+
+		List<String> text = Arrays.asList(parserPanel.getTokenTextArea().getText().split(" "));
 		text.replaceAll(String::trim);
 		text = new ArrayList<String>(text);
 		System.out.println(Collections.singletonList(text));
 		boolean result = table.compute(text);
-		
+
 		parserPanel.setResultLabel(result);
-		
+
 	}
 
 	private void createParsingTable() {
@@ -80,16 +80,18 @@ public class LRparserControl {
 
 		Grammar grammar = null;
 		grammar = new Grammar(parserPanel.getGrammarTextArea().getText());
-		
-		
+
 		table = new LRtable(grammar);
-		
+
 		for (int i = 0; i < table.getStates().size(); i++) {
 			parserPanel.addState(i);
 		}
 
 		for (String nonTeminal : grammar.getNonterminals()) {
-			parserPanel.addGotoColumn(nonTeminal);
+			String temp = nonTeminal;
+			if (temp.trim().length() > 1 && !temp.trim().equals("extended"))
+				temp = temp.charAt(0) + "'";
+			parserPanel.addGotoColumn(temp);
 		}
 
 		for (String terminal : grammar.getTerminals()) {
@@ -99,9 +101,9 @@ public class LRparserControl {
 
 		actionTable = table.getActionTable();
 		gotoTable = table.getGotoTable();
-		
+
 		for (int i = 0; i < table.getStates().size(); i++) {
-			if(actionTable.containsKey(i)){
+			if (actionTable.containsKey(i)) {
 				for (Entry<String, String> entry : actionTable.get(i).entrySet()) {
 					String terminal = entry.getKey();
 					String action = entry.getValue();
@@ -109,19 +111,20 @@ public class LRparserControl {
 				}
 			}
 		}
-		
+
 		for (int i = 0; i < table.getStates().size(); i++) {
-			if(gotoTable.containsKey(i)){
+			if (gotoTable.containsKey(i)) {
 				for (Entry<String, Integer> entry : gotoTable.get(i).entrySet()) {
-					String nonTerminal = entry.getKey();
+					String nonTerminal = entry.getKey().replace('l', '\'');
 					String gotoString = entry.getValue().toString();
 					parserPanel.addGoto(nonTerminal, gotoString, i);
 				}
 			}
 		}
 
+		parserPanel.getGotoTable().removeColumn(parserPanel.getGotoTable().getColumn("extended"));
+
 		parserPanel.repaint();
-		System.err.println(Collections.singletonList(actionTable));
 
 	}
 

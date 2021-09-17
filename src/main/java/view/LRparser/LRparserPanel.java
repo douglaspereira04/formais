@@ -397,6 +397,22 @@ public class LRparserPanel extends JPanel {
 	public void setParseButton(JButton parseButton) {
 		this.parseButton = parseButton;
 	}
+
+	public DefaultTableModel getGotoTableModel() {
+		return gotoTableModel;
+	}
+
+	public void setGotoTableModel(DefaultTableModel gotoTableModel) {
+		this.gotoTableModel = gotoTableModel;
+	}
+
+	public JTable getGotoTable() {
+		return gotoTable;
+	}
+
+	public void setGotoTable(JTable gotoTable) {
+		this.gotoTable = gotoTable;
+	}
 	
 
 }
