@@ -4,7 +4,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -60,7 +63,14 @@ public class LRparserControl {
 
 	private void parse() {
 		
-
+		List<String> text = Arrays.asList( parserPanel.getTokenTextArea().getText().split(" "));
+		text.replaceAll(String::trim);
+		text = new ArrayList<String>(text);
+		System.out.println(Collections.singletonList(text));
+		boolean result = table.compute(text);
+		
+		parserPanel.setResultLabel(result);
+		
 	}
 
 	private void createParsingTable() {

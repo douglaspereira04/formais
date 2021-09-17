@@ -23,7 +23,15 @@ public class Grammar {
 		String[] lines = grammar.split("\n");
 		for (String line : lines) {
 			String[] production  = line.split("->");
-			NONTERMINAL head = NONTERMINAL.valueOf(production[0].trim());
+			String stringHead = production[0].trim();
+			
+			if(stringHead.length() >1) {
+				if(stringHead.charAt(1) == '\'') {
+					stringHead =stringHead.charAt(0)+"l";
+				}
+			}
+			
+			NONTERMINAL head = NONTERMINAL.valueOf(stringHead);
 			this.addProduction(new Production(head, production[1].trim()));
 		}
 		
