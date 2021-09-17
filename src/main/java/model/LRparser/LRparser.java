@@ -13,7 +13,7 @@ public class LRparser {
 	
 	public LRparser(Grammar grammar) {
 		Production first = grammar.getProductions().get(0);
-		Production new_first = new Production(NONTERMINAL.Sl, first.head().toString());
+		Production new_first = new Production(NONTERMINAL.extended, first.head().toString());
 		grammar.setFirstProduction(new_first);
 		this.grammar = grammar;
 	}
@@ -57,8 +57,12 @@ public class LRparser {
 							//Concatenates the lookahead symbol from all symbols belonging to the beta_alpha sequence firstPos
 							String lookahead = "";
 							for (String b : first) {
+								
+								if (b.equals("&"))
+									continue;
+								
 								if (!lookahead.isEmpty())
-									lookahead+="/";
+									lookahead+=" ";
 								lookahead+=b;
 							}
 							
@@ -87,16 +91,18 @@ public class LRparser {
 		}
 		//Checks the product Item x Item for each closure item to find copies
 		for (Item item1 : iterator) {
+			
 			String lookahead = "";
 			for (Item item2 : iterator) {
+				
 				//Check if items are equal ignoring the lookahead value
 				if (item1.equals_ignore_lookahead(item2)) {
 					//Calculate the new lookahead value by concatenating both item's values
 					if (lookahead.isEmpty()) {
 						lookahead = item2.lookahead();
 					} else {
-						for (char c : item2.lookahead().toCharArray()) {
-							if (!lookahead.contains((Character.toString(c)))) 
+						for (String symbol : item2.lookahead().split(" ")) {
+							if (!lookahead.contains(symbol)) 
 								lookahead += " " + item2.lookahead();
 						}
 					}
@@ -143,6 +149,10 @@ public class LRparser {
 	public List<Item> GOTO(List<Item> I, String X) {
 		List<Item> J = new ArrayList<>();
 		for (Item item : I) {
+			
+			if (item.production().rule().equals("&"))
+				continue;
+			
 			String symbol = item.next();
 			if (X.equals(symbol)) {
 				Item new_item = new Item(item.production(), item.lookahead(), item.index()+1);

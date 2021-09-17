@@ -126,7 +126,7 @@ public class GrammarTest {
 		
 		Grammar grammar = new Grammar();
 		
-		grammar.addProduction(new Production(NONTERMINAL.Sl, "E"));
+		//grammar.addProduction(new Production(NONTERMINAL.Sl, "E"));
 		grammar.addProduction(new Production(NONTERMINAL.E, "E + T"));
 		grammar.addProduction(new Production(NONTERMINAL.E, "T"));
 		grammar.addProduction(new Production(NONTERMINAL.T, "T * F"));
@@ -345,6 +345,231 @@ public class GrammarTest {
 		lrtable.compute(input);
 		
 		System.out.println();
+	}
+	
+	@Test
+	public void test9() {
+		
+		System.out.println("Test 9");
+		
+		Grammar grammar = new Grammar();
+		System.out.println();
+		
+		grammar.addProduction(new Production("E", "T E'"));
+		grammar.addProduction(new Production("E'", "+ T E'"));
+		grammar.addProduction(new Production("E'", "&"));
+		grammar.addProduction(new Production("T", "F T'"));
+		grammar.addProduction(new Production("T'", "* F T'"));
+		grammar.addProduction(new Production("T'", "&"));
+		grammar.addProduction(new Production("F", "( E )"));
+		grammar.addProduction(new Production("F", "id"));
+		
+		for (Production production : grammar.getProductions()) 
+			System.out.println(production.head()+" -> "+production.rule());
+		System.out.println();
+		
+		LRtable lrtable = new LRtable(grammar);
+		
+		System.out.println("Análise Sintática");
+		String[] word = "( id + id )".split(" ");
+		System.out.println(word.length);
+		List<String> input = new ArrayList<>();
+		for (String w : word)
+			input.add(w);
+		lrtable.compute(input);
+		
+		System.out.println();		
+	}
+	
+	@Test
+	public void test10() {
+		
+		System.out.println("Test 10");
+		
+		Grammar grammar = new Grammar();
+		System.out.println();
+		
+		grammar.addProduction(new Production("E", "T E'"));
+		grammar.addProduction(new Production("E'", "+ T E'"));
+		grammar.addProduction(new Production("E'", "&"));
+		grammar.addProduction(new Production("T", "F T'"));
+		grammar.addProduction(new Production("T'", "* F T'"));
+		grammar.addProduction(new Production("T'", "&"));
+		grammar.addProduction(new Production("F", "( E )"));
+		grammar.addProduction(new Production("F", "id"));
+		
+		LRtable lrtable = new LRtable(grammar);
+		
+		System.out.println("Análise Sintática");
+		String[] word = "( id + id )".split(" ");
+		System.out.println(word.length);
+		List<String> input = new ArrayList<>();
+		for (String w : word)
+			input.add(w);
+		lrtable.compute(input);
+		
+		System.out.println();
+		
+	}
+	
+	@Test
+	public void test11() {
+		
+		System.out.println("Test 11");
+		
+		Grammar grammar = new Grammar();
+		System.out.println();
+		
+		grammar.addProduction(new Production(NONTERMINAL.E, "T El"));
+		grammar.addProduction(new Production(NONTERMINAL.El, "+ T El"));
+		grammar.addProduction(new Production(NONTERMINAL.El, "&"));
+		grammar.addProduction(new Production(NONTERMINAL.T, "F Tl"));
+		grammar.addProduction(new Production(NONTERMINAL.Tl, "* F Tl"));
+		grammar.addProduction(new Production(NONTERMINAL.Tl, "&"));
+		grammar.addProduction(new Production(NONTERMINAL.F, "( E )"));
+		grammar.addProduction(new Production(NONTERMINAL.F, "id"));
+		
+		LRtable lrtable = new LRtable(grammar);
+		
+		System.out.println("Análise Sintática");
+		String[] word = "( id + id )".split(" ");
+		System.out.println(word.length);
+		List<String> input = new ArrayList<>();
+		for (String w : word)
+			input.add(w);
+		lrtable.compute(input);
+		
+		System.out.println();
+		
+	}
+	
+	@Test
+	public void test12() {
+		
+		System.out.println("Test 12");
+		
+		Grammar grammar = new Grammar();
+		System.out.println();
+		
+		grammar.addProduction(new Production(NONTERMINAL.E, "T A"));
+		grammar.addProduction(new Production(NONTERMINAL.A, "+ T A"));
+		grammar.addProduction(new Production(NONTERMINAL.A, "&"));
+		grammar.addProduction(new Production(NONTERMINAL.T, "F B"));
+		grammar.addProduction(new Production(NONTERMINAL.B, "* F B"));
+		grammar.addProduction(new Production(NONTERMINAL.B, "&"));
+		grammar.addProduction(new Production(NONTERMINAL.F, "( E )"));
+		grammar.addProduction(new Production(NONTERMINAL.F, "id"));
+		
+		
+		for (Production production : grammar.getProductions())
+			System.out.println(production.head()+" -> "+production.rule());
+		System.out.println();
+		
+		List<String> symbols = grammar.getSymbols();
+		List<String> terminals = grammar.getTerminals();
+		List<String> nonterminals = grammar.getNonterminals();
+		System.out.println("Symbols: "+symbols);
+		System.out.println("Terminals: "+terminals);
+		System.out.println("Nonterminals: "+nonterminals);
+		
+		
+		
+		for (String nonterminal : grammar.getNonterminals()) {
+			List<String> firstPos = grammar.firstPos(nonterminal);
+			System.out.println("FirstPos "+nonterminal+": "+firstPos);
+		}
+		System.out.println();
+		
+		LRtable lrtable = new LRtable(grammar);
+		Map<Integer, Map<String, Integer>> gotoMap = lrtable.getGotoTable();
+		
+		int size = lrtable.getStates().size();
+		
+		for (int i = 0; i < size; i++) {
+			
+			System.out.println("STATE: "+i+" : "+printItemSet(lrtable.getStates().get(i)));
+		}
+		System.out.println();
+		for (int i = 0; i < size; i++) {
+			
+			System.out.println("CLOSURE: "+i+" : "+printItemSet(lrtable.closures().get(i)));
+		}
+		
+		System.out.println();
+		
+		System.out.println("GOTO TABLE");
+		
+		for (int i = 0; i < size; i++) {
+			if (gotoMap.containsKey(i)) {
+				for (String symbol : grammar.getSymbols()) {
+					if (gotoMap.get(i).containsKey(symbol)) {
+						int gotoIndex = gotoMap.get(i).get(symbol);
+						System.out.println(i+" x "+symbol+" -> "+gotoIndex);
+					}
+				}
+			}
+		}
+		System.out.println();
+		
+		Map<Integer, Map<String, String>> actionTable = lrtable.getActionTable();
+		
+		int size_ = lrtable.getStates().size();
+		
+		System.out.println("Action Table");
+		
+		for (int i = 0; i < size_; i++) {
+			if (actionTable.containsKey(i)) {
+				for (String symbol : actionTable.get(i).keySet()) {
+					String action = actionTable.get(i).get(symbol);
+					System.out.println(i+" x "+symbol+" -> "+action);
+				}
+			}
+		}
+		
+		System.out.println();
+		if (lrtable.IS_LR1())
+			System.out.println("Grammar is LR1");
+		System.out.println();
+		
+		System.out.println("Análise Sintática");
+		String[] word = "id".split(" ");
+		List<String> input = new ArrayList<>();
+		for (String w : word)
+			input.add(w);
+		lrtable.compute(input);
+		
+		System.out.println();
+		
+		
+	}
+	
+	@Test
+	public void test13() {
+		
+		System.out.println("Test 13");
+		
+		Grammar grammar = new Grammar();
+		System.out.println();
+		
+		grammar.addProduction(new Production(NONTERMINAL.S, "C C"));
+		grammar.addProduction(new Production(NONTERMINAL.C, "c C"));
+		grammar.addProduction(new Production(NONTERMINAL.C, "d"));
+		
+		
+		for (Production production : grammar.getProductions())
+			System.out.println(production.head()+" -> "+production.rule());
+		System.out.println();
+		
+		LRtable lrtable = new LRtable(grammar);
+		
+		System.out.println("Análise Sintática");
+		String[] word = "c d d".split(" ");
+		System.out.println(word.length);
+		List<String> input = new ArrayList<>();
+		for (String w : word)
+			input.add(w);
+		lrtable.compute(input);
+		
 	}
 
 }

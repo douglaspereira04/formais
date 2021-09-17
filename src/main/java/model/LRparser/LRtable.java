@@ -171,7 +171,7 @@ public class LRtable {
 					
 				} else {
 					//If rule ends in dot
-					if (symbol == null) {
+					if (symbol == null || symbol.equals("&")) {
 						//Get the current item index
 						int production_index = grammar.getProductions().indexOf(item.production());
 						
@@ -243,6 +243,9 @@ public class LRtable {
 				return false;
 			}
 			
+			System.out.println(state+" x "+symbol+" -> "+action);
+			System.out.println("STACK: "+stack);
+			
 			if (action > 0) {
 				stack.push(action);
 				symbol = word.get(index++);
@@ -251,6 +254,8 @@ public class LRtable {
 				action *= -1;
 				Production production = grammar.getProductions().get(action);
 				int size = production.rule().split(" ").length;
+				if (production.rule().equals("&"))
+					size = 0;
 				for (int i = 0; i < size; i++) {
 					stack.pop();
 				}
