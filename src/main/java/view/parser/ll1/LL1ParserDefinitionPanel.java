@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JLabel;
@@ -96,6 +97,8 @@ public class LL1ParserDefinitionPanel extends JPanel {
 
 		initializeParsingTablePanel();
 
+		parsingTableModel.addColumn("FIRST");
+		parsingTableModel.addColumn("FOLLOW");
 		parsingTableModel.addColumn("");
 		
 		List<String> terminal = parser.getTerminalSymbols();
@@ -107,16 +110,33 @@ public class LL1ParserDefinitionPanel extends JPanel {
 
 		for (int i = 0; i < parser.getNonTerminalSymbols().size(); i++) {
 			parsingTableModel.addRow(new String[parsingTableModel.getColumnCount()]);
-			parsingTableModel.setValueAt(parser.getNonTerminalSymbols().get(i), i, 0);
+			parsingTableModel.setValueAt(parser.getNonTerminalSymbols().get(i), i, 2);
 		}
 
 		for (int i = 0; i < terminal.size(); i++) {
 			for (int j = 0; j < parser.getNonTerminalSymbols().size(); j++) {
 				String production = parser.getParsingTable().get(parser.getNonTerminalSymbols().get(j),terminal.get(i));
-				parsingTableModel.setValueAt(production, j, i+1);
+				parsingTableModel.setValueAt(production, j, i+3);
 			}
 		}
+		
+		for (int i = 0; i < parser.getNonTerminalSymbols().size(); i++) {
+			String nonTerminal = parser.getNonTerminalSymbols().get(i);
+			String firstPos = Collections.singleton(parser.getFirstPos().get(nonTerminal)).toString();
+			firstPos = "{"+firstPos.substring(2, firstPos.length()-2)+"}";
+			parsingTableModel.setValueAt(firstPos, i, 0);
+			
+		}
+		
+		for (int i = 0; i < parser.getNonTerminalSymbols().size(); i++) {
+			String nonTerminal = parser.getNonTerminalSymbols().get(i);
+			String followPos = Collections.singleton(parser.getFollowPos().get(nonTerminal)).toString();
+			followPos = "{"+followPos.substring(2, followPos.length()-2)+"}";
+			parsingTableModel.setValueAt(followPos, i, 1);
+			
+		}
 
+		
 		parsingTable.getTableHeader().repaint();
 		parsingTable.repaint();
 
