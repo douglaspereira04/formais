@@ -16,6 +16,19 @@ public class Grammar {
 		symbols = new ArrayList<>();
 	}
 	
+	public Grammar(String grammar) {
+		productions = new ArrayList<>();
+		symbols = new ArrayList<>();
+		
+		String[] lines = grammar.split("\n");
+		for (String line : lines) {
+			String[] production  = line.split("->");
+			NONTERMINAL head = NONTERMINAL.valueOf(production[0].trim());
+			this.addProduction(new Production(head, production[1].trim()));
+		}
+		
+	}
+	
 	public Grammar(ArrayList<Production> productions) {
 		this.productions = productions;
 	}
