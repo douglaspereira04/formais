@@ -253,8 +253,10 @@ public class LL1Parser {
 
 						for (String first : afterSymbolFirsts) {
 							if (first == EPSILON) {
-								for (String headFollow : this.followPos.get(head)) {
-									notDone |= addNotContains(headFollow, this.followPos.get(symbol));
+								if(this.followPos.get(head) != null) {
+									for (String headFollow : this.followPos.get(head)) {
+										notDone |= addNotContains(headFollow, this.followPos.get(symbol));
+									}
 								}
 							} else {
 								notDone |= addNotContains(first, this.followPos.get(symbol));

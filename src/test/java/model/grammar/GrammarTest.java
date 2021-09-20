@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import model.LRparser.Item;
 import model.LRparser.LRparser;
 import model.LRparser.LRtable;
 import model.grammar.Production.NONTERMINAL;
-
+@Ignore
 public class GrammarTest {
 	
 	public String printItemSet(List<Item> itemSet) {

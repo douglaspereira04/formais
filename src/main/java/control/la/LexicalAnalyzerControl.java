@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -256,7 +258,7 @@ public class LexicalAnalyzerControl {
 	}
 
 	private void exportAnalysis() throws InvalidStateException {
-		String tokens = getAnalysisString();
+		String tokens = getAnalysisString(this.analysis);
 
 		try {
 			File path = FileUtils.selectExportFile("*.lexical", laPanel, ".lexical");
@@ -267,7 +269,7 @@ public class LexicalAnalyzerControl {
 
 	}
 
-	private String getAnalysisString() throws InvalidStateException {
+	private String getAnalysisString(List<LexicalEntry> analysis) throws InvalidStateException {
 
 		if (analysis == null)
 			throw new InvalidStateException("###NO ANALYSIS");
@@ -281,19 +283,48 @@ public class LexicalAnalyzerControl {
 	}
 
 	private void openLL1() throws InvalidStateException {
-		String tokens = getAnalysisString();
+		String[] answer = JOptionPane.showInputDialog(this.laPanel, "Entre com os tokens que devem ser ignorados separados por virgula\nDeixe em branco para não ignorar nenhum token", "Ignorar Tokens", JOptionPane.QUESTION_MESSAGE).split(",");
+		ArrayList<String> answerList = new ArrayList<>(Arrays.asList(answer));
+		answerList.replaceAll(String::trim);
+		List<LexicalEntry> entries = new ArrayList<LexicalEntry>(this.analysis);
+		
+		for (Iterator<LexicalEntry> iterator = entries.iterator(); iterator.hasNext();) {
+			LexicalEntry lexicalEntry = (LexicalEntry) iterator.next();
+			
+			if (answerList.contains(lexicalEntry.getToken())) {
+				iterator.remove();
+			}
+			
+		}
 
+		String tokens = getAnalysisString(entries);
+		
+		
 		LL1ParserPanel parserPanel = Main.mainView.getLl1ParserPanel();
 		LL1ParsingResultPanel resultPanel = parserPanel.getParsingResultPanel();
 		Main.mainView.getSideBar().setSelectedComponent(parserPanel);
 		resultPanel.getTokenTextArea().setText(tokens);
 		parserPanel.getParserTabs().setSelectedComponent(resultPanel);
-		
+
 
 	}
 
 	private void openLR1() throws InvalidStateException {
-		String tokens = getAnalysisString();
+		String[] answer = JOptionPane.showInputDialog(this.laPanel, "Entre com os tokens que devem ser ignorados separados por virgula\nDeixe em branco para não ignorar nenhum token", "Ignorar Tokens", JOptionPane.QUESTION_MESSAGE).split(",");
+		ArrayList<String> answerList = new ArrayList<>(Arrays.asList(answer));
+		answerList.replaceAll(String::trim);
+		List<LexicalEntry> entries = new ArrayList<LexicalEntry>(this.analysis);
+		
+		for (Iterator<LexicalEntry> iterator = entries.iterator(); iterator.hasNext();) {
+			LexicalEntry lexicalEntry = (LexicalEntry) iterator.next();
+			
+			if (answerList.contains(lexicalEntry.getToken())) {
+				iterator.remove();
+			}
+			
+		}
+
+		String tokens = getAnalysisString(entries);
 
 		LRparserPanel parserPanel = Main.mainView.getLr1ParserPanel();
 		parserPanel.getTokenTextArea().setText(tokens);

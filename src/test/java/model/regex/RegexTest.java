@@ -1,6 +1,8 @@
 package model.regex;
 
 import java.util.List;
+
+import org.junit.Ignore;
 import org.junit.Test;
 import exception.automata.DuplicatedStateException;
 import exception.automata.DuplicatedTransitionException;
@@ -11,6 +13,7 @@ import exception.regex.OperatorMismatchException;
 import model.automata.Automata;
 import model.automata.Transition;
 
+@Ignore
 public class RegexTest {
 	
 	String[] regexes = new String[] {"(a|b)*abb", " ", "a", "", "a|b", "a*", "a**", "(a|b|c|d|e)*"};

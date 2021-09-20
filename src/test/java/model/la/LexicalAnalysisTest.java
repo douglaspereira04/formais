@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import exception.automata.DuplicatedStateException;
@@ -17,6 +18,8 @@ import exception.regex.InvalidInputException;
 import exception.regex.OperatorMismatchException;
 import model.automata.Automata;
 import model.automata.Transition;
+
+@Ignore
 public class LexicalAnalysisTest {
 	
 	@Test
