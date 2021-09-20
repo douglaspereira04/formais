@@ -20,6 +20,7 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
 import app.Main;
+import control.parser.ll1.LL1ParserControl;
 import exception.automata.DuplicatedStateException;
 import exception.automata.DuplicatedTransitionException;
 import exception.automata.InvalidStateException;
@@ -33,6 +34,7 @@ import model.la.LexicalEntry;
 import view.LRparser.LRparserPanel;
 import view.la.LexicalAnalyzerPanel;
 import view.la.LexicalAnalyzerPanel.LexicalAnalyzerTab;
+import view.parser.ll1.LL1ParserDefinitionPanel;
 import view.parser.ll1.LL1ParserPanel;
 import view.parser.ll1.LL1ParsingResultPanel;
 
@@ -302,8 +304,10 @@ public class LexicalAnalyzerControl {
 		
 		LL1ParserPanel parserPanel = Main.mainView.getLl1ParserPanel();
 		LL1ParsingResultPanel resultPanel = parserPanel.getParsingResultPanel();
+		LL1ParserDefinitionPanel definitionPanel = parserPanel.getParserDefinitionPanel();
 		Main.mainView.getSideBar().setSelectedComponent(parserPanel);
 		resultPanel.getTokenTextArea().setText(tokens);
+		parserPanel.getParserTabs().setSelectedComponent(definitionPanel);
 		parserPanel.getParserTabs().setSelectedComponent(resultPanel);
 
 
