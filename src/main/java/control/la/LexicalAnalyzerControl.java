@@ -51,6 +51,7 @@ public class LexicalAnalyzerControl {
 	private LexicalAnalyzerPanel laPanel = null;
 	private LexicalAnalyzer analyzer = null;
 	private List<LexicalEntry> analysis = null;
+	private String lastIgnore = "";
 
 	public LexicalAnalyzerControl(LexicalAnalyzerPanel laPanel) {
 
@@ -285,7 +286,8 @@ public class LexicalAnalyzerControl {
 	}
 
 	private void openLL1() throws InvalidStateException {
-		String[] answer = JOptionPane.showInputDialog(this.laPanel, "Entre com os tokens que devem ser ignorados separados por virgula\nDeixe em branco para não ignorar nenhum token", "Ignorar Tokens", JOptionPane.QUESTION_MESSAGE).split(",");
+		lastIgnore = JOptionPane.showInputDialog(this.laPanel, "Entre com os tokens que devem ser ignorados separados por virgula\nDeixe em branco para não ignorar nenhum token", lastIgnore);
+		String[] answer = lastIgnore.split(",");
 		ArrayList<String> answerList = new ArrayList<>(Arrays.asList(answer));
 		answerList.replaceAll(String::trim);
 		List<LexicalEntry> entries = new ArrayList<LexicalEntry>(this.analysis);
@@ -314,7 +316,8 @@ public class LexicalAnalyzerControl {
 	}
 
 	private void openLR1() throws InvalidStateException {
-		String[] answer = JOptionPane.showInputDialog(this.laPanel, "Entre com os tokens que devem ser ignorados separados por virgula\nDeixe em branco para não ignorar nenhum token", "Ignorar Tokens", JOptionPane.QUESTION_MESSAGE).split(",");
+		lastIgnore = JOptionPane.showInputDialog(this.laPanel, "Entre com os tokens que devem ser ignorados separados por virgula\nDeixe em branco para não ignorar nenhum token", lastIgnore);
+		String[] answer = lastIgnore.split(",");
 		ArrayList<String> answerList = new ArrayList<>(Arrays.asList(answer));
 		answerList.replaceAll(String::trim);
 		List<LexicalEntry> entries = new ArrayList<LexicalEntry>(this.analysis);
